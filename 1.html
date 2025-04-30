@@ -7,12 +7,20 @@
   <style>
     :root {
       --bg-dark: #0b121e;
-      --msg-user: #1f2a38;
-      --msg-bot: #16202f;
+      --msg-user-dark: #1f2a38;
+      --msg-bot-dark: #16202f;
+      --text-dark: #e0e6ed;
+      --pdf-bg-dark: #1a273a;
+      --pdf-hover-dark: #223349;
+
+      --bg-light: #f3f3f3;
+      --msg-user-light: #d0e6ff;
+      --msg-bot-light: #ffffff;
+      --text-light: #1a1a1a;
+      --pdf-bg-light: #eaeaea;
+      --pdf-hover-light: #cccccc;
+
       --accent: #00bcd4;
-      --text-color: #e0e6ed;
-      --pdf-link-bg: #1a273a;
-      --pdf-link-hover: #223349;
     }
 
     * {
@@ -23,9 +31,17 @@
 
     html, body {
       height: 100%;
-      background-color: var(--bg-dark);
       font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-      color: var(--text-color);
+    }
+
+    body[data-theme="dark"] {
+      background-color: var(--bg-dark);
+      color: var(--text-dark);
+    }
+
+    body[data-theme="light"] {
+      background-color: var(--bg-light);
+      color: var(--text-light);
     }
 
     .chat-wrapper {
@@ -34,7 +50,13 @@
       height: 100vh;
     }
 
-    
+    .profile-header {
+      display: flex;
+      align-items: center;
+      padding: 16px;
+      border-bottom: 1px solid #ccc;
+    }
+
     .profile-pic {
       width: 45px;
       height: 45px;
@@ -53,9 +75,20 @@
     .chat-title {
       font-size: 18px;
       font-weight: 600;
+      display: flex;
+      align-items: center;
     }
 
-    /* Chat area */
+    .chat-title img {
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+
+    .chat-subtitle {
+      font-size: 13px;
+      color: gray;
+    }
+
     .chat-container {
       flex: 1;
       padding: 20px 16px;
@@ -75,32 +108,62 @@
       animation: fadeIn 0.4s ease;
     }
 
+    body[data-theme="dark"] .from-user {
+      background-color: var(--msg-user-dark);
+      color: var(--text-dark);
+    }
+
+    body[data-theme="dark"] .from-bot {
+      background-color: var(--msg-bot-dark);
+      color: var(--text-dark);
+    }
+
+    body[data-theme="light"] .from-user {
+      background-color: var(--msg-user-light);
+      color: var(--text-light);
+    }
+
+    body[data-theme="light"] .from-bot {
+      background-color: var(--msg-bot-light);
+      color: var(--text-light);
+    }
+
     .from-user {
-      background-color: var(--msg-user);
       align-self: flex-end;
       border-bottom-right-radius: 2px;
     }
 
     .from-bot {
-      background-color: var(--msg-bot);
       align-self: flex-start;
       border-bottom-left-radius: 2px;
     }
 
     .pdf-link {
       display: inline-block;
-      background-color: var(--pdf-link-bg);
       padding: 10px 14px;
       margin-top: 8px;
       border-radius: 8px;
       text-decoration: none;
-      color: var(--accent);
       font-weight: bold;
       transition: background-color 0.3s ease;
     }
 
-    .pdf-link:hover {
-      background-color: var(--pdf-link-hover);
+    body[data-theme="dark"] .pdf-link {
+      background-color: var(--pdf-bg-dark);
+      color: var(--accent);
+    }
+
+    body[data-theme="dark"] .pdf-link:hover {
+      background-color: var(--pdf-hover-dark);
+    }
+
+    body[data-theme="light"] .pdf-link {
+      background-color: var(--pdf-bg-light);
+      color: var(--accent);
+    }
+
+    body[data-theme="light"] .pdf-link:hover {
+      background-color: var(--pdf-hover-light);
     }
 
     @keyframes fadeIn {
@@ -114,19 +177,15 @@
       }
     }
 
-    /* Scrollbar Styling (optional) */
     ::-webkit-scrollbar {
       width: 8px;
     }
-    ::-webkit-scrollbar-track {
-      background: transparent;
-    }
+
     ::-webkit-scrollbar-thumb {
-      background: #2b3a4b;
+      background: #aaa;
       border-radius: 4px;
     }
 
-    /* Mobile tweak */
     @media screen and (max-width: 480px) {
       .chat-title {
         font-size: 16px;
@@ -138,37 +197,50 @@
     }
   </style>
 </head>
-<body>
+<body data-theme="light">
   <div class="chat-wrapper">
 
-    
+    <!-- Profile Header -->
+    <div class="profile-header">
+      <div class="profile-pic">
+        <img src="https://i.ibb.co/ZJCMdGh/profile.jpg" alt="Profile Picture">
+      </div>
+      <div>
+        <div class="chat-title">
+          John Doe
+          <img src="https://i.ibb.co/kgJpMCHr/blue.png" width="16" title="Verified User">
+        </div>
+        <div class="chat-subtitle">Vocational Skills in AC & Finance III</div>
+      </div>
+    </div>
 
-    <!-- Chat messages -->
+    <!-- Chat Messages -->
     <div class="chat-container">
-      <!-- User question -->
       <div class="message from-user">
         Paper Pattern
       </div>
-
-      <!-- Bot PDF answer -->
       <div class="message from-bot">
         Here’s the paper pattern for your exam:
         <a href="https://mohitmali5489.github.io/Channels/1.html" class="pdf-link" target="_blank">📄 Paper Pattern.html</a>
       </div>
-    
- <div class="message from-user">
+      <div class="message from-user">
         Vocational Skills in AC and Fin III Question Bank
       </div>
-
-      <!-- Bot PDF answer -->
       <div class="message from-bot">
         Here's a detailed Page with the answer:
         <a href="https://mohitmali5489.github.io/BAFs/3.html" class="pdf-link" target="_blank">📄 Vocational Skills in AC and Fin III.html</a>
       </div>
-    
-
     </div>
-<br>
   </div>
+
+  <!-- Theme Loader Script -->
+  <script>
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+      document.body.setAttribute('data-theme', 'dark');
+    } else {
+      document.body.setAttribute('data-theme', 'light');
+    }
+  </script>
 </body>
 </html>
