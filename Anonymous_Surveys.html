@@ -45,12 +45,18 @@
       color: var(--text-light);
     }
 
-    em[data-theme="light"] {
-       color: var(--txt);
+    em {
+      color: var(--accent); /* Default accent color */
     }
- em[data-theme="dark"] {
-       color: #ffffff;
+
+    body[data-theme="dark"] em {
+      color: #ffffff; /* White for dark theme */
     }
+
+    body[data-theme="light"] em {
+      color: var(--txt); /* Text color for light theme */
+    }
+
     .chat-wrapper {
       display: flex;
       flex-direction: column;
@@ -192,24 +198,24 @@
       background: #aaa;
       border-radius: 4px;
     }
+
     .message ol {
-  list-style: none;
-  padding-left: 20px;
-  counter-reset: rank;
-}
+      list-style: none;
+      padding-left: 20px;
+      counter-reset: rank;
+    }
 
-.message ol li {
-  margin-bottom: 10px;
-  counter-increment: rank;
-}
+    .message ol li {
+      margin-bottom: 10px;
+      counter-increment: rank;
+    }
 
-.message ol li::before {
-  content: counter(rank) ". ";
-  color: #00bcd4;
-  font-weight: bold;
-  margin-right: 4px;
-}
-
+    .message ol li::before {
+      content: counter(rank) ". ";
+      color: #00bcd4;
+      font-weight: bold;
+      margin-right: 4px;
+    }
 
     @media screen and (max-width: 480px) {
       .chat-title {
@@ -241,77 +247,73 @@
 
     <!-- Chat Messages -->
     <div class="chat-container">
-     <!-- User asks -->
-<div class="message from-user">
-  Top professors for Sem I?
-</div>
+      <!-- User asks -->
+      <div class="message from-user">
+        Top professors for Sem I?
+      </div>
 
-<!-- Bot replies -->
-<div class="message from-bot">
-  <strong>Here are the Top 5 professors for Semester I:</strong>
+      <!-- Bot replies -->
+      <div class="message from-bot">
+        <strong>Here are the Top 5 professors for Semester I:</strong>
+        <ol style="margin-top: 10px; padding-left: 20px;">
+          <li style="margin-bottom: 8px;">
+            <strong style="color: #00bcd4;">Pooja Shinde</strong> - <em>Business Communication</em>
+          </li>
+          <li style="margin-bottom: 8px;">
+            <strong style="color: #00bcd4;">Anita Chavan</strong> - <em>Financial Accounting</em>
+          </li>
+          <li style="margin-bottom: 8px;">
+            <strong style="color: #00bcd4;">Om Ale</strong> - <em>Food and Nutrition</em>
+          </li>
+          <li style="margin-bottom: 8px;">
+            <strong style="color: #00bcd4;">Kaustubh Sir</strong> - <em>Law of Torts</em>
+          </li>
+          <li>
+            <strong style="color: #00bcd4;">Greesh Lassi</strong> - <em>Environment Education</em>
+          </li>
+        </ol>
+      </div>
 
-  <ol style="margin-top: 10px; padding-left: 20px; color: #1f2a38;">
-    <li style="margin-bottom: 8px;">
-      <strong style="color: #00bcd4;">Pooja Shinde</strong> - <em>Business Communication</em>
-    </li>
-    <li style="margin-bottom: 8px;">
-      <strong style="color: #00bcd4;">Anita Chavan</strong><em class="message from-bot">– Financial Accounting</em>
-    </li>
-    <li style="margin-bottom: 8px;">
-      <strong style="color: #00bcd4;">Om Ale</strong><em class="message from-bot">– Food and Nutrition</em>
-    </li>
-    <li style="margin-bottom: 8px;">
-      <strong style="color: #00bcd4;">Kaustubh Sir</strong><em class="message from-bot">– Law of Torts</em>
-    </li>
-    <li>
-      <strong style="color: #00bcd4;">Greesh Lassi</strong><em class="message from-bot">– Environment Education</em>
-    </li>
-  </ol>
-</div>
+      <!-- User asks -->
+      <div class="message from-user">
+        Top professors for Sem II?
+      </div>
 
-    
-     <!-- User asks -->
-<div class="message from-user">
-  Top professors for Sem II?
-</div>
-
-<!-- Bot replies -->
-<div class="message from-bot">
-  <strong>Here are the Top 5 professors for Semester II:</strong>
-
-  <ol style="margin-top: 10px; padding-left: 20px; color: #1f2a38;">
-    <li style="margin-bottom: 8px;">
-      <strong style="color: #00bcd4;">Akshay Sir</strong><em class="message from-bot">– Sports</em>
-    </li>
-    <li style="margin-bottom: 8px;">
-      <strong style="color: #00bcd4;">Sanjivani Mam</strong><em class="message from-bot">– Auditing</em>
-    </li>
-    <li style="margin-bottom: 8px;">
-      <strong style="color: #00bcd4;">Sunita Mam</strong><em class="message from-bot">– VOC III, VOC IV, SMM</em>
-    </li>
-    <li style="margin-bottom: 8px;">
-      <strong style="color: #00bcd4;">Atul Pandey</strong><em class="message from-bot">– EVS</em>
-    </li>
-    <li>
-      <strong style="color: #00bcd4;">Anita Mam</strong><em class="message from-bot">– Financial Accounting</em>
-    </li>
-  </ol>
-</div>
-
+      <!-- Bot replies -->
+      <div class="message from-bot">
+        <strong>Here are the Top 5 professors for Semester II:</strong>
+        <ol style="margin-top: 10px; padding-left: 20px;">
+          <li style="margin-bottom: 8px;">
+            <strong style="color: #00bcd4;">Akshay Sir</strong> - <em>Sports</em>
+          </li>
+          <li style="margin-bottom: 8px;">
+            <strong style="color: #00bcd4;">Sanjivani Mam</strong> - <em>Auditing</em>
+          </li>
+          <li style="margin-bottom: 8px;">
+            <strong style="color: #00bcd4;">Sunita Mam</strong> - <em>VOC III, VOC IV, SMM</em>
+          </li>
+          <li style="margin-bottom: 8px;">
+            <strong style="color: #00bcd4;">Atul Pandey</strong> - <em>EVS</em>
+          </li>
+          <li>
+            <strong style="color: #00bcd4;">Anita Mam</strong> - <em>Financial Accounting</em>
+          </li>
+        </ol>
+      </div>
+    </div>
 
   </div>
 
   <!-- Theme Loader Script -->
   <script>
-(function applyThemeFromURL() {
-  const urlParams = new URLSearchParams(window.location.search);
-  const theme = urlParams.get('theme');
-  if (theme) {
-    document.body.setAttribute('data-theme', theme);
-    localStorage.setItem('theme', theme); // optional: persist for next visit
-  }
-})();
-
+    (function applyThemeFromURL() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const theme = urlParams.get('theme');
+      if (theme) {
+        document.body.setAttribute('data-theme', theme);
+        localStorage.setItem('theme', theme); // optional: persist for next visit
+      }
+    })();
   </script>
 </body>
 </html>
