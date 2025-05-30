@@ -21,6 +21,7 @@
       --pdf-hover-light: #cccccc;
 
       --accent: #00bcd4;
+      --txt: #16202f;
     }
 
     * {
@@ -38,12 +39,18 @@
       background-color: var(--bg-dark);
       color: var(--text-dark);
     }
-
+    
     body[data-theme="light"] {
       background-color: var(--bg-light);
       color: var(--text-light);
     }
 
+    em[data-theme="light"] {
+       color: var(--txt);
+    }
+ em[data-theme="dark"] {
+       color: #ffffff;
+    }
     .chat-wrapper {
       display: flex;
       flex-direction: column;
@@ -245,7 +252,7 @@
 
   <ol style="margin-top: 10px; padding-left: 20px; color: #1f2a38;">
     <li style="margin-bottom: 8px;">
-      <strong style="color: #00bcd4;">Pooja Shinde</strong> - <em style="color:--accent" >Business Communication</em>
+      <strong style="color: #00bcd4;">Pooja Shinde</strong> - <em>Business Communication</em>
     </li>
     <li style="margin-bottom: 8px;">
       <strong style="color: #00bcd4;">Anita Chavan</strong><em class="message from-bot">– Financial Accounting</em>
