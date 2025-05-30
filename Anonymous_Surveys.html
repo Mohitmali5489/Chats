@@ -296,12 +296,15 @@
 
   <!-- Theme Loader Script -->
   <script>
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme === 'dark') {
-      document.body.setAttribute('data-theme', 'dark');
-    } else {
-      document.body.setAttribute('data-theme', 'light');
-    }
+(function applyThemeFromURL() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const theme = urlParams.get('theme');
+  if (theme) {
+    document.body.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme); // optional: persist for next visit
+  }
+})();
+
   </script>
 </body>
 </html>
