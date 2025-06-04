@@ -39,28 +39,29 @@
       background-color: var(--bg-dark);
       color: var(--text-dark);
     }
-    
+
     body[data-theme="light"] {
       background-color: var(--bg-light);
       color: var(--text-light);
     }
 
     em {
-      color: var(--accent); /* Default accent color */
+      color: var(--accent);
     }
 
     body[data-theme="dark"] em {
-      color: #ffffff; /* White for dark theme */
+      color: #ffffff;
     }
 
     body[data-theme="light"] em {
-      color: var(--txt); /* Text color for light theme */
+      color: var(--txt);
     }
 
     .chat-wrapper {
       display: flex;
       flex-direction: column;
       height: 100vh;
+      position: relative;
     }
 
     .profile-header {
@@ -226,6 +227,31 @@
         font-size: 14px;
       }
     }
+
+    .scroll-to-bottom {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 44px;
+      height: 44px;
+      font-size: 24px;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+
+    .scroll-to-bottom:hover {
+      background-color: #0097a7;
+      pointer-events: all;
+    }
+
   </style>
 </head>
 <body data-theme="light">
@@ -241,13 +267,14 @@
           Anonymous Surveys
           <img src="https://i.ibb.co/SXGL4Nq0/green.png" width="16" title="Verified User">
         </div>
-        <div class="chat-subtitle">Based on Real student Reviews and Feedback</div>
+        <div class="chat-subtitle">Real Voices. Real Feedback. 100% Anonymous</div>
       </div>
     </div>
 
     <!-- Chat Messages -->
     <div class="chat-container">
-      <!-- User asks -->
+    
+    
       <div class="message from-user">
         Top professors for Sem I?
       </div>
@@ -270,6 +297,33 @@
           </li>
           <li>
             <strong style="color: #00bcd4;">Greesh Lassi</strong> - <em>Environment Education</em>
+          </li>
+        </ol>
+      </div>
+      
+       <!-- User asks -->
+      <div class="message from-user">
+        Top 5 Rank Holder Students for SEM I?
+      </div>
+
+      <!-- Bot replies -->
+      <div class="message from-bot">
+        <strong>Here are the Top 5 Rank Holder Students for SEM I:</strong>
+        <ol style="margin-top: 10px; padding-left: 20px;">
+          <li style="margin-bottom: 8px;">
+            <strong style="color: #00bcd4;">Abhishek Gupta</strong> - <em>81.82%</em>
+          </li>
+          <li style="margin-bottom: 8px;">
+            <strong style="color: #00bcd4;">Leysha Sardar</strong> - <em>81.64%</em>
+          </li>
+          <li style="margin-bottom: 8px;">
+            <strong style="color: #00bcd4;">Harshita Kashyap</strong> - <em>80.91%</em>
+          </li>
+          <li style="margin-bottom: 8px;">
+            <strong style="color: #00bcd4;">Sneha Reddy</strong> - <em>80.36%</em>
+          </li>
+          <li>
+            <strong style="color: #00bcd4;">Muskan Prasad</strong> - <em>80.18%</em>
           </li>
         </ol>
       </div>
@@ -301,19 +355,38 @@
         </ol>
       </div>
     </div>
-
+    <!-- Scroll-to-Bottom Button -->
+    <button class="scroll-to-bottom" onclick="scrollToBottom()">↓</button>
   </div>
 
-  <!-- Theme Loader Script -->
+  <!-- Scripts -->
   <script>
     (function applyThemeFromURL() {
       const urlParams = new URLSearchParams(window.location.search);
       const theme = urlParams.get('theme');
       if (theme) {
         document.body.setAttribute('data-theme', theme);
-        localStorage.setItem('theme', theme); // optional: persist for next visit
+        localStorage.setItem('theme', theme);
       }
     })();
+
+    function scrollToBottom() {
+      const chatContainer = document.querySelector('.chat-container');
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+
+    window.addEventListener('load', () => {
+      scrollToBottom(); // Auto-scroll on load
+    });
+
+    // Show or hide scroll-to-bottom button
+    document.querySelector('.chat-container').addEventListener('scroll', function () {
+      const chat = this;
+      const button = document.querySelector('.scroll-to-bottom');
+      const nearBottom = chat.scrollHeight - chat.scrollTop <= chat.clientHeight + 100;
+      button.style.opacity = nearBottom ? '0' : '1';
+      button.style.pointerEvents = nearBottom ? 'none' : 'all';
+    });
   </script>
 </body>
 </html>
