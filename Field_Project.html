@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Field Project</title>
+  <style>
+    :root {
+      --bg-dark: #0b121e;
+      --msg-user-dark: #1f2a38;
+      --msg-bot-dark: #16202f;
+      --text-dark: #e0e6ed;
+      --pdf-bg-dark: #1a273a;
+      --pdf-hover-dark: #223349;
+
+      --bg-light: #f9f9f9;
+      --msg-user-light: #d0e6ff;
+      --msg-bot-light: #ffffff;
+      --text-light: #1a1a1a;
+      --pdf-bg-light: #eaeaea;
+      --pdf-hover-light: #cccccc;
+
+      --accent: #00bcd4;
+      --txt: #16202f;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      font-size: 16px;
+    }
+
+    body[data-theme="dark"] {
+      background-color: var(--bg-dark);
+      color: var(--text-dark);
+    }
+
+    body[data-theme="light"] {
+      background-color: var(--bg-light);
+      color: var(--text-light);
+    }
+
+    em {
+      color: var(--accent);
+    }
+
+    .chat-wrapper {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    .profile-header {
+      display: flex;
+      align-items: center;
+      padding: 16px;
+      border-bottom: 1px solid #ccc;
+      background-color: rgba(255, 255, 255, 0.8);
+    }
+
+    .profile-pic {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      overflow: hidden;
+      margin-right: 12px;
+    }
+
+    .profile-pic img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .chat-title {
+      font-size: 20px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      color: black;
+    }
+
+    .chat-title img {
+      margin-left: 6px;
+      vertical-align: middle;
+    }
+
+    .chat-subtitle {
+      font-size: 13px;
+      color: gray;
+    }
+
+    .chat-container {
+      flex: 1;
+      padding: 20px 16px;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      scroll-behavior: smooth;
+    }
+
+    .message {
+      max-width: 85%;
+      padding: 12px 16px;
+      border-radius: 12px;
+      margin-bottom: 16px;
+      font-size: 15px;
+      line-height: 1.6;
+      word-wrap: break-word;
+      animation: fadeIn 0.4s ease;
+    }
+
+    body[data-theme="dark"] .from-user {
+      background-color: var(--msg-user-dark);
+      color: var(--text-dark);
+    }
+
+    body[data-theme="dark"] .from-bot {
+      background-color: var(--msg-bot-dark);
+      color: var(--text-dark);
+    }
+
+    body[data-theme="light"] .from-user {
+      background-color: var(--msg-user-light);
+      color: var(--text-light);
+    }
+
+    body[data-theme="light"] .from-bot {
+      background-color: var(--msg-bot-light);
+      color: var(--text-light);
+    }
+
+    .from-user {
+      align-self: flex-end;
+      border-bottom-right-radius: 2px;
+    }
+
+    .from-bot {
+      align-self: flex-start;
+      border-bottom-left-radius: 2px;
+    }
+
+    .pdf-link {
+      display: inline-block;
+      padding: 10px 14px;
+      margin-top: 8px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+    }
+
+    body[data-theme="dark"] .pdf-link {
+      background-color: var(--pdf-bg-dark);
+      color: var(--accent);
+    }
+
+    body[data-theme="dark"] .pdf-link:hover {
+      background-color: var(--pdf-hover-dark);
+    }
+
+    body[data-theme="light"] .pdf-link {
+      background-color: var(--pdf-bg-light);
+      color: var(--accent);
+    }
+
+    body[data-theme="light"] .pdf-link:hover {
+      background-color: var(--pdf-hover-light);
+    }
+
+    .message ul, .message ol {
+      padding-left: 20px;
+      margin-top: 8px;
+    }
+
+    .message ul li {
+      margin-bottom: 8px;
+    }
+
+    .message ol {
+      list-style: none;
+      counter-reset: list;
+    }
+
+    .message ol li {
+      counter-increment: list;
+      margin-bottom: 10px;
+    }
+
+    .message ol li::before {
+      content: counter(list) ". ";
+      font-weight: bold;
+      color: var(--accent);
+      margin-right: 4px;
+    }
+
+    .scroll-to-bottom {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 44px;
+      height: 44px;
+      font-size: 24px;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .scroll-to-bottom:hover {
+      background-color: #0097a7;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #aaa;
+      border-radius: 4px;
+    }
+
+    @media screen and (max-width: 480px) {
+      .chat-title {
+        font-size: 16px;
+      }
+
+      .message {
+        font-size: 14px;
+        padding: 10px 14px;
+      }
+
+      .chat-container {
+        padding: 16px 12px;
+      }
+    }
+  </style>
+</head>
+<body data-theme="light">
+  <div class="chat-wrapper">
+
+    <!-- Profile Header -->
+    <div class="profile-header">
+      <div class="profile-pic">
+        <img src="https://fuovcuzaxfkyqrridrgy.supabase.co/storage/v1/object/public/profile-pics//study-icon-modified.png" alt="Profile Picture">
+      </div>
+      <div>
+        <div class="chat-title">
+          Field Project
+          <img src="https://i.ibb.co/SXGL4Nq0/green.png" width="16" title="Verified User">
+        </div>
+        <div class="chat-subtitle">Guiding You from Field to File</div>
+      </div>
+    </div>
+
+    <!-- Chat Messages -->
+    <div class="chat-container">
+      <div class="message from-user">
+        Help me in Prepairing Field Project
+      </div>
+
+      <!-- Bot Reply -->
+      <div class="message from-bot">
+        <!-- Keep your step-by-step content unchanged here -->
+        <!-- Already formatted and structured well in your original -->
+        ✅ Step-by-Step Guide to Prepare Your Field Project
+        <p><b>1. Choose Your Topic</b></p>
+  <ul>
+    <li>Select a <strong>realistic, socially relevant, and manageable</strong> topic.</li>
+    <li>Take suggestions from your mentor or department head.</li>
+    <li>Examples:
+      <ul>
+        <li>Waste Management</li>
+        <li>Digital Literacy in Rural Areas</li>
+        <li>Skill Development Programs</li>
+        <li>Impact of Yoga on Students' Health</li>
+      </ul>
+    </li>
+  </ul>
+
+  <p><b>2. Get Approval and Allotment</b></p>
+  <ul>
+    <li>Submit your topic proposal for approval.</li>
+    <li>You will be allotted a <strong>Faculty Mentor</strong> to guide you.</li>
+  </ul>
+
+  <p><b>3. Plan Your Field Work</b></p>
+  <ul>
+    <li>Choose <strong>location(s)</strong> and <strong>target groups</strong> (e.g., residents, officials).</li>
+    <li>Schedule <strong>2-3 field visits</strong>.</li>
+    <li>Prepare tools:
+      <ul>
+        <li>Survey form</li>
+        <li>Interview questions</li>
+        <li>Observation checklist</li>
+      </ul>
+    </li>
+  </ul>
+
+  <p><b>4. Conduct the Field Work</b></p>
+  <ul>
+    <li>Visit the selected societies or sites.</li>
+    <li>Collect data via:
+      <ul>
+        <li>Surveys</li>
+        <li>Interviews</li>
+        <li>Observations</li>
+        <li>Photos/documents</li>
+      </ul>
+    </li>
+    <li><strong>🔒 Ethical Note:</strong> Take consent and maintain privacy.</li>
+  </ul>
+
+  <p><b>5. Maintain Records</b></p>
+  <ul>
+    <li>Fill the <strong>Guide Interaction Diary</strong> (at least 5 meetings).</li>
+    <li>Record:
+      <ul>
+        <li>Field dates</li>
+        <li>Observations</li>
+        <li>People interacted with</li>
+        <li>Feedback</li>
+      </ul>
+    </li>
+  </ul>
+
+  <p><b>6. Organize Your Report Structure</b></p>
+  <ul>
+    <li>Use Times New Roman, 12pt, 1.5 spacing.</li>
+    <li>Report should have:
+      <ol>
+        <li>Title Page</li>
+        <li>Certificate</li>
+        <li>Declaration</li>
+        <li>Acknowledgment</li>
+        <li>Abstract</li>
+        <li>Table of Contents</li>
+        <li>Chapters:
+          <ul>
+            <li>Introduction</li>
+            <li>Literature Review</li>
+            <li>Methodology</li>
+            <li>Observations & Analysis</li>
+            <li>Conclusion & Recommendations</li>
+          </ul>
+        </li>
+        <li>References</li>
+        <li>Appendices</li>
+      </ol>
+    </li>
+  </ul>
+
+  <p><b>7. Write the Report</b></p>
+  <ul>
+    <li><strong>Introduction:</strong> Purpose and background</li>
+    <li><strong>Literature Review:</strong> Past studies or policy references</li>
+    <li><strong>Methodology:</strong> Field work details</li>
+    <li><strong>Observations & Analysis:</strong> Results and data</li>
+    <li><strong>Conclusion & Recommendations:</strong> Summary + suggestions</li>
+  </ul>
+
+  <p><b>8. Review and Finalize</b></p>
+  <ul>
+    <li>Check grammar, formatting, and page numbers.</li>
+    <li>Add photos, charts, or visuals if needed.</li>
+    <li>Ensure at least <strong>20 pages</strong>.</li>
+  </ul>
+
+  <p><b>9. Submit Documents</b></p>
+  <ul>
+    <li>Guide Interaction Diary (signed)</li>
+    <li>Student Declaration</li>
+    <li>Certificate signed by mentor</li>
+    <li>Feedback Form (college provided)</li>
+  </ul>
+
+  <p><b>10. Presentation & Evaluation</b></p>
+  <ul>
+    <li>Be ready for presentation.</li>
+    <li>Evaluation based on:
+      <ul>
+        <li>Fieldwork quality</li>
+        <li>Presentation skills</li>
+        <li>Report content</li>
+        <li>Communication</li>
+      </ul>
+    </li>
+  </ul>
+
+  <p><b>📝 Pro Tips:</b></p>
+  <ul>
+    <li>Save and back up your project.</li>
+    <li>Meet your guide regularly.</li>
+    <li>Use visuals where needed.</li>
+    <li>Be honest in your report.</li>
+    <li>Submit before the deadline!</li>
+  </ul>
+      </div>
+    </div>
+
+    <!-- Scroll-to-Bottom Button -->
+    <button class="scroll-to-bottom" onclick="scrollToBottom()">↓</button>
+  </div>
+
+  <script>
+    (function applyThemeFromURL() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const theme = urlParams.get('theme');
+      if (theme) {
+        document.body.setAttribute('data-theme', theme);
+        localStorage.setItem('theme', theme);
+      }
+    })();
+
+    function scrollToBottom() {
+      const chatContainer = document.querySelector('.chat-container');
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+
+    window.addEventListener('load', scrollToBottom);
+
+    document.querySelector('.chat-container').addEventListener('scroll', function () {
+      const chat = this;
+      const button = document.querySelector('.scroll-to-bottom');
+      const nearBottom = chat.scrollHeight - chat.scrollTop <= chat.clientHeight + 100;
+      button.style.opacity = nearBottom ? '0' : '1';
+      button.style.pointerEvents = nearBottom ? 'none' : 'all';
+    });
+  </script>
+</body>
+</html>
