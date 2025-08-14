@@ -174,12 +174,18 @@
       }
 
       // Update HTML
-      document.querySelector('.profile-card-header h1').textContent = student.name;
-      document.querySelector('.profile-card-header p').textContent = `Student ID: ${student.id}`;
-      document.querySelectorAll('.info-block')[0].innerHTML = `<strong>Lectures Present</strong>${student.attended}`;
-      document.querySelectorAll('.info-block')[1].innerHTML = `<strong>Total Lectures</strong>${totalLectures}`;
-      document.querySelectorAll('.info-block')[2].innerHTML = `<strong>Attendance %</strong>${attendancePercent}%`;
-      document.querySelectorAll('.info-block')[3].innerHTML = `<strong>Last Updated</strong>${new Date().toLocaleDateString()}`;
+document.querySelector('.profile-card-header h1').textContent = student.name;
+document.querySelector('.profile-card-header p').textContent =
+  `Student ID: ${student.id} | B.Com Accounting & Finance`;
+document.querySelectorAll('.info-block')[0].innerHTML =
+  `<strong>Lectures Present</strong>${student.attended}`;
+document.querySelectorAll('.info-block')[1].innerHTML =
+  `<strong>Total Lectures</strong>${totalLectures}`;
+document.querySelectorAll('.info-block')[2].innerHTML =
+  `<strong>Attendance %</strong><span style="font-size:1.5rem;font-weight:bold;display:block;margin-top:4px;">${attendancePercent}%</span>`;
+document.querySelectorAll('.info-block')[3].innerHTML =
+  `<strong>Last Updated</strong>${new Date().toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}`;
+
 
       const statusDiv = document.querySelector('.status-badge');
       statusDiv.className = `status-badge ${statusClass}`;
