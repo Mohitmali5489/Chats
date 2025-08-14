@@ -17,179 +17,43 @@
       --border-light: #ddd;
       --border-dark: #333;
     }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; font-size: 16px; }
+    body[data-theme="dark"] { background-color: var(--bg-dark); color: var(--text-dark); }
+    body[data-theme="light"] { background-color: var(--bg-light); color: var(--text-light); }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    .profile-header { display: flex; align-items: center; padding: 16px; border-bottom: 1px solid #ccc; background-color: rgba(255, 255, 255, 0.8); }
+    .profile-pic { width: 45px; height: 45px; border-radius: 50%; overflow: hidden; margin-right: 12px; }
+    .profile-pic img { width: 100%; height: 100%; object-fit: cover; }
+    .chat-title { font-size: 18px; font-weight: 600; display: flex; align-items: center; }
+    .chat-title img { margin-left: 6px; vertical-align: middle; }
+    .chat-subtitle { font-size: 13px; color: gray; }
 
-    html, body {
-      height: 100%;
-      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-      font-size: 16px;
-    }
+    .container { max-width: 600px; margin: 30px auto; background: transparent; padding: 0 16px; }
+    .profile-box { background-color: inherit; border: 1px solid; border-color: var(--border-light); border-radius: 12px; overflow: hidden; box-shadow: 0 8px 20px rgba(0,0,0,0.05); }
+    body[data-theme="dark"] .profile-box { border-color: var(--border-dark); }
 
-    body[data-theme="dark"] {
-      background-color: var(--bg-dark);
-      color: var(--text-dark);
-    }
+    .profile-card-header { background-color: var(--accent); color: #fff; padding: 20px; text-align: center; }
+    .profile-card-header h1 { margin: 0; font-size: 24px; }
 
-    body[data-theme="light"] {
-      background-color: var(--bg-light);
-      color: var(--text-light);
-    }
+    .profile-info { padding: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; border-bottom: 1px solid var(--border-light); }
+    body[data-theme="dark"] .profile-info { border-bottom-color: var(--border-dark); }
+    .info-block { background-color: transparent; padding: 10px 15px; border-radius: 6px; text-align: center; border: 1px solid var(--border-light); }
+    body[data-theme="dark"] .info-block { border-color: var(--border-dark); }
+    .info-block strong { display: block; margin-bottom: 5px; font-size: 0.85rem; color: gray; }
 
-    .profile-header {
-      display: flex;
-      align-items: center;
-      padding: 16px;
-      border-bottom: 1px solid #ccc;
-      background-color: rgba(255, 255, 255, 0.8);
-    }
+    .status-section { padding: 20px; text-align: center; }
+    .status-badge { display: inline-block; padding: 10px 20px; font-size: 1rem; font-weight: bold; border-radius: 30px; border: 2px solid; }
+    .good { background-color: #eafaf1; color: var(--good); border-color: var(--good); }
+    .warning { background-color: #fffaf0; color: var(--warning); border-color: var(--warning); }
+    .blacklisted { background-color: #fff0f0; color: var(--danger); border-color: var(--danger); }
 
-    .profile-pic {
-      width: 45px;
-      height: 45px;
-      border-radius: 50%;
-      overflow: hidden;
-      margin-right: 12px;
-    }
-
-    .profile-pic img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .chat-title {
-      font-size: 18px;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-    }
-
-    .chat-title img {
-      margin-left: 6px;
-      vertical-align: middle;
-    }
-
-    .chat-subtitle {
-      font-size: 13px;
-      color: gray;
-    }
-
-    .container {
-      max-width: 600px;
-      margin: 30px auto;
-      background: transparent;
-      padding: 0 16px;
-    }
-
-    .profile-box {
-      background-color: inherit;
-      border: 1px solid;
-      border-color: var(--border-light);
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.05);
-    }
-
-    body[data-theme="dark"] .profile-box {
-      border-color: var(--border-dark);
-    }
-
-    .profile-card-header {
-      background-color: var(--accent);
-      color: #fff;
-      padding: 20px;
-      text-align: center;
-    }
-
-    .profile-card-header h1 {
-      margin: 0;
-      font-size: 24px;
-    }
-
-    .profile-info {
-      padding: 20px;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 15px;
-      border-bottom: 1px solid var(--border-light);
-    }
-
-    body[data-theme="dark"] .profile-info {
-      border-bottom-color: var(--border-dark);
-    }
-
-    .info-block {
-      background-color: transparent;
-      padding: 10px 15px;
-      border-radius: 6px;
-      text-align: center;
-      border: 1px solid var(--border-light);
-    }
-
-    body[data-theme="dark"] .info-block {
-      border-color: var(--border-dark);
-    }
-
-    .info-block strong {
-      display: block;
-      margin-bottom: 5px;
-      font-size: 0.85rem;
-      color: gray;
-    }
-
-    .status-section {
-      padding: 20px;
-      text-align: center;
-    }
-
-    .status-badge {
-      display: inline-block;
-      padding: 10px 20px;
-      font-size: 1rem;
-      font-weight: bold;
-      border-radius: 30px;
-      border: 2px solid;
-    }
-
-    .good {
-      background-color: #eafaf1;
-      color: var(--good);
-      border-color: var(--good);
-    }
-
-    .warning {
-      background-color: #fffaf0;
-      color: var(--warning);
-      border-color: var(--warning);
-    }
-
-    .blacklisted {
-      background-color: #fff0f0;
-      color: var(--danger);
-      border-color: var(--danger);
-    }
-
-    .footer-note {
-      font-size: 0.85rem;
-      text-align: center;
-      color: gray;
-      padding: 15px;
-    }
-
-    @media (max-width: 500px) {
-      .profile-info {
-        grid-template-columns: 1fr;
-      }
-    }
+    .footer-note { font-size: 0.85rem; text-align: center; color: gray; padding: 15px; }
+    @media (max-width: 500px) { .profile-info { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body data-theme="light">
-  
+
   <!-- Profile Header -->
   <div class="profile-header">
     <div class="profile-pic">
@@ -208,31 +72,31 @@
   <div class="container">
     <div class="profile-box">
       <div class="profile-card-header">
-        <h1>John Doe</h1>
-        <p>Student ID: 103 | B.Com Accounting & Finance</p>
+        <h1>Loading...</h1>
+        <p>Student ID: --</p>
       </div>
 
       <div class="profile-info">
         <div class="info-block">
           <strong>Lectures Present</strong>
-          6
+          --
         </div>
         <div class="info-block">
           <strong>Total Lectures</strong>
-          20
+          --
         </div>
         <div class="info-block">
           <strong>Attendance %</strong>
-          30%
+          --
         </div>
         <div class="info-block">
           <strong>Last Updated</strong>
-          August 5, 2025
+          --
         </div>
       </div>
 
       <div class="status-section">
-        <div class="status-badge blacklisted">BLACKLISTED</div>
+        <div class="status-badge blacklisted">--</div>
       </div>
 
       <div class="footer-note">
@@ -241,7 +105,15 @@
     </div>
   </div>
 
-  <script>
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+    // Replace with your actual Supabase credentials
+    const SUPABASE_URL = 'https://pwgdubtbvqnmivtupbvx.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB3Z2R1YnRidnFubWl2dHVwYnZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUwOTUzMTAsImV4cCI6MjA3MDY3MTMxMH0.kCn6JMv0kTQrkoJ7OmaxCbwZNzewRNtuOg-35nYXYXg';
+    const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    // Apply theme from URL if given
     (function applyThemeFromURL() {
       const urlParams = new URLSearchParams(window.location.search);
       const theme = urlParams.get('theme');
@@ -250,6 +122,72 @@
         localStorage.setItem('theme', theme);
       }
     })();
+
+    async function loadAttendance() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const studentId = urlParams.get('id');
+
+      if (!studentId) {
+        alert('No student ID provided in URL');
+        return;
+      }
+
+      // Get student data
+      const { data: student, error: studentError } = await supabase
+        .from('students')
+        .select('id, name, attended')
+        .eq('id', studentId)
+        .single();
+
+      if (studentError || !student) {
+        alert('Student not found');
+        return;
+      }
+
+      // Get total lectures
+      const { count: totalLectures, error: lecturesError } = await supabase
+        .from('lectures')
+        .select('*', { count: 'exact', head: true });
+
+      if (lecturesError) {
+        alert('Error fetching total lectures');
+        return;
+      }
+
+      // Calculate attendance %
+      const attendancePercent = totalLectures > 0
+        ? ((student.attended / totalLectures) * 100).toFixed(2)
+        : 0;
+
+      // Determine status
+      let statusClass = '';
+      let statusText = '';
+      if (attendancePercent >= 75) {
+        statusClass = 'good';
+        statusText = 'GOOD';
+      } else if (attendancePercent >= 50) {
+        statusClass = 'warning';
+        statusText = 'WARNING';
+      } else {
+        statusClass = 'blacklisted';
+        statusText = 'BLACKLISTED';
+      }
+
+      // Update HTML
+      document.querySelector('.profile-card-header h1').textContent = student.name;
+      document.querySelector('.profile-card-header p').textContent = `Student ID: ${student.id}`;
+      document.querySelectorAll('.info-block')[0].innerHTML = `<strong>Lectures Present</strong>${student.attended}`;
+      document.querySelectorAll('.info-block')[1].innerHTML = `<strong>Total Lectures</strong>${totalLectures}`;
+      document.querySelectorAll('.info-block')[2].innerHTML = `<strong>Attendance %</strong>${attendancePercent}%`;
+      document.querySelectorAll('.info-block')[3].innerHTML = `<strong>Last Updated</strong>${new Date().toLocaleDateString()}`;
+
+      const statusDiv = document.querySelector('.status-badge');
+      statusDiv.className = `status-badge ${statusClass}`;
+      statusDiv.textContent = statusText;
+    }
+
+    loadAttendance();
   </script>
+
 </body>
 </html>
