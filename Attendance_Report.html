@@ -216,41 +216,41 @@
       statusDiv.className = `status-badge ${statusClass}`;
       statusDiv.textContent = statusText;
 
-      // --- Load Events Participated ---
-      if (student.events) {
-        const eventIds = student.events.split(",").map(e => e.trim()).filter(e => e);
+     // --- Load Events Participated ---
+if (student.events) {
+  const eventIds = student.events.split(",").map(e => e.trim()).filter(e => e);
 
-        if (eventIds.length > 0) {
-          const { data: events, error: eventsError } = await supabase
-            .from('events')
-            .select('NO, DATE, TIME, EVENTS')
-            .in('NO', eventIds);
+  if (eventIds.length > 0) {
+    const { data: events, error: eventsError } = await supabase
+      .from('events')
+      .select('NO, DATE, TIME, EVENTS')
+      .in('NO', eventIds);
 
-          if (!eventsError && events.length > 0) {
-            const list = document.getElementById("events-list");
-            list.innerHTML = ""; // clear placeholder
+    if (!eventsError && events.length > 0) {
+      const list = document.getElementById("events-list");
+      list.innerHTML = ""; // clear placeholder
 
-            // Sort by date (newest first)
-            events.sort((a, b) => {
-              const [d1, m1, y1] = a.DATE.split("/").map(Number);
-              const [d2, m2, y2] = b.DATE.split("/").map(Number);
-              return new Date(y2, m2-1, d2) - new Date(y1, m1-1, d1);
-            });
+      // ✅ Sort in descending order (newest first)
+      events.sort((a, b) => {
+        const [d1, m1, y1] = a.DATE.split("/").map(Number);
+        const [d2, m2, y2] = b.DATE.split("/").map(Number);
+        return new Date(y2, m2 - 1, d2) - new Date(y1, m1 - 1, d1);
+      });
 
-            events.forEach(ev => {
-              const card = document.createElement("div");
-              card.className = "event-card";
-              card.innerHTML = `
-                <div class="event-date">${ev.DATE}</div>
-                <div class="event-title">${ev.EVENTS}</div>
-                <div class="event-time">${ev.TIME}</div>
-              `;
-              list.appendChild(card);
-            });
-          }
-        }
-      }
+      events.forEach(ev => {
+        const card = document.createElement("div");
+        card.className = "event-card";
+        card.innerHTML = `
+          <div class="event-date">${ev.DATE}</div>
+          <div class="event-title">${ev.EVENTS}</div>
+          <div class="event-time">${ev.TIME}</div>
+        `;
+        list.appendChild(card);
+      });
     }
+  }
+}
+
 
     loadAttendance();
   </script>
