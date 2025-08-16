@@ -48,6 +48,24 @@
     .warning { background-color: #fffaf0; color: var(--warning); border-color: var(--warning); }
     .blacklisted { background-color: #fff0f0; color: var(--danger); border-color: var(--danger); }
 
+    /* Events Section */
+    .events-section { padding: 20px; }
+    .events-section h2 { font-size: 1.2rem; margin-bottom: 12px; color: var(--accent); }
+    .event-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border-light);
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 12px;
+      transition: transform 0.2s ease;
+    }
+    body[data-theme="dark"] .event-card { border-color: var(--border-dark); }
+    .event-card:hover { transform: translateY(-2px); }
+    .event-date { font-size: 0.85rem; color: gray; margin-bottom: 4px; }
+    .event-title { font-weight: 600; font-size: 1rem; margin-bottom: 6px; }
+    .event-time { font-size: 0.9rem; color: var(--accent); }
+    .empty-note { text-align: center; font-size: 0.9rem; color: gray; padding: 15px; }
+
     .footer-note { font-size: 0.85rem; text-align: center; color: gray; padding: 15px; }
     @media (max-width: 500px) { .profile-info { grid-template-columns: 1fr; } }
   </style>
@@ -99,6 +117,14 @@
         <div class="status-badge blacklisted">--</div>
       </div>
 
+      <!-- Events Section -->
+      <div class="events-section">
+        <h2>Events Participated</h2>
+        <div id="events-list">
+          <div class="empty-note">No events recorded.</div>
+        </div>
+      </div>
+
       <div class="footer-note">
         Powered by ClassCount.
       </div>
@@ -108,7 +134,7 @@
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
-    // Replace with your actual Supabase credentials
+    // Supabase credentials
     const SUPABASE_URL = 'https://pwgdubtbvqnmivtupbvx.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB3Z2R1YnRidnFubWl2dHVwYnZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUwOTUzMTAsImV4cCI6MjA3MDY3MTMxMH0.kCn6JMv0kTQrkoJ7OmaxCbwZNzewRNtuOg-35nYXYXg';
     const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -135,7 +161,7 @@
       // Get student data
       const { data: student, error: studentError } = await supabase
         .from('students')
-        .select('id, name, attended')
+        .select('id, name, attended, events')
         .eq('id', studentId)
         .single();
 
@@ -174,22 +200,56 @@
       }
 
       // Update HTML
-document.querySelector('.profile-card-header h1').textContent = student.name;
-document.querySelector('.profile-card-header p').textContent =
-  `Student ID: ${student.id} | B.Com Accounting & Finance`;
-document.querySelectorAll('.info-block')[0].innerHTML =
-  `<strong>Lectures Present</strong>${student.attended}`;
-document.querySelectorAll('.info-block')[1].innerHTML =
-  `<strong>Total Lectures</strong>${totalLectures}`;
-document.querySelectorAll('.info-block')[2].innerHTML =
-  `<strong>Attendance %</strong><span style="font-size:1.5rem;font-weight:bold;display:block;margin-top:4px;">${attendancePercent}%</span>`;
-document.querySelectorAll('.info-block')[3].innerHTML =
-  `<strong>Last Updated</strong>${new Date().toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}`;
-
+      document.querySelector('.profile-card-header h1').textContent = student.name;
+      document.querySelector('.profile-card-header p').textContent =
+        `Student ID: ${student.id} | B.Com Accounting & Finance`;
+      document.querySelectorAll('.info-block')[0].innerHTML =
+        `<strong>Lectures Present</strong>${student.attended}`;
+      document.querySelectorAll('.info-block')[1].innerHTML =
+        `<strong>Total Lectures</strong>${totalLectures}`;
+      document.querySelectorAll('.info-block')[2].innerHTML =
+        `<strong>Attendance %</strong><span style="font-size:1.5rem;font-weight:bold;display:block;margin-top:4px;">${attendancePercent}%</span>`;
+      document.querySelectorAll('.info-block')[3].innerHTML =
+        `<strong>Last Updated</strong>${new Date().toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}`;
 
       const statusDiv = document.querySelector('.status-badge');
       statusDiv.className = `status-badge ${statusClass}`;
       statusDiv.textContent = statusText;
+
+      // --- Load Events Participated ---
+      if (student.events) {
+        const eventIds = student.events.split(",").map(e => e.trim()).filter(e => e);
+
+        if (eventIds.length > 0) {
+          const { data: events, error: eventsError } = await supabase
+            .from('events')
+            .select('NO, DATE, TIME, EVENTS')
+            .in('NO', eventIds);
+
+          if (!eventsError && events.length > 0) {
+            const list = document.getElementById("events-list");
+            list.innerHTML = ""; // clear placeholder
+
+            // Sort by date (newest first)
+            events.sort((a, b) => {
+              const [d1, m1, y1] = a.DATE.split("/").map(Number);
+              const [d2, m2, y2] = b.DATE.split("/").map(Number);
+              return new Date(y2, m2-1, d2) - new Date(y1, m1-1, d1);
+            });
+
+            events.forEach(ev => {
+              const card = document.createElement("div");
+              card.className = "event-card";
+              card.innerHTML = `
+                <div class="event-date">${ev.DATE}</div>
+                <div class="event-title">${ev.EVENTS}</div>
+                <div class="event-time">${ev.TIME}</div>
+              `;
+              list.appendChild(card);
+            });
+          }
+        }
+      }
     }
 
     loadAttendance();
