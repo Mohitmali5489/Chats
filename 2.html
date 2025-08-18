@@ -2,173 +2,318 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Vocational Skills in AC and Fin IV</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
+  <title>Attendance Report - BAFs App</title>
+  <link rel="icon" type="image/png" href="https://fuovcuzaxfkyqrridrgy.supabase.co/storage/v1/object/public/profile-pics//study-icon-modified.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <script>
+    // This script runs early to prevent a "flash of the wrong theme."
+    (function() {
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    })();
+  </script>
+
   <style>
+    /* 🎨 --- Color & Theme Variables (Consistent with other pages) --- 🎨 */
     :root {
-      --bg-dark: #0b121e;
-      --msg-user: #1f2a38;
-      --msg-bot: #16202f;
-      --accent: #00bcd4;
-      --text-color: #e0e6ed;
-      --pdf-link-bg: #1a273a;
-      --pdf-link-hover: #223349;
-    }
+      --primary-accent: #b84fff;
+      --primary-gradient: linear-gradient(135deg, #b84fff, #8f00ff);
+      --danger-color: #ef5350;
+      --warning-color: #ffa726;
+      --good-color: #66bb6a;
+      --font-family: 'Inter', sans-serif;
+      
+      --bg-gradient-light: linear-gradient(180deg, #f5f5f7, #e9e9ed);
+      --card-bg-light: rgba(255, 255, 255, 0.9);
+      --text-primary-light: #121212;
+      --text-secondary-light: #5f5f5f;
+      --border-color-light: #e0e0e0;
+      --shadow-light: 0 4px 15px rgba(0, 0, 0, 0.05);
+      --header-bg-light: rgba(255, 255, 255, 0.7);
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
+      --bg-gradient-dark: linear-gradient(180deg, #2a2a3d, #1e1e2e);
+      --card-bg-dark: rgba(42, 42, 61, 0.9);
+      --text-primary-dark: #f0f0f0;
+      --text-secondary-dark: #a0a0b0;
+      --border-color-dark: #4a4a6a;
+      --shadow-dark: 0 4px 20px rgba(0, 0, 0, 0.2);
+      --header-bg-dark: rgba(30, 30, 46, 0.7);
     }
-
-    html, body {
-      height: 100%;
-      background-color: var(--bg-dark);
-      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-      color: var(--text-color);
-    }
-
-    .chat-wrapper {
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-    }
-
     
-    .profile-pic {
-      width: 45px;
-      height: 45px;
-      border-radius: 50%;
-      background-color: #ccc;
-      overflow: hidden;
-      margin-right: 12px;
+    [data-theme="light"] {
+      --bg-gradient: var(--bg-gradient-light);
+      --card-bg: var(--card-bg-light);
+      --text-primary: var(--text-primary-light);
+      --text-secondary: var(--text-secondary-light);
+      --border-color: var(--border-color-light);
+      --shadow: var(--shadow-light);
+      --header-bg: var(--header-bg-light);
     }
 
-    .profile-pic img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
+    [data-theme="dark"] {
+      --bg-gradient: var(--bg-gradient-dark);
+      --card-bg: var(--card-bg-dark);
+      --text-primary: var(--text-primary-dark);
+      --text-secondary: var(--text-secondary-dark);
+      --border-color: var(--border-color-dark);
+      --shadow: var(--shadow-dark);
+      --header-bg: var(--header-bg-dark);
     }
 
-    .chat-title {
-      font-size: 18px;
-      font-weight: 600;
+    /* 🧱 --- Base & Reset Styles --- 🧱 */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-family);
+      background: var(--bg-gradient);
+      color: var(--text-primary);
+      transition: background 0.4s ease, color 0.4s ease;
     }
 
-    /* Chat area */
-    .chat-container {
-      flex: 1;
-      padding: 20px 16px;
-      display: flex;
-      flex-direction: column;
-      overflow-y: auto;
-      scroll-behavior: smooth;
+    /* 🔝 --- Header (Consistent with Profile Page) --- 🔝 */
+    .top-bar {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 16px; background: var(--header-bg);
+      backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 100;
+      border-bottom: 1px solid var(--border-color);
     }
+    .top-bar h1 { font-size: 20px; font-weight: 600; }
+    .header-button {
+      background: none; border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      width: 40px; height: 40px; color: var(--text-primary);
+    }
+    .header-button svg { width: 24px; height: 24px; }
+    .channel-info-header { display: flex; align-items: center; gap: 10px; }
+    .channel-icon { width: 36px; height: 36px; border-radius: 50%; }
 
-    .message {
-      max-width: 80%;
-      padding: 12px 16px;
-      border-radius: 12px;
-      margin-bottom: 16px;
-      font-size: 15px;
-      line-height: 1.5;
-      animation: fadeIn 0.4s ease;
+    /* 💳 --- Main Content & Card Layout --- 💳 */
+    .container { padding: 16px; max-width: 600px; margin: 0 auto; }
+    .card {
+      background: var(--card-bg); border-radius: 16px;
+      border: 1px solid var(--border-color); box-shadow: var(--shadow);
+      margin-bottom: 16px; padding: 24px;
     }
-
-    .from-user {
-      background-color: var(--msg-user);
-      align-self: flex-end;
-      border-bottom-right-radius: 2px;
+    .main-info-card {
+      text-align: center; background: var(--primary-gradient); color: white;
     }
-
-    .from-bot {
-      background-color: var(--msg-bot);
-      align-self: flex-start;
-      border-bottom-left-radius: 2px;
+    .student-name { font-size: 24px; font-weight: 700; }
+    .student-id { font-size: 14px; opacity: 0.8; margin-top: 4px; }
+    .status-badge {
+      display: inline-block; padding: 6px 16px;
+      margin-top: 16px; border-radius: 20px;
+      font-weight: 600; font-size: 14px;
+      background-color: rgba(255, 255, 255, 0.2);
     }
-
-    .pdf-link {
-      display: inline-block;
-      background-color: var(--pdf-link-bg);
-      padding: 10px 14px;
-      margin-top: 8px;
-      border-radius: 8px;
-      text-decoration: none;
-      color: var(--accent);
-      font-weight: bold;
-      transition: background-color 0.3s ease;
+    .stats-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
     }
-
-    .pdf-link:hover {
-      background-color: var(--pdf-link-hover);
+    .stat-item { text-align: center; }
+    .stat-item .label {
+      font-size: 14px; color: var(--text-secondary); margin-bottom: 6px;
     }
-
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(10px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+    .stat-item .value { font-size: 22px; font-weight: 600; }
+    .stat-item .value-percent {
+      font-size: 28px; font-weight: 700; color: var(--primary-accent);
     }
-
-    /* Scrollbar Styling (optional) */
-    ::-webkit-scrollbar {
-      width: 8px;
+    .events-card h2 {
+      font-size: 18px; font-weight: 600; margin-bottom: 16px;
+      text-align: center;
     }
-    ::-webkit-scrollbar-track {
-      background: transparent;
+    .event-item {
+      padding: 12px 0; border-bottom: 1px solid var(--border-color);
     }
-    ::-webkit-scrollbar-thumb {
-      background: #2b3a4b;
-      border-radius: 4px;
+    .event-item:last-child { border-bottom: none; }
+    .event-date { font-size: 12px; color: var(--text-secondary); }
+    .event-title { font-size: 16px; font-weight: 500; margin: 4px 0; }
+    .event-time { font-size: 14px; color: var(--primary-accent); }
+    .empty-state {
+      text-align: center; color: var(--text-secondary); padding: 20px;
     }
-
-    /* Mobile tweak */
-    @media screen and (max-width: 480px) {
-      .chat-title {
-        font-size: 16px;
-      }
-
-      .message {
-        font-size: 14px;
-      }
+    .footer {
+      font-size: 12px; text-align: center;
+      color: var(--text-secondary); margin-top: 20px;
     }
   </style>
 </head>
 <body>
-  <div class="chat-wrapper">
 
-    
-
-    <!-- Chat messages -->
-    <div class="chat-container">
-      <!-- User question -->
-      <div class="message from-user">
-        Paper Pattern
-      </div>
-
-      <!-- Bot PDF answer -->
-      <div class="message from-bot">
-        Here’s the paper pattern for your exam:
-        <a href="https://mohitmali5489.github.io/Channels/1.html" class="pdf-link" target="_blank">📄 Paper Pattern.html</a>
-      </div>
-    
- <div class="message from-user">
-        Vocational Skills in AC and Fin IV Question Bank
-      </div>
-
-      <!-- Bot PDF answer -->
-      <div class="message from-bot">
-        Here's a detailed Page with the answer:
-        <a href="https://mohitmali5489.github.io/BAFs/2.html" class="pdf-link" target="_blank">📄 Vocational Skills in AC and Fin IV.html</a>
-      </div>
-    
-
+  <header class="top-bar">
+    <a href="Home.html" class="header-button">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+      </svg>
+    </a>
+    <div class="channel-info-header">
+        <img src="https://i.ibb.co/B5nqq226/Untitled-design-1.png" alt="Channel Icon" class="channel-icon">
+        <h1>Attendance</h1>
     </div>
-<br>
-  </div>
+    <div style="width: 40px;"></div>
+  </header>
+
+  <main class="container">
+    <div class="card main-info-card">
+      <div id="studentName" class="student-name">Loading...</div>
+      <div id="studentId" class="student-id">Student ID: --</div>
+      <div id="attendanceStatus" class="status-badge">--</div>
+    </div>
+
+    <div class="card stats-grid">
+      <div class="stat-item">
+        <div class="label">Lectures Present</div>
+        <div id="lecturesPresent" class="value">--</div>
+      </div>
+      <div class="stat-item">
+        <div class="label">Total Lectures</div>
+        <div id="totalLectures" class="value">--</div>
+      </div>
+      <div class="stat-item">
+        <div class="label">Attendance %</div>
+        <div id="attendancePercent" class="value-percent">--%</div>
+      </div>
+      <div class="stat-item">
+        <div class="label">Last Updated</div>
+        <div id="lastUpdated" class="value">--</div>
+      </div>
+    </div>
+
+    <div class="card events-card">
+      <h2>Co-curricular Activities</h2>
+      <div id="eventsList">
+        <div class="empty-state">Loading activities...</div>
+      </div>
+    </div>
+
+    <div class="footer">Powered by ClassCount.</div>
+  </main>
+
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+    const SUPABASE_URL = 'https://pwgdubtbvqnmivtupbvx.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB3Z2R1YnRidnFubWl2dHVwYnZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUwOTUzMTAsImV4cCI6MjA3MDY3MTMxMH0.kCn6JMv0kTQrkoJ7OmaxCbwZNzewRNtuOg-35nYXYXg';
+    const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    function applyThemeFromURL() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const theme = urlParams.get('theme');
+      if (theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem('theme', theme); // Save theme for persistence
+      }
+    }
+
+    async function loadAttendance() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const studentId = urlParams.get('id');
+
+      if (!studentId) {
+        document.getElementById('studentName').textContent = "Error";
+        document.getElementById('studentId').textContent = "No Student ID provided in URL.";
+        return;
+      }
+
+      const { data: student, error: studentError } = await supabase
+        .from('students')
+        .select('id, name, attended, events')
+        .eq('id', studentId)
+        .single();
+
+      if (studentError || !student) {
+        document.getElementById('studentName').textContent = "Not Found";
+        document.getElementById('studentId').textContent = `Student with ID ${studentId} not found.`;
+        return;
+      }
+
+      const { count: totalLectures, error: lecturesError } = await supabase
+        .from('lectures')
+        .select('*', { count: 'exact', head: true });
+
+      if (lecturesError) {
+        console.error("Error fetching lectures:", lecturesError);
+        return;
+      }
+
+      const attendancePercent = totalLectures > 0
+        ? ((student.attended / totalLectures) * 100).toFixed(2)
+        : 0;
+
+      let statusText = '';
+      let statusColor = '';
+      if (attendancePercent >= 75) {
+        statusText = 'GOOD';
+        statusColor = 'var(--good-color)';
+      } else if (attendancePercent >= 50) {
+        statusText = 'WARNING';
+        statusColor = 'var(--warning-color)';
+      } else {
+        statusText = 'BLACKLISTED';
+        statusColor = 'var(--danger-color)';
+      }
+
+      // Update HTML with new IDs
+      document.getElementById('studentName').textContent = student.name;
+      document.getElementById('studentId').textContent = `Student ID: ${student.id} | B.Com A&F`;
+      document.getElementById('lecturesPresent').textContent = student.attended;
+      document.getElementById('totalLectures').textContent = totalLectures;
+      document.getElementById('attendancePercent').textContent = `${attendancePercent}%`;
+      document.getElementById('lastUpdated').textContent = new Date().toLocaleDateString('en-GB');
+      
+      const statusBadge = document.getElementById('attendanceStatus');
+      statusBadge.textContent = statusText;
+      statusBadge.style.backgroundColor = statusColor;
+      statusBadge.style.color = 'white'; // Make text color white for better contrast on colored bg
+
+      // Load Events
+      loadEvents(student.events);
+    }
+
+    async function loadEvents(eventIdsString) {
+      const list = document.getElementById("eventsList");
+      if (!eventIdsString) {
+        list.innerHTML = `<div class="empty-state">No activities participated.</div>`;
+        return;
+      }
+
+      const eventIds = eventIdsString.split(",").map(e => e.trim()).filter(e => e);
+      if (eventIds.length === 0) {
+        list.innerHTML = `<div class="empty-state">No activities participated.</div>`;
+        return;
+      }
+
+      const { data: events, error } = await supabase
+        .from('events')
+        .select('DATE, TIME, EVENTS')
+        .in('NO', eventIds);
+
+      if (error || !events || events.length === 0) {
+        list.innerHTML = `<div class="empty-state">Could not load activities.</div>`;
+        return;
+      }
+
+      // Sort events by date (newest first)
+      events.sort((a, b) => {
+        const [d1, m1, y1] = a.DATE.split("/").map(Number);
+        const [d2, m2, y2] = b.DATE.split("/").map(Number);
+        return new Date(y2, m2 - 1, d2) - new Date(y1, m1 - 1, d1);
+      });
+
+      list.innerHTML = ""; // Clear placeholder
+      events.forEach(ev => {
+        list.innerHTML += `
+          <div class="event-item">
+            <div class="event-date">${ev.DATE}</div>
+            <div class="event-title">${ev.EVENTS}</div>
+            <div class="event-time">${ev.TIME}</div>
+          </div>
+        `;
+      });
+    }
+
+    applyThemeFromURL();
+    loadAttendance();
+  </script>
 </body>
 </html>
