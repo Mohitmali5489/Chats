@@ -2,163 +2,245 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Attendance Report</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
+  <title>Attendance Report - BAFs App</title>
+  <link rel="icon" type="image/png" href="https://fuovcuzaxfkyqrridrgy.supabase.co/storage/v1/object/public/profile-pics//study-icon-modified.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <script>
+    // This script runs early to prevent a "flash of the wrong theme."
+    (function() {
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    })();
+  </script>
+
   <style>
+    /* 🎨 --- Color & Theme Variables --- 🎨 */
     :root {
-      --bg-dark: #0b121e;
-      --text-dark: #e0e6ed;
-      --bg-light: #f9f9f9;
-      --text-light: #1a1a1a;
-      --accent: #b84fff;
-      --good: #27ae60;
-      --warning: #f39c12;
-      --danger: #e74c3c;
-      --border-light: #ddd;
-      --border-dark: #333;
+      --primary-accent: #b84fff;
+      --primary-gradient: linear-gradient(135deg, #b84fff, #8f00ff);
+      --danger-color: #ef5350;
+      --warning-color: #ffa726;
+      --good-color: #66bb6a;
+      --font-family: 'Inter', sans-serif;
+      
+      --bg-gradient-light: linear-gradient(180deg, #f5f5f7, #e9e9ed);
+      --card-bg-light: rgba(255, 255, 255, 0.9);
+      --text-primary-light: #121212;
+      --text-secondary-light: #5f5f5f;
+      --border-color-light: #e0e0e0;
+      --shadow-light: 0 4px 20px rgba(0, 0, 0, 0.06);
+      --header-bg-light: rgba(255, 255, 255, 0.7);
+
+      --bg-gradient-dark: linear-gradient(180deg, #2a2a3d, #1e1e2e);
+      --card-bg-dark: rgba(42, 42, 61, 0.9);
+      --text-primary-dark: #f0f0f0;
+      --text-secondary-dark: #a0a0b0;
+      --border-color-dark: #4a4a6a;
+      --shadow-dark: 0 4px 20px rgba(0, 0, 0, 0.2);
+      --header-bg-dark: rgba(30, 30, 46, 0.7);
     }
+    
+    [data-theme="light"] {
+      --bg-gradient: var(--bg-gradient-light);
+      --card-bg: var(--card-bg-light);
+      --text-primary: var(--text-primary-light);
+      --text-secondary: var(--text-secondary-light);
+      --border-color: var(--border-color-light);
+      --shadow: var(--shadow-light);
+      --header-bg: var(--header-bg-light);
+    }
+
+    [data-theme="dark"] {
+      --bg-gradient: var(--bg-gradient-dark);
+      --card-bg: var(--card-bg-dark);
+      --text-primary: var(--text-primary-dark);
+      --text-secondary: var(--text-secondary-dark);
+      --border-color: var(--border-color-dark);
+      --shadow: var(--shadow-dark);
+      --header-bg: var(--header-bg-dark);
+    }
+
+    /* 🧱 --- Base & Reset Styles --- 🧱 */
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { height: 100%; font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; font-size: 16px; }
-    body[data-theme="dark"] { background-color: var(--bg-dark); color: var(--text-dark); }
-    body[data-theme="light"] { background-color: var(--bg-light); color: var(--text-light); }
-
-    .profile-header { display: flex; align-items: center; padding: 16px; border-bottom: 1px solid #ccc; background-color: rgba(255, 255, 255, 0.8); }
-    .profile-pic { width: 45px; height: 45px; border-radius: 50%; overflow: hidden; margin-right: 12px; }
-    .profile-pic img { width: 100%; height: 100%; object-fit: cover; }
-    .chat-title { font-size: 18px; font-weight: 600; display: flex; align-items: center; }
-    .chat-title img { margin-left: 6px; vertical-align: middle; }
-    .chat-subtitle { font-size: 13px; color: gray; }
-
-    .container { max-width: 600px; margin: 30px auto; background: transparent; padding: 0 16px; }
-    .profile-box { background-color: inherit; border: 1px solid; border-color: var(--border-light); border-radius: 12px; overflow: hidden; box-shadow: 0 8px 20px rgba(0,0,0,0.05); }
-    body[data-theme="dark"] .profile-box { border-color: var(--border-dark); }
-
-    .profile-card-header { background-color: var(--accent); color: #fff; padding: 20px; text-align: center; }
-    .profile-card-header h1 { margin: 0; font-size: 24px; }
-
-    .profile-info { padding: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; border-bottom: 1px solid var(--border-light); }
-    body[data-theme="dark"] .profile-info { border-bottom-color: var(--border-dark); }
-    .info-block { background-color: transparent; padding: 10px 15px; border-radius: 6px; text-align: center; border: 1px solid var(--border-light); }
-    body[data-theme="dark"] .info-block { border-color: var(--border-dark); }
-    .info-block strong { display: block; margin-bottom: 5px; font-size: 0.85rem; color: gray; }
-
-    .status-section { padding: 20px; text-align: center; }
-    .status-badge { display: inline-block; padding: 10px 20px; font-size: 1rem; font-weight: bold; border-radius: 30px; border: 2px solid; }
-    .good { background-color: #eafaf1; color: var(--good); border-color: var(--good); }
-    .warning { background-color: #fffaf0; color: var(--warning); border-color: var(--warning); }
-    .blacklisted { background-color: #fff0f0; color: var(--danger); border-color: var(--danger); }
-
-    /* Events Section */
-    .events-section { padding: 20px; }
-    .events-section h2 { font-size: 1.2rem; margin-bottom: 12px; color: var(--accent); }
-    .event-card {
-      background: rgba(255,255,255,0.05);
-      border: 1px solid var(--border-light);
-      border-radius: 10px;
-      padding: 15px;
-      margin-bottom: 12px;
-      transition: transform 0.2s ease;
+    body {
+      font-family: var(--font-family);
+      background: var(--bg-gradient);
+      color: var(--text-primary);
+      transition: background 0.4s ease, color 0.4s ease;
     }
-    body[data-theme="dark"] .event-card { border-color: var(--border-dark); }
-    .event-card:hover { transform: translateY(-2px); }
-    .event-date { font-size: 0.85rem; color: gray; margin-bottom: 4px; }
-    .event-title { font-weight: 600; font-size: 1rem; margin-bottom: 6px; }
-    .event-time { font-size: 0.9rem; color: var(--accent); }
-    .empty-note { text-align: center; font-size: 0.9rem; color: gray; padding: 15px; }
 
-    .footer-note { font-size: 0.85rem; text-align: center; color: gray; padding: 15px; }
-    @media (max-width: 500px) { .profile-info { grid-template-columns: 1fr; } }
+    /* 🔝 --- Header --- 🔝 */
+    .top-bar {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 16px; background: var(--header-bg);
+      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      position: sticky; top: 0; z-index: 100;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .header-button {
+      background: none; border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      width: 40px; height: 40px; color: var(--text-primary);
+    }
+    .header-button svg { width: 24px; height: 24px; }
+    .channel-info-header {
+      display: flex; align-items: center; gap: 12px;
+      flex-grow: 1; justify-content: center;
+      margin-right: 40px; /* Balance the space from the back button */
+    }
+    .channel-icon { width: 40px; height: 40px; border-radius: 50%; }
+    .channel-title-main {
+      display: flex; align-items: center; gap: 6px;
+      font-weight: 600; font-size: 18px;
+    }
+    .verified-tick { width: 16px; height: 16px; }
+    .channel-subtitle {
+      font-size: 13px; color: var(--text-secondary); text-align: left;
+    }
+    
+    /* 💳 --- Main Content & Card Layout --- 💳 */
+    .container { padding: 16px; max-width: 600px; margin: 0 auto; }
+    .card {
+      background: var(--card-bg); border-radius: 16px;
+      border: 1px solid var(--border-color); box-shadow: var(--shadow);
+      margin-bottom: 16px; padding: 24px;
+    }
+    .main-info-card {
+      text-align: center; background: var(--primary-gradient); color: white;
+      border: none;
+    }
+    .student-name { font-size: 24px; font-weight: 700; }
+    .student-id { font-size: 14px; opacity: 0.85; margin-top: 4px; }
+    .status-badge {
+      display: inline-block; padding: 6px 16px;
+      margin-top: 20px; border-radius: 20px;
+      font-weight: 600; font-size: 14px;
+      color: white;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .stats-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 20px;
+    }
+    .stat-item { text-align: center; }
+    .stat-item .label {
+      font-size: 14px; color: var(--text-secondary); margin-bottom: 6px;
+    }
+    .stat-item .value { font-size: 22px; font-weight: 600; }
+    .stat-item .value-percent {
+      font-size: 28px; font-weight: 700; color: var(--primary-accent);
+    }
+    .events-card h2 {
+      font-size: 18px; font-weight: 600; margin-bottom: 16px;
+      text-align: center; color: var(--text-primary);
+    }
+    .event-item {
+      padding: 16px 0; border-bottom: 1px solid var(--border-color);
+      transition: background-color 0.2s ease;
+    }
+    .event-item:hover {
+        background-color: rgba(128,128,128,0.05);
+    }
+    .event-item:first-child { padding-top: 0; }
+    .event-item:last-child { border-bottom: none; padding-bottom: 0; }
+    .event-date { font-size: 12px; color: var(--text-secondary); }
+    .event-title { font-size: 16px; font-weight: 500; margin: 4px 0; }
+    .event-time { font-size: 14px; color: var(--primary-accent); }
+    .empty-state {
+      text-align: center; color: var(--text-secondary); padding: 20px;
+      font-style: italic;
+    }
+    .footer {
+      font-size: 12px; text-align: center;
+      color: var(--text-secondary); margin-top: 20px; padding-bottom: 20px;
+    }
   </style>
 </head>
-<body data-theme="light">
+<body>
 
-  <!-- Profile Header -->
-  <div class="profile-header">
-    <div class="profile-pic">
-      <img src="https://i.ibb.co/B5nqq226/Untitled-design-1.png" alt="Profile Picture">
-    </div>
-    <div>
-      <div class="chat-title">
-        Attendance Report
-        <img src="https://i.ibb.co/SXGL4Nq0/green.png" width="16" title="Verified User">
-      </div>
-      <div class="chat-subtitle">Where Every Day Counts.</div>
-    </div>
-  </div>
-
-  <!-- Profile Container -->
-  <div class="container">
-    <div class="profile-box">
-      <div class="profile-card-header">
-        <h1>Loading...</h1>
-        <p>Student ID: --</p>
-      </div>
-
-      <div class="profile-info">
-        <div class="info-block">
-          <strong>Lectures Present</strong>
-          --
+  <header class="top-bar">
+    <a href="Home.html" class="header-button">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+      </svg>
+    </a>
+    <div class="channel-info-header">
+      <img src="https://i.ibb.co/B5nqq226/Untitled-design-1.png" alt="Channel Icon" class="channel-icon">
+      <div>
+        <div class="channel-title-main">
+          Attendance Report
+          <img src="https://i.ibb.co/SXGL4Nq0/green.png" alt="Verified" class="verified-tick">
         </div>
-        <div class="info-block">
-          <strong>Total Lectures</strong>
-          --
-        </div>
-        <div class="info-block">
-          <strong>Attendance %</strong>
-          --
-        </div>
-        <div class="info-block">
-          <strong>Last Updated</strong>
-          --
-        </div>
-      </div>
-
-      <div class="status-section">
-        <div class="status-badge blacklisted">--</div>
-      </div>
-
-      <!-- Events Section -->
-      <div class="events-section">
-        <h2 align="center">Co-curricular Activities Participation</h2>
-        <div id="events-list">
-          <div class="empty-note">No Activities Participated.</div>
-        </div>
-      </div>
-
-      <div class="footer-note">
-        Powered by ClassCount.
+        <div class="channel-subtitle">Where Every Day Counts.</div>
       </div>
     </div>
-  </div>
+  </header>
+
+  <main class="container">
+    <div class="card main-info-card">
+      <div id="studentName" class="student-name">Loading...</div>
+      <div id="studentId" class="student-id">Student ID: --</div>
+      <div id="attendanceStatus" class="status-badge">--</div>
+    </div>
+
+    <div class="card stats-grid">
+      <div class="stat-item">
+        <div class="label">Lectures Present</div>
+        <div id="lecturesPresent" class="value">--</div>
+      </div>
+      <div class="stat-item">
+        <div class="label">Total Lectures</div>
+        <div id="totalLectures" class="value">--</div>
+      </div>
+      <div class="stat-item">
+        <div class="label">Last Updated</div>
+        <div id="lastUpdated" class="value">--</div>
+      </div>
+      <div class="stat-item">
+        <div class="label">Attendance %</div>
+        <div id="attendancePercent" class="value-percent">--%</div>
+      </div>
+    </div>
+
+    <div class="card events-card">
+      <h2>Co-curricular Activities</h2>
+      <div id="eventsList">
+        <div class="empty-state">Loading activities...</div>
+      </div>
+    </div>
+
+    <div class="footer">Powered by ClassCount.</div>
+  </main>
 
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
-    // Supabase credentials
     const SUPABASE_URL = 'https://pwgdubtbvqnmivtupbvx.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB3Z2R1YnRidnFubWl2dHVwYnZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUwOTUzMTAsImV4cCI6MjA3MDY3MTMxMH0.kCn6JMv0kTQrkoJ7OmaxCbwZNzewRNtuOg-35nYXYXg';
     const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // Apply theme from URL if given
-    (function applyThemeFromURL() {
+    function applyThemeFromURL() {
       const urlParams = new URLSearchParams(window.location.search);
       const theme = urlParams.get('theme');
       if (theme) {
-        document.body.setAttribute('data-theme', theme);
-        localStorage.setItem('theme', theme);
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem('theme', theme); // Save theme for persistence
       }
-    })();
+    }
 
     async function loadAttendance() {
       const urlParams = new URLSearchParams(window.location.search);
       const studentId = urlParams.get('id');
 
       if (!studentId) {
-        alert('No student ID provided in URL');
+        document.getElementById('studentName').textContent = "Error";
+        document.getElementById('studentId').textContent = "No Student ID provided in URL.";
         return;
       }
 
-      // Get student data
       const { data: student, error: studentError } = await supabase
         .from('students')
         .select('id, name, attended, events')
@@ -166,94 +248,94 @@
         .single();
 
       if (studentError || !student) {
-        alert('Student not found');
+        document.getElementById('studentName').textContent = "Not Found";
+        document.getElementById('studentId').textContent = `Student with ID ${studentId} not found.`;
         return;
       }
 
-      // Get total lectures
       const { count: totalLectures, error: lecturesError } = await supabase
         .from('lectures')
         .select('*', { count: 'exact', head: true });
 
       if (lecturesError) {
-        alert('Error fetching total lectures');
+        console.error("Error fetching lectures:", lecturesError);
         return;
       }
 
-      // Calculate attendance %
       const attendancePercent = totalLectures > 0
         ? ((student.attended / totalLectures) * 100).toFixed(2)
         : 0;
 
-      // Determine status
-      let statusClass = '';
       let statusText = '';
+      let statusColor = '';
       if (attendancePercent >= 75) {
-        statusClass = 'good';
-        statusText = 'GOOD';
+        statusText = 'Good Standing';
+        statusColor = 'var(--good-color)';
       } else if (attendancePercent >= 50) {
-        statusClass = 'warning';
-        statusText = 'WARNING';
+        statusText = 'Warning';
+        statusColor = 'var(--warning-color)';
       } else {
-        statusClass = 'blacklisted';
-        statusText = 'BLACKLISTED';
+        statusText = 'Blacklisted';
+        statusColor = 'var(--danger-color)';
       }
 
-      // Update HTML
-      document.querySelector('.profile-card-header h1').textContent = student.name;
-      document.querySelector('.profile-card-header p').textContent =
-        `Student ID: ${student.id} | B.Com Accounting & Finance`;
-      document.querySelectorAll('.info-block')[0].innerHTML =
-        `<strong>Lectures Present</strong>${student.attended}`;
-      document.querySelectorAll('.info-block')[1].innerHTML =
-        `<strong>Total Lectures</strong>${totalLectures}`;
-      document.querySelectorAll('.info-block')[2].innerHTML =
-        `<strong>Attendance %</strong><span style="font-size:1.5rem;font-weight:bold;display:block;margin-top:4px;">${attendancePercent}%</span>`;
-      document.querySelectorAll('.info-block')[3].innerHTML =
-        `<strong>Last Updated</strong>${new Date().toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}`;
+      document.getElementById('studentName').textContent = student.name;
+      document.getElementById('studentId').textContent = `Student ID: ${student.id} | B.Com Accounting & Finance`;
+      document.getElementById('lecturesPresent').textContent = student.attended;
+      document.getElementById('totalLectures').textContent = totalLectures;
+      document.getElementById('attendancePercent').textContent = `${attendancePercent}%`;
+      document.getElementById('lastUpdated').textContent = new Date().toLocaleDateString('en-GB');
+      
+      const statusBadge = document.getElementById('attendanceStatus');
+      statusBadge.textContent = statusText;
+      statusBadge.style.backgroundColor = statusColor;
 
-      const statusDiv = document.querySelector('.status-badge');
-      statusDiv.className = `status-badge ${statusClass}`;
-      statusDiv.textContent = statusText;
+      loadEvents(student.events);
+    }
 
-     // --- Load Events Participated ---
-if (student.events) {
-  const eventIds = student.events.split(",").map(e => e.trim()).filter(e => e);
+    async function loadEvents(eventIdsString) {
+      const list = document.getElementById("eventsList");
+      if (!eventIdsString) {
+        list.innerHTML = `<div class="empty-state">No activities participated.</div>`;
+        return;
+      }
 
-  if (eventIds.length > 0) {
-    const { data: events, error: eventsError } = await supabase
-      .from('events')
-      .select('NO, DATE, TIME, EVENTS')
-      .in('NO', eventIds);
+      const eventIds = eventIdsString.split(",").map(e => e.trim()).filter(e => e);
+      if (eventIds.length === 0) {
+        list.innerHTML = `<div class="empty-state">No activities participated.</div>`;
+        return;
+      }
 
-    if (!eventsError && events.length > 0) {
-      const list = document.getElementById("events-list");
-      list.innerHTML = ""; // clear placeholder
+      const { data: events, error } = await supabase
+        .from('events')
+        .select('DATE, TIME, EVENTS')
+        .in('NO', eventIds);
 
-      // ✅ Sort in descending order (newest first)
+      if (error || !events || events.length === 0) {
+        list.innerHTML = `<div class="empty-state">Could not load activities.</div>`;
+        return;
+      }
+
       events.sort((a, b) => {
         const [d1, m1, y1] = a.DATE.split("/").map(Number);
         const [d2, m2, y2] = b.DATE.split("/").map(Number);
         return new Date(y2, m2 - 1, d2) - new Date(y1, m1 - 1, d1);
       });
 
+      list.innerHTML = ""; // Clear placeholder
       events.forEach(ev => {
-        const card = document.createElement("div");
-        card.className = "event-card";
-        card.innerHTML = `
-          <div class="event-date">${ev.DATE}</div>
-          <div class="event-title">${ev.EVENTS}</div>
-          <div class="event-time">${ev.TIME}</div>
+        list.innerHTML += `
+          <div class="event-item">
+            <div class="event-date">${ev.DATE}</div>
+            <div class="event-title">${ev.EVENTS}</div>
+            <div class="event-time">${ev.TIME}</div>
+          </div>
         `;
-        list.appendChild(card);
       });
     }
-  }
-}
-}
 
+    applyThemeFromURL();
     loadAttendance();
   </script>
-
 </body>
 </html>
