@@ -370,7 +370,7 @@
 
       if (error || !lectures || lectures.length === 0) {
         console.error("Error fetching attended lectures:", error);
-        list.innerHTML = `<div class="empty-state">Could not load attended lectures.</div>`;
+        list.innerHTML = `<div class="empty-state">No lectures Found.</div>`;
         return;
       }
 
