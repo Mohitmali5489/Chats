@@ -132,22 +132,22 @@
     .stat-item .value-percent {
       font-size: 28px; font-weight: 700; color: var(--primary-accent);
     }
-    .events-card h2 {
+    .data-card h2 {
       font-size: 18px; font-weight: 600; margin-bottom: 16px;
       text-align: center; color: var(--text-primary);
     }
-    .event-item {
+    .data-item {
       padding: 16px 0; border-bottom: 1px solid var(--border-color);
       transition: background-color 0.2s ease;
     }
-    .event-item:hover {
+    .data-item:hover {
         background-color: rgba(128,128,128,0.05);
     }
-    .event-item:first-child { padding-top: 0; }
-    .event-item:last-child { border-bottom: none; padding-bottom: 0; }
-    .event-date { font-size: 12px; color: var(--text-secondary); }
-    .event-title { font-size: 16px; font-weight: 500; margin: 4px 0; }
-    .event-time { font-size: 14px; color: var(--primary-accent); }
+    .data-item:first-child { padding-top: 0; }
+    .data-item:last-child { border-bottom: none; padding-bottom: 0; }
+    .item-date { font-size: 12px; color: var(--text-secondary); }
+    .item-title { font-size: 16px; font-weight: 500; margin: 4px 0; }
+    .item-time { font-size: 14px; color: var(--primary-accent); }
     .empty-state {
       text-align: center; color: var(--text-secondary); padding: 20px;
       font-style: italic;
@@ -205,7 +205,14 @@
       </div>
     </div>
 
-    <div class="card events-card">
+    <div class="card data-card">
+      <h2>Recent Lectures</h2>
+      <div id="lecturesList">
+        <div class="empty-state">Loading attended lectures...</div>
+      </div>
+    </div>
+
+    <div class="card data-card">
       <h2>Co-curricular Activities</h2>
       <div id="eventsList">
         <div class="empty-state">Loading activities...</div>
@@ -227,7 +234,7 @@
       const theme = urlParams.get('theme');
       if (theme) {
         document.documentElement.setAttribute('data-theme', theme);
-        localStorage.setItem('theme', theme); // Save theme for persistence
+        localStorage.setItem('theme', theme);
       }
     }
 
@@ -240,10 +247,11 @@
         document.getElementById('studentId').textContent = "No Student ID provided in URL.";
         return;
       }
-
+      
+      // MODIFICATION: Added 'lectures' to the select query
       const { data: student, error: studentError } = await supabase
         .from('students')
-        .select('id, name, attended, events')
+        .select('id, name, attended, events, lectures')
         .eq('id', studentId)
         .single();
 
@@ -258,7 +266,7 @@
         .select('*', { count: 'exact', head: true });
 
       if (lecturesError) {
-        console.error("Error fetching lectures:", lecturesError);
+        console.error("Error fetching total lectures:", lecturesError);
         return;
       }
 
@@ -290,7 +298,9 @@
       statusBadge.textContent = statusText;
       statusBadge.style.backgroundColor = statusColor;
 
+      // MODIFICATION: Pass the student's specific data to each function
       loadEvents(student.events);
+      loadAttendedLectures(student.lectures);
     }
 
     async function loadEvents(eventIdsString) {
@@ -322,20 +332,62 @@
         return new Date(y2, m2 - 1, d2) - new Date(y1, m1 - 1, d1);
       });
 
-      list.innerHTML = ""; // Clear placeholder
+      list.innerHTML = "";
       events.forEach(ev => {
         list.innerHTML += `
-          <div class="event-item">
-            <div class="event-date">${ev.DATE}</div>
-            <div class="event-title">${ev.EVENTS}</div>
-            <div class="event-time">${ev.TIME}</div>
+          <div class="data-item">
+            <div class="item-date">${ev.DATE}</div>
+            <div class="item-title">${ev.EVENTS}</div>
+            <div class="item-time">${ev.TIME}</div>
+          </div>
+        `;
+      });
+    }
+
+    // --- MODIFIED FUNCTION TO LOAD STUDENT'S ATTENDED LECTURES ---
+    async function loadAttendedLectures(lectureIdsString) {
+      const list = document.getElementById("lecturesList");
+      
+      if (!lectureIdsString) {
+        list.innerHTML = `<div class="empty-state">No lecture attendance records found.</div>`;
+        return;
+      }
+
+      const lectureIds = lectureIdsString.split(',').map(id => id.trim()).filter(id => id);
+      
+      if (lectureIds.length === 0) {
+        list.innerHTML = `<div class="empty-state">No lectures attended.</div>`;
+        return;
+      }
+
+      // Fetch only the lectures this student attended, order by most recent, and limit to 5
+      const { data: lectures, error } = await supabase
+        .from('lectures')
+        .select('DATE, TIME, LECTURE')
+        .in('NO', lectureIds) // Filter by the student's lecture IDs
+        .order('NO', { ascending: false }) // Get the most recent ones first
+        .limit(5); // Limit to 5 results
+
+      if (error || !lectures || lectures.length === 0) {
+        console.error("Error fetching attended lectures:", error);
+        list.innerHTML = `<div class="empty-state">Could not load attended lectures.</div>`;
+        return;
+      }
+
+      list.innerHTML = ""; // Clear the "Loading..." message
+      lectures.forEach(lec => {
+        list.innerHTML += `
+          <div class="data-item">
+            <div class="item-date">${lec.DATE}</div>
+            <div class="item-title">${lec.LECTURE}</div>
+            <div class="item-time">${lec.TIME}</div>
           </div>
         `;
       });
     }
 
     applyThemeFromURL();
-    loadAttendance();
+    loadAttendance(); // This one function now calls the others
   </script>
 </body>
 </html>
