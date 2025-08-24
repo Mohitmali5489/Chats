@@ -315,7 +315,7 @@
       }
 
       const { data: events, error } = await supabase
-        .from('events')
+        .from('sybaf_events')
         .select('DATE, TIME, EVENTS')
         .in('NO', eventIds);
 
