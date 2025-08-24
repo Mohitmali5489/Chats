@@ -8,7 +8,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   
   <script>
-    // This script runs early to prevent a "flash of the wrong theme."
     (function() {
       const savedTheme = localStorage.getItem('theme') || 'light';
       document.documentElement.setAttribute('data-theme', savedTheme);
@@ -16,7 +15,7 @@
   </script>
 
   <style>
-    /* 🎨 --- Color & Theme Variables --- 🎨 */
+    /* 🎨 Theme Variables */
     :root {
       --primary-accent: #b84fff;
       --primary-gradient: linear-gradient(135deg, #b84fff, #8f00ff);
@@ -62,7 +61,6 @@
       --header-bg: var(--header-bg-dark);
     }
 
-    /* 🧱 --- Base & Reset Styles --- 🧱 */
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: var(--font-family);
@@ -71,7 +69,7 @@
       transition: background 0.4s ease, color 0.4s ease;
     }
 
-    /* 🔝 --- Header --- 🔝 */
+    /* Header */
     .top-bar {
       display: flex; justify-content: space-between; align-items: center;
       padding: 12px 16px; background: var(--header-bg);
@@ -88,7 +86,7 @@
     .channel-info-header {
       display: flex; align-items: center; gap: 12px;
       flex-grow: 1; justify-content: left;
-      margin-right: 40px; /* Balance the space from the back button */
+      margin-right: 40px;
     }
     .channel-icon { width: 40px; height: 40px; border-radius: 50%; }
     .channel-title-main {
@@ -99,8 +97,8 @@
     .channel-subtitle {
       font-size: 13px; color: var(--text-secondary); text-align: left;
     }
-    
-    /* 💳 --- Main Content & Card Layout --- 💳 */
+
+    /* Main Content */
     .container { padding: 16px; max-width: 600px; margin: 0 auto; }
     .card {
       background: var(--card-bg); border-radius: 16px;
@@ -226,7 +224,7 @@
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
     const SUPABASE_URL = 'https://pwgdubtbvqnmivtupbvx.supabase.co';
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB3Z2R1YnRidnFubWl2dHVwYnZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUwOTUzMTAsImV4cCI6MjA3MDY3MTMxMH0.kCn6JMv0kTQrkoJ7OmaxCbwZNzewRNtuOg-35nYXYXg';
+    const SUPABASE_KEY = 'YOUR_SUPABASE_KEY'; // keep secure
     const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
     function applyThemeFromURL() {
@@ -248,9 +246,9 @@
         return;
       }
       
-      // MODIFICATION: Added 'lectures' to the select query
+      // ✅ Fixed table name: sybaf_students
       const { data: student, error: studentError } = await supabase
-        .from('students')
+        .from('sybaf_students')
         .select('id, name, attended, events, lectures')
         .eq('id', studentId)
         .single();
@@ -261,8 +259,9 @@
         return;
       }
 
+      // ✅ Fixed table name: sybaf_lectures
       const { count: totalLectures, error: lecturesError } = await supabase
-        .from('lectures')
+        .from('sybaf_lectures')
         .select('*', { count: 'exact', head: true });
 
       if (lecturesError) {
@@ -298,7 +297,6 @@
       statusBadge.textContent = statusText;
       statusBadge.style.backgroundColor = statusColor;
 
-      // MODIFICATION: Pass the student's specific data to each function
       loadEvents(student.events);
       loadAttendedLectures(student.lectures);
     }
@@ -344,7 +342,6 @@
       });
     }
 
-    // --- MODIFIED FUNCTION TO LOAD STUDENT'S ATTENDED LECTURES ---
     async function loadAttendedLectures(lectureIdsString) {
       const list = document.getElementById("lecturesList");
       
@@ -360,13 +357,13 @@
         return;
       }
 
-      // Fetch only the lectures this student attended, order by most recent, and limit to 5
+      // ✅ Fixed table name: sybaf_lectures
       const { data: lectures, error } = await supabase
-        .from('lectures')
+        .from('sybaf_lectures')
         .select('DATE, TIME, LECTURE')
-        .in('NO', lectureIds) // Filter by the student's lecture IDs
-        .order('NO', { ascending: false }) // Get the most recent ones first
-        .limit(5); // Limit to 5 results
+        .in('NO', lectureIds)
+        .order('NO', { ascending: false })
+        .limit(5);
 
       if (error || !lectures || lectures.length === 0) {
         console.error("Error fetching attended lectures:", error);
@@ -374,7 +371,7 @@
         return;
       }
 
-      list.innerHTML = ""; // Clear the "Loading..." message
+      list.innerHTML = "";
       lectures.forEach(lec => {
         list.innerHTML += `
           <div class="data-item">
@@ -387,7 +384,7 @@
     }
 
     applyThemeFromURL();
-    loadAttendance(); // This one function now calls the others
+    loadAttendance();
   </script>
 </body>
 </html>
