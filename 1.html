@@ -36,16 +36,13 @@
                 <p class="text-sm opacity-80">Welcome back,</p>
                 <h1 id="studentName" class="text-2xl font-bold">Loading...</h1>
             </div>
-            <div class="relative">
-                <i data-lucide="bell" class="w-6 h-6 cursor-pointer"></i>
-                <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-4 h-4 flex items-center justify-center rounded-full">1</span>
-            </div>
+            <!-- Bell icon removed -->
         </header>
 
         <!-- Main Content -->
         <main class="p-4 md:p-6 space-y-8">
 
-            <!-- Overall Attendance Card (Restored to V1 Design) -->
+            <!-- Overall Attendance Card -->
             <section class="bg-gray-50 p-6 rounded-2xl shadow-sm border border-gray-200">
                 <h2 class="text-lg font-semibold text-gray-700 mb-4">Overall Attendance</h2>
                 <div class="flex items-center justify-center space-x-6">
@@ -68,7 +65,7 @@
                 </div>
             </section>
 
-            <!-- Recently Attended Lectures (Redesigned & Moved Up) -->
+            <!-- Recently Attended Lectures -->
             <section>
                 <h2 class="text-lg font-semibold text-gray-700 mb-4">Recently Attended</h2>
                 <div id="lecturesList" class="space-y-3">
@@ -76,11 +73,11 @@
                 </div>
             </section>
 
-            <!-- Subject-wise Breakdown -->
+            <!-- Subject-wise Breakdown (Now fully dynamic) -->
             <section>
                 <h2 class="text-lg font-semibold text-gray-700 mb-4">Subject Breakdown</h2>
                 <div id="subject-list" class="grid grid-cols-1 gap-3">
-                    <div class="text-center text-gray-500 p-4">Loading subjects...</div>
+                    <div class="text-center text-gray-500 p-4">Calculating subject attendance...</div>
                 </div>
             </section>
             
@@ -108,18 +105,6 @@
             "Sports": "Prof. Narayan Lad"
         };
         
-        // This data is static as requested.
-        const subjects = [
-            { name: "Financial Accounting – III", attendance: "85%" },
-            { name: "Cost Accounting – I", attendance: "92%" },
-            { name: "Basics of Service Sector", attendance: "78%" },
-            { name: "Mutual Fund Distributor – I", attendance: "95%" },
-            { name: "Big Data Analysis", attendance: "74%" },
-            { name: "Field Project", attendance: "100%" },
-            { name: "Marathi", attendance: "88%" },
-            { name: "Sports", attendance: "100%" }
-        ];
-
         // --- UI Update Functions ---
 
         /**
@@ -138,36 +123,79 @@
         }
 
         /**
-         * Renders the list of subjects with their professors and mock attendance.
+         * Fetches all lecture data, calculates subject-wise attendance for a student, and renders it.
+         * @param {Set<string>} attendedLectureIds - A Set containing the IDs of lectures the student attended.
          */
-        function displaySubjectBreakdown() {
+        async function displayDynamicSubjectBreakdown(attendedLectureIds) {
             const container = document.getElementById('subject-list');
             if (!container) return;
-            container.innerHTML = ''; // Clear loading state
+            container.innerHTML = `<div class="text-center text-gray-500 p-4">Calculating...</div>`;
 
-            subjects.forEach(subject => {
-                const percentage = parseInt(subject.attendance);
+            // 1. Fetch all lectures
+            const { data: allLectures, error } = await supabase
+                .from('lectures')
+                .select('NO, LECTURE');
+
+            if (error || !allLectures) {
+                console.error("Error fetching all lectures:", error);
+                container.innerHTML = `<div class="text-center text-red-500 p-4">Could not load subject data.</div>`;
+                return;
+            }
+
+            // 2. Process the data to get totals and attended counts per subject
+            const subjectStats = {};
+
+            for (const lecture of allLectures) {
+                const subjectName = lecture.LECTURE;
+                // Initialize if not present
+                if (!subjectStats[subjectName]) {
+                    subjectStats[subjectName] = { total: 0, attended: 0 };
+                }
+                // Increment total count
+                subjectStats[subjectName].total++;
+                // Increment attended count if the student was present
+                if (attendedLectureIds.has(String(lecture.NO))) {
+                    subjectStats[subjectName].attended++;
+                }
+            }
+
+            // 3. Render the results
+            container.innerHTML = ''; // Clear loading state
+            const sortedSubjects = Object.keys(subjectStats).sort();
+
+            if (sortedSubjects.length === 0) {
+                 container.innerHTML = `<div class="text-center text-gray-500 p-4">No subject data available.</div>`;
+                 return;
+            }
+
+            for (const subjectName of sortedSubjects) {
+                const stats = subjectStats[subjectName];
+                const percentage = stats.total > 0 ? Math.round((stats.attended / stats.total) * 100) : 0;
+                
                 let textColor = 'text-green-600';
                 if (percentage < 75) textColor = 'text-red-500';
                 else if (percentage < 80) textColor = 'text-orange-500';
 
-                const professor = professorMap[subject.name] || 'N/A';
+                const professor = professorMap[subjectName] || 'N/A';
 
                 const subjectCard = `
                     <div class="bg-gray-50 p-3 rounded-lg border border-gray-200 flex justify-between items-center">
                         <div>
-                            <p class="font-semibold text-gray-800">${subject.name}</p>
+                            <p class="font-semibold text-gray-800">${subjectName}</p>
                             <p class="text-sm text-gray-500">${professor}</p>
                         </div>
-                        <p class="text-lg font-bold ${textColor}">${subject.attendance}</p>
+                        <div class="text-right">
+                            <p class="text-lg font-bold ${textColor}">${percentage}%</p>
+                            <p class="text-xs text-gray-500">${stats.attended}/${stats.total}</p>
+                        </div>
                     </div>
                 `;
                 container.innerHTML += subjectCard;
-            });
+            }
         }
         
         /**
-         * Fetches and displays the 5 most recently attended lectures in a professional format.
+         * Fetches and displays the 5 most recently attended lectures with improved date/time format.
          * @param {string} lectureIdsString - A comma-separated string of lecture IDs.
          */
         async function loadAttendedLectures(lectureIdsString) {
@@ -199,23 +227,29 @@
             list.innerHTML = ""; // Clear loading message
             lectures.forEach(lec => {
                 const professor = professorMap[lec.LECTURE] || 'N/A';
+                
+                // Reformat date
+                const dateParts = lec.DATE.split('/');
+                const dateObj = new Date(`${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`);
+                const day = dateObj.getDate();
+                const month = dateObj.toLocaleString('default', { month: 'short' }).toUpperCase();
+
                 const lectureItem = `
-                    <div class="flex items-center bg-green-50 p-4 rounded-lg opacity-90">
-                        <div class="w-20 text-center">
-                            <p class="font-bold text-gray-700">${lec.DATE}</p>
-                            <p class="text-xs text-gray-500">${lec.TIME}</p>
+                    <div class="flex items-center bg-green-50 p-4 rounded-lg">
+                        <div class="w-16 text-center bg-white rounded-md p-2 shadow-sm border border-gray-200">
+                            <p class="font-bold text-indigo-600 text-xl">${day}</p>
+                            <p class="text-xs font-semibold text-gray-500">${month}</p>
                         </div>
-                        <div class="flex-1 pl-4 border-l border-green-200">
+                        <div class="flex-1 pl-4">
                             <p class="font-semibold text-gray-800">${lec.LECTURE}</p>
                             <p class="text-sm text-gray-500">${professor}</p>
                         </div>
-                         <span class="text-xs font-semibold text-green-700 bg-green-200 px-2 py-1 rounded-full">Attended</span>
+                         <span class="text-xs font-semibold text-green-700">${lec.TIME}</span>
                     </div>
                 `;
                 list.innerHTML += lectureItem;
             });
         }
-
 
         /**
          * Main function to load all student data and populate the page.
@@ -281,9 +315,12 @@
             // Animate progress circle
             setTimeout(() => setProgress(attendancePercent), 100);
 
+            // Create a Set of attended lecture IDs for efficient lookup
+            const attendedLectureIds = new Set(student.lectures ? student.lectures.split(',').map(id => id.trim()) : []);
+
             // Load dynamic sections
             loadAttendedLectures(student.lectures);
-            displaySubjectBreakdown();
+            displayDynamicSubjectBreakdown(attendedLectureIds);
         }
 
         // --- Initial Load ---
