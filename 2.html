@@ -29,46 +29,41 @@
     <form id="loginForm" class="space-y-6">
       
       <!-- Role Selection -->
-<div>
-  <label class="text-sm font-medium text-slate-700 mb-2 block">I am a...</label>
-  <div class="flex items-center bg-slate-200 rounded-full p-1">
-    <!-- Student -->
-    <input type="radio" name="role" value="Student" id="role-student" class="hidden peer/student" checked>
-    <label for="role-student" 
-      class="flex-1 text-center py-2 cursor-pointer text-sm font-semibold rounded-full 
-             transition-all duration-300 text-slate-600 
-             peer-checked/student:bg-indigo-600 peer-checked/student:text-white">
-      Student
-    </label>
+      <div>
+        <label class="text-sm font-medium text-slate-700 mb-2 block">I am a...</label>
+        <div class="flex items-center bg-slate-200 rounded-full p-1">
+          <!-- Student -->
+          <input type="radio" name="role" value="Student" id="role-student" class="hidden peer/student" checked>
+          <label for="role-student" 
+            class="flex-1 text-center py-2 cursor-pointer text-sm font-semibold rounded-full 
+                   transition-all duration-300 text-slate-600 
+                   peer-checked/student:bg-indigo-600 peer-checked/student:text-white">
+            Student
+          </label>
 
-    <!-- Registrar -->
-    <input type="radio" name="role" value="Registrar" id="role-registrar" class="hidden peer/registrar">
-    <label for="role-registrar" 
-      class="flex-1 text-center py-2 cursor-pointer text-sm font-semibold rounded-full 
-             transition-all duration-300 text-slate-600 
-             peer-checked/registrar:bg-indigo-600 peer-checked/registrar:text-white">
-      Registrar
-    </label>
-  </div>
-</div>
-
+          <!-- Registrar -->
+          <input type="radio" name="role" value="Registrar" id="role-registrar" class="hidden peer/registrar">
+          <label for="role-registrar" 
+            class="flex-1 text-center py-2 cursor-pointer text-sm font-semibold rounded-full 
+                   transition-all duration-300 text-slate-600 
+                   peer-checked/registrar:bg-indigo-600 peer-checked/registrar:text-white">
+            Registrar
+          </label>
+        </div>
+      </div>
 
       <!-- Course Selection -->
       <div id="course-selection-wrapper" class="overflow-hidden transition-all duration-500 ease-in-out">
         <label for="course" class="text-sm font-medium text-slate-700">Course</label>
         <div class="mt-1 relative">
-          <!-- Left icon -->
           <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
             <i data-lucide="book-marked" class="w-5 h-5 text-slate-400"></i>
           </div>
-
-          <!-- Select Dropdown -->
           <select id="course" name="course" required
             class="w-full pl-10 pr-10 py-2 bg-slate-100 border border-slate-300 rounded-md shadow-sm 
                    focus:ring-indigo-500 focus:border-indigo-500 text-sm appearance-none">
             <option value="" disabled selected>Select your course</option>
             
-            <!-- First Year -->
             <optgroup label="First Year (FY)">
               <option value="FY BA">FY BA</option>
               <option value="FY B COM">FY B COM</option>
@@ -79,7 +74,6 @@
               <option value="FY B.SC (COMPUTER.SCI)">FY B.SC (COMPUTER.SCI)</option>
             </optgroup>
             
-            <!-- Second Year -->
             <optgroup label="Second Year (SY)">
               <option value="SY BA">SY BA</option>
               <option value="SY B COM">SY B COM</option>
@@ -90,7 +84,6 @@
               <option value="SY B.SC (COMPUTER.SCI)">SY B.SC (COMPUTER.SCI)</option>
             </optgroup>
             
-            <!-- Third Year -->
             <optgroup label="Third Year (TY)">
               <option value="TY BA">TY BA</option>
               <option value="TY B COM">TY B COM</option>
@@ -101,8 +94,6 @@
               <option value="TY B.SC (COMPUTER.SCI)">TY B.SC (COMPUTER.SCI)</option>
             </optgroup>
           </select>
-
-          <!-- Right icon -->
           <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
             <i data-lucide="chevron-down" class="w-5 h-5 text-slate-400"></i>
           </div>
@@ -150,7 +141,33 @@
     </form>
   </div>
 
-  <script>
+  <script type="module">
+    import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+    // 🔑 Replace with your Supabase credentials
+    const supabaseUrl = "https://YOUR_PROJECT.supabase.co";
+    const supabaseKey = "YOUR_ANON_KEY";
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    // Course mapping
+    const courseMap = {
+      "FY BA": "fyba", "FY B COM": "fybcom", "FY BSC": "fybsc", 
+      "FY B.COM (MGMT STUDIES)": "fybms", "FY B.COM (A/C & FINANCE)": "fybaf", 
+      "FY B.COM (FINANCIAL MKT)": "fybfm", "FY B.SC (COMPUTER.SCI)": "fybsccs",
+      "SY BA": "syba", "SY B COM": "sybcom", "SY BSC": "sybsc", 
+      "SY B.COM (MGMT STUDIES)": "sybms", "SY B.COM (A/C & FINANCE)": "sybaf", 
+      "SY B.COM (FINANCIAL MKT)": "sybfm", "SY B.SC (COMPUTER.SCI)": "sybsccs",
+      "TY BA": "tyba", "TY B COM": "tybcom", "TY BSC": "tybsc", 
+      "TY B.COM (MGMT STUDIES)": "tybms", "TY B.COM (A/C & FINANCE)": "tybaf", 
+      "TY B.COM (FINANCIAL MKT)": "tybfm", "TY B.SC (COMPUTER.SCI)": "tybsccs"
+    };
+
+    function setCookie(name, value, days = 1) {
+      const date = new Date();
+      date.setTime(date.getTime() + (days*24*60*60*1000));
+      document.cookie = `${name}=${value};expires=${date.toUTCString()};path=/`;
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
       lucide.createIcons();
 
@@ -172,8 +189,39 @@
 
       roleStudentRadio.addEventListener('change', updateCourseVisibility);
       roleRegistrarRadio.addEventListener('change', updateCourseVisibility);
-
       updateCourseVisibility();
+
+      // Login handler
+      document.getElementById("loginForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const userId = document.getElementById("userId").value.trim();
+        const password = document.getElementById("password").value.trim();
+        const role = document.querySelector("input[name='role']:checked").value.toLowerCase();
+        const courseRaw = document.getElementById("course").value;
+        const course = courseMap[courseRaw] || "";
+
+        let { data, error } = await supabase
+          .from("users")
+          .select("*")
+          .eq("ID", userId)
+          .eq("password", password)
+          .eq("role", role)
+          .maybeSingle();
+
+        if (error || !data) {
+          alert("Invalid login credentials!");
+          return;
+        }
+
+        setCookie("ID", data.ID);
+        setCookie("role", data.role);
+        if (role === "student") {
+          setCookie("course", course);
+        }
+
+        window.location.href = "Home.html";
+      });
     });
   </script>
 </body>
