@@ -1,200 +1,180 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Attendance Portal - Login</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/lucide-icons@latest/dist/lucide.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Attendance Portal - Login</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide-icons@latest/dist/lucide.js"></script>
 
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            /* A more vibrant gradient background */
-            background-color: #1a202c;
-            background-image: radial-gradient(at 27% 37%, hsla(215, 98%, 61%, 1) 0px, transparent 0%), 
-                              radial-gradient(at 97% 21%, hsla(125, 98%, 72%, 1) 0px, transparent 50%), 
-                              radial-gradient(at 52% 99%, hsla(355, 98%, 61%, 1) 0px, transparent 50%), 
-                              radial-gradient(at 10% 29%, hsla(256, 96%, 67%, 1) 0px, transparent 50%), 
-                              radial-gradient(at 97% 96%, hsla(38, 60%, 74%, 1) 0px, transparent 50%), 
-                              radial-gradient(at 33% 50%, hsla(222, 67%, 73%, 1) 0px, transparent 50%), 
-                              radial-gradient(at 79% 53%, hsla(343, 68%, 79%, 1) 0px, transparent 50%);
-            background-attachment: fixed;
-        }
-        /* Custom styles for the glassmorphism effect */
-        .glass-card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        /* Custom scrollbar for dropdown */
-        select {
-            scrollbar-width: thin;
-            scrollbar-color: #6366f1 #374151;
-        }
-    </style>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f1f5f9; /* slate-100 */
+    }
+  </style>
 </head>
-<body class="antialiased text-gray-200 flex items-center justify-center min-h-screen p-4">
+<body class="antialiased text-slate-800 flex items-center justify-center min-h-screen p-4">
 
-    <div class="w-full max-w-md mx-auto glass-card shadow-2xl rounded-2xl p-8 transition-all duration-300">
-        <div class="text-center mb-8">
-            <img src="https://i.ibb.co/tTnYjHs1/C-1.png" alt="App Logo" class="w-20 h-20 mx-auto mb-4 rounded-full shadow-lg border-2 border-white/30">
-            <h1 class="text-3xl font-bold text-white">Attendance Portal</h1>
-            <p class="text-gray-300 mt-2">Sign in to access your dashboard.</p>
-        </div>
-
-        <form id="loginForm" class="space-y-6">
-            
-            <div>
-                <label class="text-sm font-medium text-gray-300 mb-2 block">I am a...</label>
-                <div class="relative bg-gray-900/50 p-1 rounded-full flex items-center">
-                    <span id="role-slider" class="absolute top-1 bottom-1 left-1 w-1/2 bg-indigo-500 rounded-full transition-transform duration-300 ease-in-out"></span>
-                    
-                    <input type="radio" name="role" value="Student" id="role-student" class="hidden" checked>
-                    <input type="radio" name="role" value="Registrar" id="role-registrar" class="hidden">
-                    
-                    <label for="role-student" class="relative z-10 w-1/2 text-center py-2 cursor-pointer text-sm font-semibold transition-colors duration-300">Student</label>
-                    <label for="role-registrar" class="relative z-10 w-1/2 text-center py-2 cursor-pointer text-sm font-semibold transition-colors duration-300">Registrar</label>
-                </div>
-            </div>
-
-            <div id="course-selection-wrapper" class="overflow-hidden transition-all duration-500 ease-in-out max-h-96 opacity-100">
-                <label for="course" class="text-sm font-medium text-gray-300">Course</label>
-                <div class="mt-1 relative">
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <i data-lucide="book-marked" class="w-5 h-5 text-gray-400"></i>
-                    </div>
-                    <select id="course" name="course" required class="w-full pl-10 pr-4 py-2 bg-gray-900/50 border border-white/20 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 appearance-none">
-                        <option value="" disabled selected>Select your course</option>
-                         <optgroup label="First Year (FY)" class="bg-gray-800">
-                            <option value="FY BA">FY BA</option>
-                            <option value="FY B COM">FY B COM</option>
-                            <option value="FY BSC">FY BSC</option>
-                            <option value="FY B.COM (MGMT STUDIES)">FY B.COM (MGMT STUDIES)</option>
-                            <option value="FY B.COM (A/C & FINANCE)">FY B.COM (A/C & FINANCE)</option>
-                            <option value="FY B.COM (FINANCIAL MKT)">FY B.COM (FINANCIAL MKT)</option>
-                            <option value="FY B.SC (COMPUTER.SCI)">FY B.SC (COMPUTER.SCI)</option>
-                        </optgroup>
-                        <optgroup label="Second Year (SY)" class="bg-gray-800">
-                            <option value="SY BA">SY BA</option>
-                            <option value="SY B COM">SY B COM</option>
-                            <option value="SY BSC">SY BSC</option>
-                            <option value="SY B.COM (MGMT STUDIES)">SY B.COM (MGMT STUDIES)</option>
-                            <option value="SY B.COM (A/C & FINANCE)">SY B.COM (A/C & FINANCE)</option>
-                            <option value="SY B.COM (FINANCIAL MKT)">SY B.COM (FINANCIAL MKT)</option>
-                            <option value="SY B.SC (COMPUTER.SCI)">SY B.SC (COMPUTER.SCI)</option>
-                        </optgroup>
-                        <optgroup label="Third Year (TY)" class="bg-gray-800">
-                            <option value="TY BA">TY BA</option>
-                            <option value="TY B COM">TY B COM</option>
-                            <option value="TY BSC">TY BSC</option>
-                            <option value="TY B.COM (MGMT STUDIES)">TY B.COM (MGMT STUDIES)</option>
-                            <option value="TY B.COM (A/C & FINANCE)">TY B.COM (A/C & FINANCE)</option>
-                            <option value="TY B.COM (FINANCIAL MKT)">TY B.COM (FINANCIAL MKT)</option>
-                            <option value="TY B.SC (COMPUTER.SCI)">TY B.SC (COMPUTER.SCI)</option>
-                        </optgroup>
-                    </select>
-                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                        <i data-lucide="chevron-down" class="w-5 h-5 text-gray-400"></i>
-                    </div>
-                </div>
-            </div>
-
-            <div>
-                <label for="userId" class="text-sm font-medium text-gray-300">User ID</label>
-                <div class="mt-1 relative">
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <i data-lucide="user" class="w-5 h-5 text-gray-400"></i>
-                    </div>
-                    <input type="text" id="userId" name="userId" required class="w-full pl-10 pr-3 py-2 bg-gray-900/50 border border-white/20 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="Enter your college ID">
-                </div>
-            </div>
-
-            <div>
-                <label for="password" class="text-sm font-medium text-gray-300">Password</label>
-                 <div class="mt-1 relative">
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <i data-lucide="lock" class="w-5 h-5 text-gray-400"></i>
-                    </div>
-                    <input type="password" id="password" name="password" required class="w-full pl-10 pr-3 py-2 bg-gray-900/50 border border-white/20 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="••••••••">
-                </div>
-            </div>
-
-            <div class="pt-2">
-                <button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-lg text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-indigo-500 transition-all duration-200 transform hover:scale-105">
-                    Sign In
-                </button>
-            </div>
-        </form>
+  <div class="w-full max-w-md mx-auto bg-white shadow-xl rounded-2xl p-8">
+    <div class="text-center mb-8">
+      <img src="https://i.ibb.co/tTnYjHs1/C-1.png" alt="App Logo" class="w-20 h-20 mx-auto mb-4 rounded-full shadow-md">
+      <h1 class="text-3xl font-bold text-slate-900">Attendance Portal</h1>
+      <p class="text-slate-500 mt-2">Sign in to access your dashboard.</p>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Initialize Lucide Icons
-            lucide.createIcons();
+    <form id="loginForm" class="space-y-6">
+      
+      <!-- Role Selection -->
+<div>
+  <label class="text-sm font-medium text-slate-700 mb-2 block">I am a...</label>
+  <div class="flex items-center bg-slate-200 rounded-full p-1">
+    <!-- Student -->
+    <input type="radio" name="role" value="Student" id="role-student" class="hidden peer/student" checked>
+    <label for="role-student" 
+      class="flex-1 text-center py-2 cursor-pointer text-sm font-semibold rounded-full 
+             transition-all duration-300 text-slate-600 
+             peer-checked/student:bg-indigo-600 peer-checked/student:text-white">
+      Student
+    </label>
 
-            const roleStudent = document.getElementById('role-student');
-            const roleRegistrar = document.getElementById('role-registrar');
-            const roleSlider = document.getElementById('role-slider');
-            const courseSelectionWrapper = document.getElementById('course-selection-wrapper');
+    <!-- Registrar -->
+    <input type="radio" name="role" value="Registrar" id="role-registrar" class="hidden peer/registrar">
+    <label for="role-registrar" 
+      class="flex-1 text-center py-2 cursor-pointer text-sm font-semibold rounded-full 
+             transition-all duration-300 text-slate-600 
+             peer-checked/registrar:bg-indigo-600 peer-checked/registrar:text-white">
+      Registrar
+    </label>
+  </div>
+</div>
 
-            // --- Function to handle the visual slider and conditional field ---
-            function handleRoleChange() {
-                // Move the slider
-                if (roleRegistrar.checked) {
-                    roleSlider.style.transform = 'translateX(100%)';
-                } else {
-                    roleSlider.style.transform = 'translateX(0%)';
-                }
 
-                // Show/hide course selection with transition
-                if (roleStudent.checked) {
-                    courseSelectionWrapper.style.maxHeight = '100px'; // Set to a value larger than content
-                    courseSelectionWrapper.style.opacity = '1';
-                    courseSelectionWrapper.style.marginTop = '1.5rem'; // Corresponds to space-y-6
-                } else {
-                    courseSelectionWrapper.style.maxHeight = '0';
-                    courseSelectionWrapper.style.opacity = '0';
-                    courseSelectionWrapper.style.marginTop = '0';
-                }
-            }
+      <!-- Course Selection -->
+      <div id="course-selection-wrapper" class="overflow-hidden transition-all duration-500 ease-in-out">
+        <label for="course" class="text-sm font-medium text-slate-700">Course</label>
+        <div class="mt-1 relative">
+          <!-- Left icon -->
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <i data-lucide="book-marked" class="w-5 h-5 text-slate-400"></i>
+          </div>
 
-            // Add event listeners to radio buttons
-            roleStudent.addEventListener('change', handleRoleChange);
-            roleRegistrar.addEventListener('change', handleRoleChange);
+          <!-- Select Dropdown -->
+          <select id="course" name="course" required
+            class="w-full pl-10 pr-10 py-2 bg-slate-100 border border-slate-300 rounded-md shadow-sm 
+                   focus:ring-indigo-500 focus:border-indigo-500 text-sm appearance-none">
+            <option value="" disabled selected>Select your course</option>
+            
+            <!-- First Year -->
+            <optgroup label="First Year (FY)">
+              <option value="FY BA">FY BA</option>
+              <option value="FY B COM">FY B COM</option>
+              <option value="FY BSC">FY BSC</option>
+              <option value="FY B.COM (MGMT STUDIES)">FY B.COM (MGMT STUDIES)</option>
+              <option value="FY B.COM (A/C & FINANCE)">FY B.COM (A/C & FINANCE)</option>
+              <option value="FY B.COM (FINANCIAL MKT)">FY B.COM (FINANCIAL MKT)</option>
+              <option value="FY B.SC (COMPUTER.SCI)">FY B.SC (COMPUTER.SCI)</option>
+            </optgroup>
+            
+            <!-- Second Year -->
+            <optgroup label="Second Year (SY)">
+              <option value="SY BA">SY BA</option>
+              <option value="SY B COM">SY B COM</option>
+              <option value="SY BSC">SY BSC</option>
+              <option value="SY B.COM (MGMT STUDIES)">SY B.COM (MGMT STUDIES)</option>
+              <option value="SY B.COM (A/C & FINANCE)">SY B.COM (A/C & FINANCE)</option>
+              <option value="SY B.COM (FINANCIAL MKT)">SY B.COM (FINANCIAL MKT)</option>
+              <option value="SY B.SC (COMPUTER.SCI)">SY B.SC (COMPUTER.SCI)</option>
+            </optgroup>
+            
+            <!-- Third Year -->
+            <optgroup label="Third Year (TY)">
+              <option value="TY BA">TY BA</option>
+              <option value="TY B COM">TY B COM</option>
+              <option value="TY BSC">TY BSC</option>
+              <option value="TY B.COM (MGMT STUDIES)">TY B.COM (MGMT STUDIES)</option>
+              <option value="TY B.COM (A/C & FINANCE)">TY B.COM (A/C & FINANCE)</option>
+              <option value="TY B.COM (FINANCIAL MKT)">TY B.COM (FINANCIAL MKT)</option>
+              <option value="TY B.SC (COMPUTER.SCI)">TY B.SC (COMPUTER.SCI)</option>
+            </optgroup>
+          </select>
 
-            // Initial check on page load to set the correct state
-            handleRoleChange();
+          <!-- Right icon -->
+          <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+            <i data-lucide="chevron-down" class="w-5 h-5 text-slate-400"></i>
+          </div>
+        </div>
+      </div>
 
-            // --- Form Submission Logic (Unchanged) ---
-            const loginForm = document.getElementById('loginForm');
-            loginForm.addEventListener('submit', function(event) {
-                event.preventDefault(); // Prevent the form from reloading the page
+      <!-- User ID -->
+      <div>
+        <label for="userId" class="text-sm font-medium text-slate-700">User ID</label>
+        <div class="mt-1 relative">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <i data-lucide="user" class="w-5 h-5 text-slate-400"></i>
+          </div>
+          <input type="text" id="userId" name="userId" required 
+            class="w-full pl-10 pr-3 py-2 bg-slate-100 border border-slate-300 rounded-md shadow-sm 
+                   focus:ring-indigo-500 focus:border-indigo-500 placeholder-slate-400" 
+            placeholder="Enter your college ID">
+        </div>
+      </div>
 
-                const userId = document.getElementById('userId').value;
-                const role = document.querySelector('input[name="role"]:checked').value;
-                const course = document.getElementById('course').value;
+      <!-- Password -->
+      <div>
+        <label for="password" class="text-sm font-medium text-slate-700">Password</label>
+        <div class="mt-1 relative">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <i data-lucide="lock" class="w-5 h-5 text-slate-400"></i>
+          </div>
+          <input type="password" id="password" name="password" required 
+            class="w-full pl-10 pr-3 py-2 bg-slate-100 border border-slate-300 rounded-md shadow-sm 
+                   focus:ring-indigo-500 focus:border-indigo-500 placeholder-slate-400" 
+            placeholder="••••••••">
+        </div>
+      </div>
 
-                console.log('Login attempt:');
-                console.log('User ID:', userId);
-                console.log('Role:', role);
-                
-                if (role === 'Student') {
-                    if (!course) {
-                        alert('Please select your course.');
-                        return;
-                    }
-                    console.log('Course:', course);
-                    // window.location.href = `student-dashboard.html?id=${userId}&course=${encodeURIComponent(course)}`;
-                } else if (role === 'Registrar') {
-                    // window.location.href = `registrar-dashboard.html?id=${userId}`;
-                }
-            });
-        });
-    </script>
+      <!-- Submit -->
+      <div class="pt-2">
+        <button type="submit" 
+          class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm 
+                 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 
+                 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 
+                 transition-all duration-200 transform hover:scale-105">
+          Sign In
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+
+      const roleStudentRadio = document.getElementById('role-student');
+      const roleRegistrarRadio = document.getElementById('role-registrar');
+      const courseSelectionWrapper = document.getElementById('course-selection-wrapper');
+
+      const updateCourseVisibility = () => {
+        if (roleStudentRadio.checked) {
+          courseSelectionWrapper.style.maxHeight = courseSelectionWrapper.scrollHeight + 'px';
+          courseSelectionWrapper.style.opacity = '1';
+          courseSelectionWrapper.style.marginTop = '1.5rem';
+        } else {
+          courseSelectionWrapper.style.maxHeight = '0';
+          courseSelectionWrapper.style.opacity = '0';
+          courseSelectionWrapper.style.marginTop = '0';
+        }
+      };
+
+      roleStudentRadio.addEventListener('change', updateCourseVisibility);
+      roleRegistrarRadio.addEventListener('change', updateCourseVisibility);
+
+      updateCourseVisibility();
+    });
+  </script>
 </body>
 </html>
