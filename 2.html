@@ -8,7 +8,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <script src="https://unpkg.com/lucide-icons@latest/dist/lucide.js"></script>
+
+  <!-- ✅ Fixed: use UMD build so lucide is global -->
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 
   <style>
     body {
@@ -169,7 +171,7 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-      lucide.createIcons();
+      lucide.createIcons(); // ✅ now works
 
       const roleStudentRadio = document.getElementById('role-student');
       const roleRegistrarRadio = document.getElementById('role-registrar');
