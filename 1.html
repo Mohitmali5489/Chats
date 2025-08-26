@@ -1,311 +1,217 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
-    <title>SYBAF Attendance Portal</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>SYBAF Attendance</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        /* 🎨 --- Color & Theme Variables --- 🎨 */
-        :root {
-            /* NEW: Professional purple color scheme */
-            --primary-accent: #8f00ff; /* A vibrant, deep purple */
-            --primary-gradient: linear-gradient(135deg, #b84fff, #8f00ff);
-            --font-family: 'Inter', sans-serif;
-            
-            --bg-gradient: linear-gradient(180deg, #f5f5f7, #e9e9ed);
-            --card-bg: #ffffff;
-            --text-primary: #121212;
-            --text-secondary: #5f5f5f;
-            --border-color: #e0e0e0;
-            --header-bg: rgba(255, 255, 255, 0.7);
-            --shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
-            --border-radius: 0.75rem;
-            --fab-size: 56px;
-        }
-        
-        /* 🧱 --- Base & Layout Styles --- 🧱 */
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        
+        /* Using the background gradient from your theme example */
         body {
-            font-family: var(--font-family);
-            background: var(--bg-gradient);
-            color: var(--text-primary);
-            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+            background-image: linear-gradient(180deg, #f5f5f7, #e9e9ed);
         }
-
-        .app-container {
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
+        .progress-ring__circle {
+            transition: stroke-dashoffset 0.6s ease-out;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
         }
-
-        /* 🔝 --- Header --- 🔝 */
-        header {
-            background: var(--header-bg);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            padding: 1rem 1.5rem;
-            text-align: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            border-bottom: 1px solid var(--border-color);
-        }
-        
-        header h1 {
-            margin: 0;
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-        
-        main {
-            flex-grow: 1;
-            padding: 1.5rem;
-            max-width: 1200px;
-            width: 100%;
-            margin: 0 auto;
-        }
-
-        /* 🃏 --- Card Styles --- 🃏 */
-        .card-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.5rem;
-        }
-        
-        .card {
-            background: var(--card-bg);
-            padding: 1.5rem;
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-            border: 1px solid var(--border-color);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
-        }
-        
-        .card-title {
-            font-size: 1.2rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            color: var(--text-primary);
-        }
-        
-        .card-details {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-            margin-bottom: 1rem;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem 1rem;
-            align-items: center;
-        }
-
-        .detail-item {
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-        }
-        
-        .card-stats {
-            font-size: 1rem;
-            font-weight: 600;
-            color: #16a34a; /* Green for positive stat */
-            margin-bottom: 1.5rem;
-        }
-        
-        .view-btn {
-            margin-top: auto;
-            display: inline-block;
-            padding: 0.75rem 1.5rem;
-            background: var(--primary-gradient);
-            color: white;
-            border-radius: 8px;
-            text-decoration: none;
-            text-align: center;
-            font-weight: 600;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-            border: none;
-        }
-        
-        .view-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(143, 0, 255, 0.3);
-        }
-        
-        /* 📢 --- Status & FAB --- 📢 */
-        .status-message {
-            text-align: center;
-            padding: 3rem;
-            color: var(--text-secondary);
-            font-weight: 500;
-            background-color: var(--card-bg);
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-        }
-        
-        .fab-qr-link {
-            position: fixed;
-            bottom: 1.5rem;
-            right: 1.5rem;
-            z-index: 999;
-            width: var(--fab-size);
-            height: var(--fab-size);
-            border-radius: 50%;
-            background: var(--primary-gradient);
-            color: white;
-            border: none;
-            box-shadow: 0 4px 20px rgba(143, 0, 255, 0.4);
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: transform 0.3s ease;
-            text-decoration: none;
-        }
-        
-        .fab-qr-link:hover {
-            transform: scale(1.1);
-        }
-        
-        /* 📜 --- Footer --- 📜 */
-        footer {
-            text-align: center;
-            padding: 1.5rem;
-            color: var(--text-secondary);
-            font-size: 0.9rem;
+        /* Custom shadow matching the theme's --shadow-light variable */
+        .theme-shadow {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
         }
     </style>
 </head>
-<body>
+<body class="antialiased text-[#121212] min-h-screen">
 
-<div class="app-container">
-    <header>
-        <h1>SYBAF Attendance Portal</h1>
+<div class="max-w-lg mx-auto">
+    
+    <header class="bg-gradient-to-r from-[#b84fff] to-[#8f00ff] text-white p-4 flex justify-between items-center rounded-b-2xl sticky top-0 z-10 shadow-lg">
+        <div>
+            <p class="text-sm opacity-80">Welcome back,</p>
+            <h1 id="studentName" class="text-2xl font-bold">Loading...</h1>
+        </div>
+        <a id="qrLink" href="#" aria-label="View QR Code" class="hover:opacity-80 transition-opacity duration-200 p-2">
+             <i data-lucide="qr-code" class="w-8 h-8"></i>
+        </a>
     </header>
-    <main>
-        <div id="lectures-container" class="card-container">
+
+    <main class="p-4 md:p-6 space-y-6">
+        <section class="bg-white p-6 rounded-2xl theme-shadow border border-[#e0e0e0]">
+            <h2 class="text-lg font-semibold text-gray-800 mb-4">Overall Attendance</h2>
+            <div class="flex items-center justify-center space-x-6">
+                <div class="relative w-32 h-32">
+                    <svg class="w-full h-full" viewBox="0 0 100 100">
+                        <circle class="text-gray-200" stroke-width="10" stroke="currentColor" fill="transparent" r="45" cx="50" cy="50" />
+                        <circle id="progress-circle" class="progress-ring__circle" stroke-width="10" stroke-linecap="round" stroke="currentColor" fill="transparent" r="45" cx="50" cy="50" />
+                    </svg>
+                    <div class="absolute inset-0 flex flex-col items-center justify-center">
+                        <span id="attendancePercent" class="text-3xl font-bold text-[#8f00ff]">--%</span>
+                    </div>
+                </div>
+                <div class="text-left">
+                    <p id="attendanceStatusText" class="text-2xl font-bold">--</p>
+                    <p class="text-sm text-[#5f5f5f] mt-1">Minimum 75% required.</p>
+                    <p id="missedClasses" class="text-sm text-[#5f5f5f]">-- classes missed.</p>
+                </div>
             </div>
+        </section>
+
+        <section>
+            <h2 class="text-lg font-semibold text-gray-800 mb-4 px-2">Recently Attended</h2>
+            <div id="lecturesList" class="space-y-3">
+                <div class="text-center text-[#5f5f5f] p-4">Loading recent lectures...</div>
+            </div>
+        </section>
+
+        <section>
+            <h2 class="text-lg font-semibold text-gray-800 mb-4 px-2">Subject Breakdown</h2>
+            <div id="subject-list" class="grid grid-cols-1 gap-3">
+                <div class="text-center text-[#5f5f5f] p-4">Calculating subject attendance...</div>
+            </div>
+        </section>
     </main>
-    <footer>
+    
+    <footer class="text-center text-sm text-gray-400 py-6">
         <p>Powered by ClassCount</p>
     </footer>
 </div>
 
-<a id="qr-fab-link" href="#" class="fab-qr-link" title="Generate My QR Code">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="28px" height="28px">
-      <path d="M15 21h-4v-4h4v4zm-6 0H5v-4h4v4zm6-6h-4v-4h4v4zm-6 0H5v-4h4v4zm6-6h-4V5h4v4zm-6 0H5V5h4v4zM7 3H3v4h4V3zm14 8h-4v-4h4v4zm0 8h-4v-4h4v4zm-8-8h4V3h-4v8zm4 0v4h4v-4h-4z"/>
-    </svg>
-</a>
-
+<script src="https://unpkg.com/lucide-icons@latest/dist/lucide.js"></script>
 <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
-
-    const SUPABASE_URL = "https://pwgdubtbvqnmivtupbvx.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB3Z2R1YnRidnFubWl2dHVwYnZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUwOTUzMTAsImV4cCI6MjA3MDY3MTMxMH0.kCn6JMv0kTQrkoJ7OmaxCbwZNzewRNtuOg-35nYXYXg";
+    const SUPABASE_URL = 'https://pwgdubtbvqnmivtupbvx.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB3Z2R1YnRidnFubWl2dHVwYnZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUwOTUzMTAsImV4cCI6MjA3MDY3MTMxMH0.kCn6JMv0kTQrkoJ7OmaxCbwZNzewRNtuOg-35nYXYXg';
     const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    const lecturesContainer = document.getElementById("lectures-container");
-    const qrFabLink = document.getElementById("qr-fab-link");
-    
-    let studentId = null;
-    let studentName = 'Student';
-
-    function showStatusMessage(container, message) {
-        container.innerHTML = `<div class="status-message">${message}</div>`;
+    async function fetchProfessorMap() {
+        const { data, error } = await supabase.from('sybaf_prof').select('subject, name');
+        if (error) { console.error("Error fetching professor map:", error); return {}; }
+        return data.reduce((map, item) => { map[item.subject] = item.name; return map; }, {});
     }
 
-    function createLectureCard(item) {
-        const participantCount = Array.isArray(item.attendees) ? item.attendees.length : 0;
-        
-        const card = document.createElement("div");
-        card.className = "card";
-        card.innerHTML = `
-            <div class="card-title">${item.LECTURE}</div>
-            <div class="card-details">
-                <span class="detail-item">📅 ${item.DATE}</span>
-                <span class="detail-item">🕒 ${item.TIME}</span>
-            </div>
-            <div class="card-stats">Present: ${participantCount}</div>
-            <a href="view.html?no=${item.NO}&course=sybaf" class="view-btn">
-                View Attendance
-            </a>
-        `;
-        return card;
+    function setProgress(percent) {
+        const circle = document.getElementById('progress-circle');
+        if (!circle) return;
+        const radius = circle.r.baseVal.value;
+        const circumference = 2 * Math.PI * radius;
+        const offset = circumference - (percent / 100) * circumference;
+        circle.style.strokeDasharray = `${circumference} ${circumference}`;
+        circle.style.strokeDashoffset = offset;
     }
 
-    async function loadLectures() {
-        showStatusMessage(lecturesContainer, 'Loading lectures... 🧐');
-
-        const { data, error } = await supabase
-            .from('sybaf_lectures')
-            .select("*")
-            .order("NO", { ascending: false });
-
-        if (error) {
-            console.error("Error fetching lectures:", error);
-            showStatusMessage(lecturesContainer, 'Could not load lectures. Please try again later. 😥');
+    function displayAttendedLectures(attendedLectures, professorMap) {
+        const list = document.getElementById("lecturesList");
+        if (!attendedLectures || attendedLectures.length === 0) {
+            list.innerHTML = `<div class="text-center text-[#5f5f5f] p-4">You haven't attended any lectures yet.</div>`;
             return;
         }
-        
-        lecturesContainer.innerHTML = ""; 
-        
-        if (data.length === 0) {
-            showStatusMessage(lecturesContainer, 'No lectures found yet. 🎉');
-            return;
-        }
-        
-        data.forEach(item => {
-            const card = createLectureCard(item);
-            lecturesContainer.appendChild(card);
+        const recentAttended = attendedLectures.sort((a, b) => b.NO - a.NO).slice(0, 5);
+        list.innerHTML = "";
+        recentAttended.forEach(lec => {
+            const professor = professorMap[lec.LECTURE] || 'N/A';
+            const [day, monthNum, year] = lec.DATE.split('/');
+            const month = new Date(year, monthNum - 1, day).toLocaleString('default', { month: 'short' }).toUpperCase();
+            list.innerHTML += `
+              <div class="flex items-center bg-white p-4 rounded-xl theme-shadow border border-[#e0e0e0]">
+                <div class="w-16 text-center bg-gray-50 rounded-md p-2 border border-gray-200">
+                  <p class="font-bold text-[#b84fff] text-xl">${day}</p>
+                  <p class="text-xs font-semibold text-[#5f5f5f]">${month}</p>
+                </div>
+                <div class="flex-1 pl-4">
+                  <p class="font-semibold text-gray-800">${lec.LECTURE}</p>
+                  <p class="text-sm text-[#5f5f5f]">${professor}</p>
+                </div>
+                <span class="text-xs font-semibold text-[#8f00ff]">${lec.TIME}</span>
+              </div>
+            `;
         });
     }
-    
-    document.addEventListener('DOMContentLoaded', async () => {
-        // 1. Get student ID from the URL parameter
-        const urlParams = new URLSearchParams(window.location.search);
-        studentId = urlParams.get('id');
 
-        if (!studentId) {
-            showStatusMessage(lecturesContainer, 'Error: Student ID not found in URL. 😟');
-            qrFabLink.style.display = 'none'; // Hide button if there's no ID
+    async function displayDynamicSubjectBreakdown(allLectures, attendedLectureIds, professorMap) {
+        const container = document.getElementById('subject-list');
+        container.innerHTML = '';
+        if (!allLectures || allLectures.length === 0) {
+            container.innerHTML = `<div class="text-center text-[#5f5f5f] p-4">No subject data available.</div>`;
             return;
         }
+        const subjectStats = {};
+        allLectures.forEach(lecture => {
+            const subjectName = lecture.LECTURE;
+            if (!subjectStats[subjectName]) subjectStats[subjectName] = { total: 0, attended: 0 };
+            subjectStats[subjectName].total++;
+            if (attendedLectureIds.has(lecture.NO)) subjectStats[subjectName].attended++;
+        });
+        Object.keys(subjectStats).sort().forEach(subjectName => {
+            const stats = subjectStats[subjectName];
+            const percentage = stats.total > 0 ? Math.round((stats.attended / stats.total) * 100) : 0;
+            const textColor = percentage < 75 ? 'text-red-500' : 'text-green-600';
+            const professor = professorMap[subjectName] || 'N/A';
+            container.innerHTML += `
+              <div class="bg-white p-3 rounded-lg theme-shadow border border-[#e0e0e0] flex justify-between items-center">
+                <div>
+                  <p class="font-semibold text-gray-800">${subjectName}</p>
+                  <p class="text-sm text-[#5f5f5f]">${professor}</p>
+                </div>
+                <div class="text-right">
+                  <p class="text-lg font-bold ${textColor}">${percentage}%</p>
+                  <p class="text-xs text-[#5f5f5f]">${stats.attended}/${stats.total}</p>
+                </div>
+              </div>
+            `;
+        });
+    }
 
-        // 2. Fetch the student's name from the 'sybaf_students' table
-        try {
-            const { data: studentData, error: studentError } = await supabase
-                .from('sybaf_students')
-                .select('name')
-                .eq('id', studentId)
-                .single();
-
-            if (studentError) throw studentError;
-            
-            if (studentData) {
-                studentName = studentData.name;
-            }
-
-        } catch (error) {
-             console.error('Error fetching student name:', error.message);
-             // If the name can't be fetched, we can still proceed with a default
-             studentName = 'Student'; 
+    async function loadDashboard() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const studentId = urlParams.get('id');
+        if (!studentId) {
+            document.body.innerHTML = `<div class="h-screen flex items-center justify-center text-center"><div class="p-4"><h1 class="text-2xl font-bold text-red-600">Access Denied</h1><p class="text-gray-600">Student ID is missing. Please access this page through your app.</p></div></div>`;
+            return;
         }
-        
-        // 3. Update the QR code FAB link to pass both ID and Name
-        qrFabLink.href = `QR.html?id=${encodeURIComponent(studentId)}&name=${encodeURIComponent(studentName)}`;
-        
-        // 4. Load all the available lectures
-        await loadLectures();
+        const professorMap = await fetchProfessorMap();
+        const { data: student, error: studentError } = await supabase.from('sybaf_students').select('name').eq('id', studentId).single();
+        if (studentError || !student) { console.error("Student not found:", studentError); document.getElementById('studentName').textContent = "Unknown Student"; return; }
+        document.getElementById('studentName').textContent = student.name;
+        document.getElementById('qrLink').href = `QR.html?id=${encodeURIComponent(studentId)}&name=${encodeURIComponent(student.name)}`;
+        const { data: allLectures, error: allLecturesError } = await supabase.from('sybaf_lectures').select('NO, LECTURE');
+        if (allLecturesError) { console.error("Error fetching lectures:", allLecturesError); return; }
+        const { data: attendedLectures, error: attendedError } = await supabase.from('sybaf_lectures').select('NO, LECTURE, DATE, TIME').contains('attendees', [studentId]);
+        if (attendedError) { console.error("Error fetching attended lectures:", attendedError); return; }
+        const totalLectures = allLectures.length;
+        const attendedCount = attendedLectures.length;
+        const attendedLectureIds = new Set(attendedLectures.map(lec => lec.NO));
+        const attendancePercent = totalLectures > 0 ? Math.round((attendedCount / totalLectures) * 100) : 0;
+        document.getElementById('attendancePercent').textContent = `${attendancePercent}%`;
+        document.getElementById('missedClasses').textContent = `${totalLectures - attendedCount} classes missed.`;
+        const statusTextElement = document.getElementById('attendanceStatusText');
+        const progressCircle = document.getElementById('progress-circle');
+        if (attendancePercent >= 75) {
+            statusTextElement.textContent = "You're Safe!";
+            statusTextElement.className = 'text-2xl font-bold text-green-600';
+            // Using theme's primary accent color for the progress ring
+            progressCircle.setAttribute('class', 'progress-ring__circle text-[#b84fff]');
+        } else if (attendancePercent >= 60) {
+            statusTextElement.textContent = 'Warning!';
+            statusTextElement.className = 'text-2xl font-bold text-orange-500';
+            progressCircle.setAttribute('class', 'progress-ring__circle text-orange-500');
+        } else {
+            statusTextElement.textContent = 'Danger Zone!';
+            statusTextElement.className = 'text-2xl font-bold text-red-500';
+            progressCircle.setAttribute('class', 'progress-ring__circle text-red-500');
+        }
+        setTimeout(() => setProgress(attendancePercent), 100);
+        displayAttendedLectures(attendedLectures, professorMap);
+        displayDynamicSubjectBreakdown(allLectures, attendedLectureIds, professorMap);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        loadDashboard();
+        lucide.createIcons();
     });
 </script>
-
 </body>
 </html>
