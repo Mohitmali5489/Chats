@@ -2,216 +2,188 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>SYBAF Attendance</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barcode Scanner - Open Food Facts</title>
     <style>
-        /* Using the background gradient from your theme example */
         body {
-            font-family: 'Inter', sans-serif;
-            background-image: linear-gradient(180deg, #f5f5f7, #e9e9ed);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f4f4;
         }
-        .progress-ring__circle {
-            transition: stroke-dashoffset 0.6s ease-out;
-            transform: rotate(-90deg);
-            transform-origin: 50% 50%;
+        #scanner-container {
+            position: relative;
+            width: 100%;
+            max-width: 640px;
+            margin: 20px auto;
+            border: 2px solid #ccc;
+            overflow: hidden; /* This will contain the video stream within the border */
         }
-        /* Custom shadow matching the theme's --shadow-light variable */
-        .theme-shadow {
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+        video {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        #interactive.viewport canvas, #interactive.viewport video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        #result-container {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        #toggle-scanner {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+        #toggle-scanner:hover {
+            background-color: #0056b3;
+        }
+        .product-image {
+            max-width: 150px;
+            float: right;
+            margin-left: 15px;
+            border-radius: 5px;
         }
     </style>
 </head>
-<body class="antialiased text-[#121212] min-h-screen">
+<body>
 
-<div class="max-w-lg mx-auto">
-    
-    <header class="bg-gradient-to-r from-[#b84fff] to-[#8f00ff] text-white p-4 flex justify-between items-center rounded-b-2xl sticky top-0 z-10 shadow-lg">
-        <div>
-            <p class="text-sm opacity-80">Welcome back,</p>
-            <h1 id="studentName" class="text-2xl font-bold">Loading...</h1>
-        </div>
-        <a id="qrLink" href="#" aria-label="View QR Code" class="hover:opacity-80 transition-opacity duration-200 p-2">
-             <i data-lucide="qr-code" class="w-8 h-8"></i>
-        </a>
-    </header>
+    <h1>Product Lookup via Barcode Scan</h1>
+    <p>Point your camera at a product's barcode to get its information from the Open Food Facts database.</p>
 
-    <main class="p-4 md:p-6 space-y-6">
-        <section class="bg-white p-6 rounded-2xl theme-shadow border border-[#e0e0e0]">
-            <h2 class="text-lg font-semibold text-gray-800 mb-4">Overall Attendance</h2>
-            <div class="flex items-center justify-center space-x-6">
-                <div class="relative w-32 h-32">
-                    <svg class="w-full h-full" viewBox="0 0 100 100">
-                        <circle class="text-gray-200" stroke-width="10" stroke="currentColor" fill="transparent" r="45" cx="50" cy="50" />
-                        <circle id="progress-circle" class="progress-ring__circle" stroke-width="10" stroke-linecap="round" stroke="currentColor" fill="transparent" r="45" cx="50" cy="50" />
-                    </svg>
-                    <div class="absolute inset-0 flex flex-col items-center justify-center">
-                        <span id="attendancePercent" class="text-3xl font-bold text-[#8f00ff]">--%</span>
-                    </div>
-                </div>
-                <div class="text-left">
-                    <p id="attendanceStatusText" class="text-2xl font-bold">--</p>
-                    <p class="text-sm text-[#5f5f5f] mt-1">Minimum 75% required.</p>
-                    <p id="missedClasses" class="text-sm text-[#5f5f5f]">-- classes missed.</p>
-                </div>
-            </div>
-        </section>
+    <button id="toggle-scanner">Start Scanner</button>
 
-        <section>
-            <h2 class="text-lg font-semibold text-gray-800 mb-4 px-2">Recently Attended</h2>
-            <div id="lecturesList" class="space-y-3">
-                <div class="text-center text-[#5f5f5f] p-4">Loading recent lectures...</div>
-            </div>
-        </section>
+    <div id="scanner-container" style="display: none;">
+        <div id="interactive" class="viewport"></div>
+    </div>
 
-        <section>
-            <h2 class="text-lg font-semibold text-gray-800 mb-4 px-2">Subject Breakdown</h2>
-            <div id="subject-list" class="grid grid-cols-1 gap-3">
-                <div class="text-center text-[#5f5f5f] p-4">Calculating subject attendance...</div>
-            </div>
-        </section>
-    </main>
-    
-    <footer class="text-center text-sm text-gray-400 py-6">
-        <p>Powered by ClassCount</p>
-    </footer>
-</div>
+    <div id="result-container">
+        <strong>Product Information:</strong>
+        <div id="product-info">Waiting for scan...</div>
+    </div>
 
-<script src="https://unpkg.com/lucide-icons@latest/dist/lucide.js"></script>
-<script type="module">
-    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
-    const SUPABASE_URL = 'https://pwgdubtbvqnmivtupbvx.supabase.co';
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB3Z2R1YnRidnFubWl2dHVwYnZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUwOTUzMTAsImV4cCI6MjA3MDY3MTMxMH0.kCn6JMv0kTQrkoJ7OmaxCbwZNzewRNtuOg-35nYXYXg';
-    const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+    <script src="https://cdn.jsdelivr.net/npm/quagga/dist/quagga.min.js"></script>
 
-    async function fetchProfessorMap() {
-        const { data, error } = await supabase.from('sybaf_prof').select('subject, name');
-        if (error) { console.error("Error fetching professor map:", error); return {}; }
-        return data.reduce((map, item) => { map[item.subject] = item.name; return map; }, {});
-    }
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const scannerContainer = document.getElementById('scanner-container');
+            const toggleScannerBtn = document.getElementById('toggle-scanner');
+            const productInfoDiv = document.getElementById('product-info');
+            let isScannerActive = false;
 
-    function setProgress(percent) {
-        const circle = document.getElementById('progress-circle');
-        if (!circle) return;
-        const radius = circle.r.baseVal.value;
-        const circumference = 2 * Math.PI * radius;
-        const offset = circumference - (percent / 100) * circumference;
-        circle.style.strokeDasharray = `${circumference} ${circumference}`;
-        circle.style.strokeDashoffset = offset;
-    }
+            toggleScannerBtn.addEventListener('click', () => {
+                if (isScannerActive) {
+                    stopScanner();
+                } else {
+                    startScanner();
+                }
+            });
 
-    function displayAttendedLectures(attendedLectures, professorMap) {
-        const list = document.getElementById("lecturesList");
-        if (!attendedLectures || attendedLectures.length === 0) {
-            list.innerHTML = `<div class="text-center text-[#5f5f5f] p-4">You haven't attended any lectures yet.</div>`;
-            return;
-        }
-        const recentAttended = attendedLectures.sort((a, b) => b.NO - a.NO).slice(0, 5);
-        list.innerHTML = "";
-        recentAttended.forEach(lec => {
-            const professor = professorMap[lec.LECTURE] || 'N/A';
-            const [day, monthNum, year] = lec.DATE.split('/');
-            const month = new Date(year, monthNum - 1, day).toLocaleString('default', { month: 'short' }).toUpperCase();
-            list.innerHTML += `
-              <div class="flex items-center bg-white p-4 rounded-xl theme-shadow border border-[#e0e0e0]">
-                <div class="w-16 text-center bg-gray-50 rounded-md p-2 border border-gray-200">
-                  <p class="font-bold text-[#b84fff] text-xl">${day}</p>
-                  <p class="text-xs font-semibold text-[#5f5f5f]">${month}</p>
-                </div>
-                <div class="flex-1 pl-4">
-                  <p class="font-semibold text-gray-800">${lec.LECTURE}</p>
-                  <p class="text-sm text-[#5f5f5f]">${professor}</p>
-                </div>
-                <span class="text-xs font-semibold text-[#8f00ff]">${lec.TIME}</span>
-              </div>
-            `;
+            function startScanner() {
+                Quagga.init({
+                    inputStream: {
+                        name: "Live",
+                        type: "LiveStream",
+                        target: document.querySelector('#interactive'),
+                        constraints: {
+                            width: 640,
+                            height: 480,
+                            facingMode: "environment" // Use the rear camera
+                        },
+                    },
+                    decoder: {
+                        readers: ["ean_reader", "upc_reader", "code_128_reader"]
+                    }
+                }, function(err) {
+                    if (err) {
+                        console.error(err);
+                        productInfoDiv.innerHTML = `<p style="color: red;">Error: Could not initialize scanner. Please grant camera permissions.</p>`;
+                        return;
+                    }
+                    Quagga.start();
+                    isScannerActive = true;
+                    scannerContainer.style.display = 'block';
+                    toggleScannerBtn.textContent = 'Stop Scanner';
+                    productInfoDiv.innerHTML = 'Scanner is active. Point camera at a barcode.';
+                });
+
+                Quagga.onDetected(handleBarcodeDetection);
+            }
+
+            function stopScanner() {
+                Quagga.stop();
+                isScannerActive = false;
+                scannerContainer.style.display = 'none';
+                toggleScannerBtn.textContent = 'Start Scanner';
+                productInfoDiv.innerHTML = 'Scanner is stopped.';
+            }
+
+            function handleBarcodeDetection(data) {
+                const barcode = data.codeResult.code;
+                productInfoDiv.innerHTML = `Detected barcode: <strong>${barcode}</strong>. Fetching product info...`;
+
+                // Stop the scanner once a barcode is detected to prevent multiple fetches
+                Quagga.stop();
+
+                fetchProductInfo(barcode);
+            }
+
+            async function fetchProductInfo(barcode) {
+                const apiUrl = `https://world.openfoodfacts.org/api/v0/product/${barcode}.json`;
+
+                try {
+                    const response = await fetch(apiUrl);
+                    const data = await response.json();
+
+                    if (data.status === 1) { // Product found
+                        const product = data.product;
+                        displayProductInfo(product);
+                    } else { // Product not found
+                        productInfoDiv.innerHTML = `<p>Product with barcode <strong>${barcode}</strong> not found in the Open Food Facts database.</p>`;
+                    }
+                } catch (error) {
+                    console.error("Failed to fetch product data:", error);
+                    productInfoDiv.innerHTML = `<p style="color: red;">An error occurred while fetching product data.</p>`;
+                } finally {
+                    // Prepare for the next scan
+                    isScannerActive = false;
+                    scannerContainer.style.display = 'none';
+                    toggleScannerBtn.textContent = 'Start Scanner Again';
+                }
+            }
+
+            function displayProductInfo(product) {
+                let html = '';
+                if (product.image_url) {
+                    html += `<img src="${product.image_url}" alt="${product.product_name}" class="product-image">`;
+                }
+                html += `<h3>${product.product_name || 'N/A'}</h3>`;
+                html += `<p><strong>Brand:</strong> ${product.brands || 'N/A'}</p>`;
+                html += `<p><strong>Quantity:</strong> ${product.quantity || 'N/A'}</p>`;
+                html += `<p><strong>Ingredients:</strong> ${product.ingredients_text || 'Not listed'}</p>`;
+
+                productInfoDiv.innerHTML = html;
+            }
         });
-    }
+    </script>
 
-    async function displayDynamicSubjectBreakdown(allLectures, attendedLectureIds, professorMap) {
-        const container = document.getElementById('subject-list');
-        container.innerHTML = '';
-        if (!allLectures || allLectures.length === 0) {
-            container.innerHTML = `<div class="text-center text-[#5f5f5f] p-4">No subject data available.</div>`;
-            return;
-        }
-        const subjectStats = {};
-        allLectures.forEach(lecture => {
-            const subjectName = lecture.LECTURE;
-            if (!subjectStats[subjectName]) subjectStats[subjectName] = { total: 0, attended: 0 };
-            subjectStats[subjectName].total++;
-            if (attendedLectureIds.has(lecture.NO)) subjectStats[subjectName].attended++;
-        });
-        Object.keys(subjectStats).sort().forEach(subjectName => {
-            const stats = subjectStats[subjectName];
-            const percentage = stats.total > 0 ? Math.round((stats.attended / stats.total) * 100) : 0;
-            const textColor = percentage < 75 ? 'text-red-500' : 'text-green-600';
-            const professor = professorMap[subjectName] || 'N/A';
-            container.innerHTML += `
-              <div class="bg-white p-3 rounded-lg theme-shadow border border-[#e0e0e0] flex justify-between items-center">
-                <div>
-                  <p class="font-semibold text-gray-800">${subjectName}</p>
-                  <p class="text-sm text-[#5f5f5f]">${professor}</p>
-                </div>
-                <div class="text-right">
-                  <p class="text-lg font-bold ${textColor}">${percentage}%</p>
-                  <p class="text-xs text-[#5f5f5f]">${stats.attended}/${stats.total}</p>
-                </div>
-              </div>
-            `;
-        });
-    }
-
-    async function loadDashboard() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const studentId = urlParams.get('id');
-        if (!studentId) {
-            document.body.innerHTML = `<div class="h-screen flex items-center justify-center text-center"><div class="p-4"><h1 class="text-2xl font-bold text-red-600">Access Denied</h1><p class="text-gray-600">Student ID is missing. Please access this page through your app.</p></div></div>`;
-            return;
-        }
-        const professorMap = await fetchProfessorMap();
-        const { data: student, error: studentError } = await supabase.from('sybaf_students').select('name').eq('id', studentId).single();
-        if (studentError || !student) { console.error("Student not found:", studentError); document.getElementById('studentName').textContent = "Unknown Student"; return; }
-        document.getElementById('studentName').textContent = student.name;
-        document.getElementById('qrLink').href = `QR.html?id=${encodeURIComponent(studentId)}&name=${encodeURIComponent(student.name)}`;
-        const { data: allLectures, error: allLecturesError } = await supabase.from('sybaf_lectures').select('NO, LECTURE');
-        if (allLecturesError) { console.error("Error fetching lectures:", allLecturesError); return; }
-        const { data: attendedLectures, error: attendedError } = await supabase.from('sybaf_lectures').select('NO, LECTURE, DATE, TIME').contains('attendees', [studentId]);
-        if (attendedError) { console.error("Error fetching attended lectures:", attendedError); return; }
-        const totalLectures = allLectures.length;
-        const attendedCount = attendedLectures.length;
-        const attendedLectureIds = new Set(attendedLectures.map(lec => lec.NO));
-        const attendancePercent = totalLectures > 0 ? Math.round((attendedCount / totalLectures) * 100) : 0;
-        document.getElementById('attendancePercent').textContent = `${attendancePercent}%`;
-        document.getElementById('missedClasses').textContent = `${totalLectures - attendedCount} classes missed.`;
-        const statusTextElement = document.getElementById('attendanceStatusText');
-        const progressCircle = document.getElementById('progress-circle');
-        if (attendancePercent >= 75) {
-            statusTextElement.textContent = "You're Safe!";
-            statusTextElement.className = 'text-2xl font-bold text-green-600';
-            // Using theme's primary accent color for the progress ring
-            progressCircle.setAttribute('class', 'progress-ring__circle text-[#b84fff]');
-        } else if (attendancePercent >= 60) {
-            statusTextElement.textContent = 'Warning!';
-            statusTextElement.className = 'text-2xl font-bold text-orange-500';
-            progressCircle.setAttribute('class', 'progress-ring__circle text-orange-500');
-        } else {
-            statusTextElement.textContent = 'Danger Zone!';
-            statusTextElement.className = 'text-2xl font-bold text-red-500';
-            progressCircle.setAttribute('class', 'progress-ring__circle text-red-500');
-        }
-        setTimeout(() => setProgress(attendancePercent), 100);
-        displayAttendedLectures(attendedLectures, professorMap);
-        displayDynamicSubjectBreakdown(allLectures, attendedLectureIds, professorMap);
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-        loadDashboard();
-        lucide.createIcons();
-    });
-</script>
 </body>
 </html>
