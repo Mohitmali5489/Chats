@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detailed Barcode Scanner - Open Food Facts</title>
+    <title>Product Scanner - User-Friendly View</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -23,102 +23,107 @@
             overflow: hidden;
         }
         video, canvas {
-            width: 100%;
-            height: auto;
-            display: block;
+            width: 100%; height: auto; display: block;
         }
         #interactive.viewport canvas, #interactive.viewport video {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-        }
-        #result-container {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
         }
         #toggle-scanner {
-            display: block;
+            display: block; width: 100%; padding: 12px; font-size: 16px;
+            background-color: #007bff; color: white; border: none;
+            border-radius: 5px; cursor: pointer; margin-bottom: 20px;
+        }
+        #toggle-scanner:hover { background-color: #0056b3; }
+
+        /* NEW STYLES FOR PRODUCT CARD */
+        #product-info {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin-top: 20px;
+        }
+        .product-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+        }
+        .product-header img {
+            width: 120px;
+            height: 120px;
+            object-fit: contain;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+        .product-header-text h2 {
+            margin: 0;
+            font-size: 1.8em;
+            color: #222;
+        }
+        .product-header-text p {
+            margin: 5px 0 0;
+            color: #666;
+            font-size: 1.1em;
+        }
+        .product-section {
+            margin-top: 20px;
+        }
+        .product-section h3 {
+            margin-bottom: 10px;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 5px;
+            font-size: 1.2em;
+        }
+        .scores-container {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .scores-container img {
+            height: 60px;
+        }
+        .nutrition-table {
             width: 100%;
-            padding: 12px;
-            font-size: 16px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-bottom: 20px;
+            border-collapse: collapse;
+            margin-top: 10px;
         }
-        #toggle-scanner:hover {
-            background-color: #0056b3;
+        .nutrition-table th, .nutrition-table td {
+            text-align: left;
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
         }
-        .product-image {
-            max-width: 150px;
-            float: right;
-            margin: 0 0 10px 15px;
+        .nutrition-table th { background-color: #f8f8f8; }
+        .ingredients-text {
+            background-color: #f9f9f9;
+            padding: 10px;
             border-radius: 5px;
             border: 1px solid #eee;
         }
-        .score-images img {
-            height: 60px;
-            margin-right: 10px;
-        }
-        dl {
-            padding-left: 20px;
-            border-left: 2px solid #eee;
-        }
-        dt {
+        .allergens-container span {
+            display: inline-block;
+            background-color: #ffc107;
+            color: #333;
+            padding: 5px 10px;
+            border-radius: 15px;
+            margin: 5px 5px 5px 0;
+            font-size: 0.9em;
             font-weight: bold;
-            color: #555;
-            margin-top: 10px;
-        }
-        dd {
-            margin-left: 20px;
-            word-wrap: break-word;
-        }
-        details {
-            margin-top: 20px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            padding: 10px;
-        }
-        summary {
-            font-weight: bold;
-            cursor: pointer;
-        }
-        pre {
-            background-color: #2d2d2d;
-            color: #ccc;
-            padding: 15px;
-            border-radius: 5px;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            font-size: 14px;
         }
     </style>
 </head>
 <body>
-
-    <h1>Product Lookup via Barcode Scan</h1>
-    <p>Point your camera at a product's barcode to get detailed information from the Open Food Facts database.</p>
-
+    <h1>Product Information Scanner</h1>
+    <p>Scan a product's barcode to see a neatly organized summary of its data.</p>
     <button id="toggle-scanner">Start Scanner</button>
-
-    <div id="scanner-container" style="display: none;">
-        <div id="interactive" class="viewport"></div>
-    </div>
-
-    <div id="result-container">
-        <strong>Product Information:</strong>
-        <div id="product-info">Waiting for scan...</div>
-    </div>
+    <div id="scanner-container" style="display: none;"><div id="interactive" class="viewport"></div></div>
+    
+    <div id="product-info">Waiting for scan...</div>
 
     <script src="https://cdn.jsdelivr.net/npm/quagga/dist/quagga.min.js"></script>
-
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const scannerContainer = document.getElementById('scanner-container');
@@ -126,42 +131,21 @@
             const productInfoDiv = document.getElementById('product-info');
             let isScannerActive = false;
 
-            toggleScannerBtn.addEventListener('click', () => {
-                if (isScannerActive) {
-                    stopScanner();
-                } else {
-                    startScanner();
-                }
-            });
+            // --- SCANNER LOGIC (UNCHANGED) ---
+            toggleScannerBtn.addEventListener('click', () => isScannerActive ? stopScanner() : startScanner());
 
             function startScanner() {
                 Quagga.init({
-                    inputStream: {
-                        name: "Live",
-                        type: "LiveStream",
-                        target: document.querySelector('#interactive'),
-                        constraints: {
-                            width: 640,
-                            height: 480,
-                            facingMode: "environment"
-                        },
-                    },
-                    decoder: {
-                        readers: ["ean_reader", "upc_reader", "code_128_reader"]
-                    }
-                }, function(err) {
-                    if (err) {
-                        console.error(err);
-                        productInfoDiv.innerHTML = `<p style="color: red;">Error: Could not initialize scanner. Please grant camera permissions.</p>`;
-                        return;
-                    }
+                    inputStream: { name: "Live", type: "LiveStream", target: document.querySelector('#interactive'), constraints: { width: 640, height: 480, facingMode: "environment" }},
+                    decoder: { readers: ["ean_reader", "upc_reader", "code_128_reader"] }
+                }, (err) => {
+                    if (err) { console.error(err); productInfoDiv.innerHTML = `<p style="color: red;">Error: Could not initialize scanner.</p>`; return; }
                     Quagga.start();
                     isScannerActive = true;
                     scannerContainer.style.display = 'block';
                     toggleScannerBtn.textContent = 'Stop Scanner';
-                    productInfoDiv.innerHTML = '<p>Scanner is active. Point camera at a barcode.</p>';
+                    productInfoDiv.innerHTML = 'Scanner is active. Point camera at a barcode.';
                 });
-
                 Quagga.onDetected(handleBarcodeDetection);
             }
 
@@ -170,108 +154,124 @@
                 isScannerActive = false;
                 scannerContainer.style.display = 'none';
                 toggleScannerBtn.textContent = 'Start Scanner';
-                productInfoDiv.innerHTML = '<p>Scanner is stopped.</p>';
+                productInfoDiv.innerHTML = 'Scanner is stopped.';
             }
 
             function handleBarcodeDetection(data) {
                 const barcode = data.codeResult.code;
                 productInfoDiv.innerHTML = `<p>Detected barcode: <strong>${barcode}</strong>. Fetching product info...</p>`;
-                
-                Quagga.stop(); // Stop scanning to prevent multiple triggers
-
+                Quagga.stop();
                 fetchProductInfo(barcode);
             }
 
             async function fetchProductInfo(barcode) {
                 const apiUrl = `https://world.openfoodfacts.org/api/v2/product/${barcode}.json`;
-
                 try {
                     const response = await fetch(apiUrl);
                     const data = await response.json();
-
                     if (data.status === 1) {
-                        const product = data.product;
-                        displayProductInfo(product);
+                        displayProductInfo(data.product);
                     } else {
-                        productInfoDiv.innerHTML = `<p>Product with barcode <strong>${barcode}</strong> not found in the Open Food Facts database.</p>`;
+                        productInfoDiv.innerHTML = `<p>Product with barcode <strong>${barcode}</strong> not found.</p>`;
                     }
                 } catch (error) {
-                    console.error("Failed to fetch product data:", error);
-                    productInfoDiv.innerHTML = `<p style="color: red;">An error occurred while fetching product data.</p>`;
+                    console.error("Fetch error:", error);
+                    productInfoDiv.innerHTML = `<p style="color: red;">An error occurred while fetching data.</p>`;
                 } finally {
                     isScannerActive = false;
                     scannerContainer.style.display = 'none';
                     toggleScannerBtn.textContent = 'Start Scanner Again';
                 }
             }
-            
-            // Helper function to render an object as a nested definition list
-            function renderObjectAsDl(obj, container) {
-                const dl = document.createElement('dl');
-                for (const key in obj) {
-                    if (obj.hasOwnProperty(key) && obj[key] !== null && obj[key] !== "" && !(Array.isArray(obj[key]) && obj[key].length === 0)) {
-                        const dt = document.createElement('dt');
-                        dt.textContent = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()); // Format key for display
-                        dl.appendChild(dt);
 
-                        const dd = document.createElement('dd');
-                        const value = obj[key];
-
-                        if (typeof value === 'object' && !Array.isArray(value)) {
-                            renderObjectAsDl(value, dd); // Recursive call for nested objects
-                        } else {
-                            dd.textContent = Array.isArray(value) ? value.join(', ') : value;
-                        }
-                        dl.appendChild(dd);
-                    }
-                }
-                container.appendChild(dl);
-            }
-
+            // --- NEW & IMPROVED DISPLAY FUNCTION ---
             function displayProductInfo(product) {
                 // Clear previous results
                 productInfoDiv.innerHTML = ''; 
-
-                // Basic Info
-                let headerHtml = '';
-                if (product.image_url) {
-                    headerHtml += `<img src="${product.image_url}" alt="${product.product_name}" class="product-image">`;
-                }
-                headerHtml += `<h2>${product.product_name || 'N/A'}</h2>`;
-                headerHtml += `<p><strong>Brand:</strong> ${product.brands || 'N/A'} | <strong>Quantity:</strong> ${product.quantity || 'N/A'}</p>`;
                 
-                // Scores
-                headerHtml += '<div class="score-images">';
+                // 1. Product Header
+                const header = document.createElement('div');
+                header.className = 'product-header';
+                const imgSrc = product.image_front_url || 'https://static.openfoodfacts.org/images/icons/product_default.svg';
+                header.innerHTML = `
+                    <img src="${imgSrc}" alt="${product.product_name || 'Product Image'}">
+                    <div class="product-header-text">
+                        <h2>${product.product_name || 'Name not available'}</h2>
+                        <p>${product.brands || ''} • ${product.quantity || ''}</p>
+                    </div>
+                `;
+                productInfoDiv.appendChild(header);
+
+                // 2. Scores Section
+                const scoresSection = document.createElement('div');
+                scoresSection.className = 'product-section';
+                let scoresHTML = '<h3>Quick Summary ✨</h3><div class="scores-container">';
                 if (product.nutriscore_grade) {
-                    headerHtml += `<img src="https://static.openfoodfacts.org/images/attributes/nutriscore-${product.nutriscore_grade}.svg" alt="Nutri-Score: ${product.nutriscore_grade.toUpperCase()}">`;
+                    scoresHTML += `<img src="https://static.openfoodfacts.org/images/attributes/nutriscore-${product.nutriscore_grade}.svg" alt="Nutri-Score: ${product.nutriscore_grade.toUpperCase()}">`;
                 }
                 if (product.ecoscore_grade) {
-                    headerHtml += `<img src="https://static.openfoodfacts.org/images/attributes/ecoscore-${product.ecoscore_grade}.svg" alt="Eco-Score: ${product.ecoscore_grade.toUpperCase()}">`;
+                    scoresHTML += `<img src="https://static.openfoodfacts.org/images/attributes/ecoscore-${product.ecoscore_grade}.svg" alt="Eco-Score: ${product.ecoscore_grade.toUpperCase()}">`;
                 }
-                headerHtml += '</div><hr>';
-                productInfoDiv.innerHTML = headerHtml;
+                if (product.nova_group) {
+                    scoresHTML += `<img src="https://static.openfoodfacts.org/images/attributes/nova-group-${product.nova_group}.svg" alt="NOVA Group: ${product.nova_group}">`;
+                }
+                 if (scoresHTML.endsWith('<div class="scores-container">')) {
+                    scoresHTML += '<p>No summary scores available.</p>'; // Handle case with no scores
+                }
+                scoresHTML += '</div>';
+                scoresSection.innerHTML = scoresHTML;
+                productInfoDiv.appendChild(scoresSection);
 
-                // Display all other data in a structured list
-                const detailsContainer = document.createElement('div');
-                renderObjectAsDl(product, detailsContainer);
-                productInfoDiv.appendChild(detailsContainer);
-                
-                // Add collapsible raw JSON view
-                const details = document.createElement('details');
-                const summary = document.createElement('summary');
-                summary.textContent = 'View Raw API Data';
-                details.appendChild(summary);
+                // 3. Nutrition Facts Table
+                if (product.nutriments) {
+                    const nutritionSection = document.createElement('div');
+                    nutritionSection.className = 'product-section';
+                    let tableHTML = `
+                        <h3>Nutrition Facts 📊</h3>
+                        <table class="nutrition-table">
+                            <tr><th>Nutrient</th><th>Value (per 100g)</th></tr>
+                    `;
+                    const nutrients = {
+                        "Energy (kcal)": product.nutriments['energy-kcal_100g'],
+                        "Fat": product.nutriments.fat_100g,
+                        "Saturated Fat": product.nutriments['saturated-fat_100g'],
+                        "Carbohydrates": product.nutriments.carbohydrates_100g,
+                        "Sugars": product.nutriments.sugars_100g,
+                        "Fiber": product.nutriments.fiber_100g,
+                        "Protein": product.nutriments.proteins_100g,
+                        "Salt": product.nutriments.salt_100g
+                    };
+                    for (const [name, value] of Object.entries(nutrients)) {
+                        if (value !== undefined) {
+                            tableHTML += `<tr><td>${name}</td><td>${value}${name.includes('kcal') ? '' : 'g'}</td></tr>`;
+                        }
+                    }
+                    tableHTML += '</table>';
+                    nutritionSection.innerHTML = tableHTML;
+                    productInfoDiv.appendChild(nutritionSection);
+                }
 
-                const pre = document.createElement('pre');
-                const code = document.createElement('code');
-                code.textContent = JSON.stringify(product, null, 2); // Pretty print JSON
-                pre.appendChild(code);
-                details.appendChild(pre);
-
-                productInfoDiv.appendChild(details);
+                // 4. Ingredients & Allergens
+                const ingredientsSection = document.createElement('div');
+                ingredientsSection.className = 'product-section';
+                let ingredientsHTML = '<h3>Ingredients & Allergens 🌿</h3>';
+                if (product.ingredients_text) {
+                    ingredientsHTML += `<p class="ingredients-text">${product.ingredients_text_with_allergens || product.ingredients_text}</p>`;
+                }
+                if (product.allergens_tags && product.allergens_tags.length > 0) {
+                    ingredientsHTML += '<div class="allergens-container">';
+                    product.allergens_tags.forEach(tag => {
+                        ingredientsHTML += `<span>${tag.replace('en:', '').replace(/-/g, ' ')}</span>`;
+                    });
+                    ingredientsHTML += '</div>';
+                }
+                 if (!product.ingredients_text && (!product.allergens_tags || product.allergens_tags.length === 0)) {
+                    ingredientsHTML += '<p>No ingredient or allergen information available.</p>';
+                }
+                ingredientsSection.innerHTML = ingredientsHTML;
+                productInfoDiv.appendChild(ingredientsSection);
             }
         });
     </script>
-
 </body>
 </html>
