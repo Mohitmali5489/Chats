@@ -1,227 +1,314 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Attendance Portal - Login</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>SYBAF Attendance</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* --- 🎨 THEME COLORS & VARIABLES 🎨 --- */
+        :root, [data-theme="light"] {
+            --bg-gradient: linear-gradient(180deg, #f5f5f7, #e9e9ed);
+            --card-bg: #ffffff;
+            --text-primary: #121212;
+            --text-secondary: #5f5f5f;
+            --border-color: #e0e0e0;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+        }
 
-  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-
-  <style>
-    body {
-      font-family: 'Inter', sans-serif;
-      background-color: #f1f5f9; /* slate-100 */
-    }
-  </style>
+        [data-theme="dark"] {
+            --bg-gradient: linear-gradient(180deg, #2a2a3d, #1e1e2e);
+            --card-bg: #2a2a3d;
+            --text-primary: #f0f0f0;
+            --text-secondary: #a0a0b0;
+            --border-color: #4a4a6a;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-image: var(--bg-gradient);
+            color: var(--text-primary);
+        }
+        .progress-ring__circle {
+            transition: stroke-dashoffset 0.6s ease-out;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+        .theme-shadow { box-shadow: var(--shadow); }
+    </style>
 </head>
-<body class="antialiased text-slate-800 flex items-center justify-center min-h-screen p-4">
+<body class="min-h-screen">
 
-  <div class="w-full max-w-md mx-auto bg-white shadow-xl rounded-2xl p-8">
-    <div class="text-center mb-8">
-      <img src="https://i.ibb.co/tTnYjHs1/C-1.png" alt="App Logo" class="w-20 h-20 mx-auto mb-4 rounded-full shadow-md">
-      <h1 class="text-3xl font-bold text-slate-900">Attendance Portal</h1>
-      <p class="text-slate-500 mt-2">Sign in to access your dashboard.</p>
-    </div>
-
-    <form id="loginForm" class="space-y-6">
-      
-      <div>
-        <label class="text-sm font-medium text-slate-700 mb-2 block">I am a...</label>
-        <div class="flex items-center bg-slate-200 rounded-full p-1">
-          <input type="radio" name="role" value="Student" id="role-student" class="hidden peer/student" checked>
-          <label for="role-student" 
-            class="flex-1 text-center py-2 cursor-pointer text-sm font-semibold rounded-full 
-                   transition-all duration-300 text-slate-600 
-                   peer-checked/student:bg-indigo-600 peer-checked/student:text-white">
-            Student
-          </label>
-
-          <input type="radio" name="role" value="Registrar" id="role-registrar" class="hidden peer/registrar">
-          <label for="role-registrar" 
-            class="flex-1 text-center py-2 cursor-pointer text-sm font-semibold rounded-full 
-                   transition-all duration-300 text-slate-600 
-                   peer-checked/registrar:bg-indigo-600 peer-checked/registrar:text-white">
-            Registrar
-          </label>
+<div class="max-w-lg mx-auto">
+    
+    <header class="bg-gradient-to-r from-[#b84fff] to-[#8f00ff] text-white rounded-b-2xl sticky top-0 z-10 shadow-lg">
+        <div class="flex justify-between items-center p-4 md:px-6">
+            <div>
+                <p class="text-sm opacity-80">Welcome back,</p>
+                <h1 id="studentName" class="text-2xl font-bold">Loading...</h1>
+            </div>
+            <a id="qrLink" href="#" aria-label="View QR Code" class="hover:opacity-80 transition-opacity duration-200 p-2">
+                 <i data-lucide="qr-code" class="w-8 h-8"></i>
+            </a>
         </div>
-      </div>
+    </header>
 
-      <div id="course-selection-wrapper" class="overflow-hidden transition-all duration-500 ease-in-out">
-        <label for="course" class="text-sm font-medium text-slate-700">Course</label>
-        <div class="mt-1 relative">
-          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <i data-lucide="book-marked" class="w-5 h-5 text-slate-400"></i>
-          </div>
-          <select id="course" name="course" required
-            class="w-full pl-10 pr-10 py-2 bg-slate-100 border border-slate-300 rounded-md shadow-sm 
-                   focus:ring-indigo-500 focus:border-indigo-500 text-sm appearance-none">
-            <option value="" disabled selected>Select your course</option>
+    <main class="p-4 md:p-6 space-y-6">
+        <section class="bg-[var(--card-bg)] p-6 rounded-2xl theme-shadow border border-[var(--border-color)]">
+            <h2 class="text-lg font-semibold text-[var(--text-primary)] mb-4">Overall Attendance</h2>
+            <div class="flex items-center justify-center space-x-6">
+                <div class="relative w-32 h-32">
+                    <svg class="w-full h-full" viewBox="0 0 100 100">
+                        <circle class="text-[var(--border-color)]" stroke-width="10" stroke="currentColor" fill="transparent" r="45" cx="50" cy="50" />
+                        <circle id="progress-circle" class="progress-ring__circle" stroke-width="10" stroke-linecap="round" stroke="currentColor" fill="transparent" r="45" cx="50" cy="50" />
+                    </svg>
+                    <div class="absolute inset-0 flex flex-col items-center justify-center">
+                        <span id="attendancePercent" class="text-3xl font-bold text-[#8f00ff]">--%</span>
+                    </div>
+                </div>
+                <div class="text-left">
+                    <p id="attendanceStatusText" class="text-2xl font-bold">--</p>
+                    <p class="text-sm text-[var(--text-secondary)] mt-1">Minimum 75% required.</p>
+                    <p id="missedClasses" class="text-sm text-[var(--text-secondary)]">-- classes missed.</p>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <a id="viewQrButton" href="#" class="flex items-center justify-center w-full gap-2 py-3 px-4 bg-gradient-to-r from-[#b84fff] to-[#8f00ff] text-white font-semibold rounded-xl theme-shadow hover:opacity-90 transition-opacity">
+                <i data-lucide="user-square-2" class="w-6 h-6"></i>
+                <span>View My QR Code</span>
+            </a>
+        </section>
+
+        <section>
+            <h2 class="text-lg font-semibold text-[var(--text-primary)] mb-4 px-2">Recently Attended</h2>
+            <div id="lecturesList" class="space-y-3">
+                <div class="text-center text-[var(--text-secondary)] p-4">Loading recent lectures...</div>
+            </div>
+        </section>
+
+        <section>
+            <h2 class="text-lg font-semibold text-[var(--text-primary)] mb-4 px-2">Subject Breakdown</h2>
+            <div id="subject-list" class="grid grid-cols-1 gap-3">
+                <div class="text-center text-[var(--text-secondary)] p-4">Calculating subject attendance...</div>
+            </div>
+        </section>
+        
+        <section id="activities-section" class="hidden">
+            <h2 class="text-lg font-semibold text-[var(--text-primary)] mb-4 px-2">Co-curricular Activities</h2>
+            <div id="activitiesList" class="space-y-3">
+                </div>
+        </section>
+        </main>
+    
+    <footer class="text-center text-sm text-gray-400 py-6">
+        <p>Powered by ClassCount</p>
+    </footer>
+</div>
+
+<script src="https://unpkg.com/lucide-icons@latest/dist/lucide.js"></script>
+<script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+    const SUPABASE_URL = 'https://pwgdubtbvqnmivtupbvx.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB3Z2R1YnRidnFubWl2dHVwYnZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUwOTUzMTAsImV4cCI6MjA3MDY3MTMxMH0.kCn6JMv0kTQrkoJ7OmaxCbwZNzewRNtuOg-35nYXYXg';
+    const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    // --- Helper Functions ---
+    async function fetchProfessorMap() {
+        const { data, error } = await supabase.from('sybaf_prof').select('subject, name');
+        if (error) { console.error("Error fetching professor map:", error); return {}; }
+        return data.reduce((map, item) => { map[item.subject] = item.name; return map; }, {});
+    }
+
+    function setProgress(percent) {
+        const circle = document.getElementById('progress-circle');
+        if (!circle) return;
+        const radius = circle.r.baseVal.value;
+        const circumference = 2 * Math.PI * radius;
+        const offset = circumference - (percent / 100) * circumference;
+        circle.style.strokeDasharray = `${circumference} ${circumference}`;
+        circle.style.strokeDashoffset = offset;
+    }
+
+    // --- UI Display Functions ---
+    function displayAttendedLectures(attendedLectures, professorMap) {
+        const list = document.getElementById("lecturesList");
+        if (!attendedLectures || attendedLectures.length === 0) {
+            list.innerHTML = `<div class="text-center text-[var(--text-secondary)] p-4">You haven't attended any lectures yet.</div>`;
+            return;
+        }
+        const recentAttended = attendedLectures.sort((a, b) => b.NO - a.NO).slice(0, 5);
+        list.innerHTML = "";
+        recentAttended.forEach(lec => {
+            const professor = professorMap[lec.LECTURE] || 'N/A';
+            const [day, monthNum, year] = lec.DATE.split('/');
+            const month = new Date(year, monthNum - 1, day).toLocaleString('default', { month: 'short' }).toUpperCase();
+            list.innerHTML += `
+              <div class="flex items-center bg-[var(--card-bg)] p-4 rounded-xl theme-shadow border border-[var(--border-color)]">
+                <div class="w-16 text-center bg-[var(--bg-gradient)] rounded-md p-2 border border-[var(--border-color)]">
+                  <p class="font-bold text-[#b84fff] text-xl">${day}</p>
+                  <p class="text-xs font-semibold text-[var(--text-secondary)]">${month}</p>
+                </div>
+                <div class="flex-1 pl-4">
+                  <p class="font-semibold text-[var(--text-primary)]">${lec.LECTURE}</p>
+                  <p class="text-sm text-[var(--text-secondary)]">${professor}</p>
+                </div>
+                <span class="text-xs font-semibold text-[#8f00ff]">${lec.TIME}</span>
+              </div>
+            `;
+        });
+    }
+
+    // === 👇 NEW DISPLAY FUNCTION ADDED HERE 👇 ===
+    function displayActivities(attendedActivities) {
+        const section = document.getElementById("activities-section");
+        const list = document.getElementById("activitiesList");
+
+        // If there are no activities, keep the section hidden and exit.
+        if (!attendedActivities || attendedActivities.length === 0) {
+            return; 
+        }
+
+        // If activities exist, make the section visible.
+        section.classList.remove('hidden');
+
+        // Sort by most recent and take the top 5.
+        const recentActivities = attendedActivities.sort((a, b) => b.NO - a.NO).slice(0, 5);
+        list.innerHTML = ""; // Clear any placeholder text
+
+        recentActivities.forEach(activity => {
+            const [day, monthNum, year] = activity.DATE.split('/');
+            const month = new Date(year, monthNum - 1, day).toLocaleString('default', { month: 'short' }).toUpperCase();
             
-            <optgroup label="First Year (FY)">
-              <option value="FY BA">FY BA</option>
-              <option value="FY B COM">FY B COM</option>
-              <option value="FY BSC">FY BSC</option>
-              <option value="FY B.COM (MGMT STUDIES)">FY B.COM (MGMT STUDIES)</option>
-              <option value="FY B.COM (A/C & FINANCE)">FY B.COM (A/C & FINANCE)</option>
-              <option value="FY B.COM (FINANCIAL MKT)">FY B.COM (FINANCIAL MKT)</option>
-              <option value="FY B.SC (COMPUTER.SCI)">FY B.SC (COMPUTER.SCI)</option>
-            </optgroup>
-            
-            <optgroup label="Second Year (SY)">
-              <option value="SY BA">SY BA</option>
-              <option value="SY B COM">SY B COM</option>
-              <option value="SY BSC">SY BSC</option>
-              <option value="SY B.COM (MGMT STUDIES)">SY B.COM (MGMT STUDIES)</option>
-              <option value="SY B.COM (A/C & FINANCE)">SY B.COM (A/C & FINANCE)</option>
-              <option value="SY B.COM (FINANCIAL MKT)">SY B.COM (FINANCIAL MKT)</option>
-              <option value="SY B.SC (COMPUTER.SCI)">SY B.SC (COMPUTER.SCI)</option>
-            </optgroup>
-            
-            <optgroup label="Third Year (TY)">
-              <option value="TY BA">TY BA</option>
-              <option value="TY B COM">TY B COM</option>
-              <option value="TY BSC">TY BSC</option>
-              <option value="TY B.COM (MGMT STUDIES)">TY B.COM (MGMT STUDIES)</option>
-              <option value="TY B.COM (A/C & FINANCE)">TY B.COM (A/C & FINANCE)</option>
-              <option value="TY B.COM (FINANCIAL MKT)">TY B.COM (FINANCIAL MKT)</option>
-              <option value="TY B.SC (COMPUTER.SCI)">TY B.SC (COMPUTER.SCI)</option>
-            </optgroup>
-          </select>
-          <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-            <i data-lucide="chevron-down" class="w-5 h-5 text-slate-400"></i>
-          </div>
-        </div>
-      </div>
+            list.innerHTML += `
+                <div class="flex items-center bg-[var(--card-bg)] p-4 rounded-xl theme-shadow border border-[var(--border-color)]">
+                    <div class="w-16 text-center bg-[var(--bg-gradient)] rounded-md p-2 border border-[var(--border-color)]">
+                        <p class="font-bold text-[#b84fff] text-xl">${day}</p>
+                        <p class="text-xs font-semibold text-[var(--text-secondary)]">${month}</p>
+                    </div>
+                    <div class="flex-1 pl-4">
+                        <p class="font-semibold text-[var(--text-primary)]">${activity.EVENTS}</p>
+                        <p class="text-sm text-[var(--text-secondary)]">Activity Participation</p>
+                    </div>
+                    <span class="text-xs font-semibold text-[#8f00ff]">${activity.TIME}</span>
+                </div>
+            `;
+        });
+    }
+    // === 👆 END OF NEW DISPLAY FUNCTION 👆 ===
 
-      <div>
-        <label for="userId" class="text-sm font-medium text-slate-700">User ID</label>
-        <div class="mt-1 relative">
-          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <i data-lucide="user" class="w-5 h-5 text-slate-400"></i>
-          </div>
-          <input type="text" id="userId" name="userId" required 
-            class="w-full pl-10 pr-3 py-2 bg-slate-100 border border-slate-300 rounded-md shadow-sm 
-                   focus:ring-indigo-500 focus:border-indigo-500 placeholder-slate-400" 
-            placeholder="Enter your college ID">
-        </div>
-      </div>
+    async function displayDynamicSubjectBreakdown(allLectures, attendedLectureIds, professorMap) {
+        const container = document.getElementById('subject-list');
+        container.innerHTML = '';
+        if (!allLectures || allLectures.length === 0) {
+            container.innerHTML = `<div class="text-center text-[var(--text-secondary)] p-4">No subject data available.</div>`;
+            return;
+        }
+        const subjectStats = {};
+        allLectures.forEach(lecture => {
+            const subjectName = lecture.LECTURE;
+            if (!subjectStats[subjectName]) subjectStats[subjectName] = { total: 0, attended: 0 };
+            subjectStats[subjectName].total++;
+            if (attendedLectureIds.has(lecture.NO)) subjectStats[subjectName].attended++;
+        });
+        Object.keys(subjectStats).sort().forEach(subjectName => {
+            const stats = subjectStats[subjectName];
+            const percentage = stats.total > 0 ? Math.round((stats.attended / stats.total) * 100) : 0;
+            const textColor = percentage < 75 ? 'text-red-500' : 'text-green-600';
+            const professor = professorMap[subjectName] || 'N/A';
+            container.innerHTML += `
+              <div class="bg-[var(--card-bg)] p-3 rounded-lg theme-shadow border border-[var(--border-color)] flex justify-between items-center">
+                <div>
+                  <p class="font-semibold text-[var(--text-primary)]">${subjectName}</p>
+                  <p class="text-sm text-[var(--text-secondary)]">${professor}</p>
+                </div>
+                <div class="text-right">
+                  <p class="text-lg font-bold ${textColor}">${percentage}%</p>
+                  <p class="text-xs text-[var(--text-secondary)]">${stats.attended}/${stats.total}</p>
+                </div>
+              </div>
+            `;
+        });
+    }
 
-      <div>
-        <label for="password" class="text-sm font-medium text-slate-700">Password</label>
-        <div class="mt-1 relative">
-          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <i data-lucide="lock" class="w-5 h-5 text-slate-400"></i>
-          </div>
-          <input type="password" id="password" name="password" required 
-            class="w-full pl-10 pr-3 py-2 bg-slate-100 border border-slate-300 rounded-md shadow-sm 
-                   focus:ring-indigo-500 focus:border-indigo-500 placeholder-slate-400" 
-            placeholder="••••••••">
-        </div>
-      </div>
+    // --- Main Application Logic ---
+    async function main() {
+        const urlParams = new URLSearchParams(window.location.search);
+        
+        // 1. Set Theme from URL
+        const theme = urlParams.get('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', theme);
+        
+        // 2. Get Student ID from URL
+        const studentId = urlParams.get('id');
+        if (!studentId) {
+            document.body.innerHTML = `<div class="h-screen flex items-center justify-center text-center p-4"><div class="bg-white p-8 rounded-xl shadow-lg"><h1 class="text-2xl font-bold text-red-600">Access Denied</h1><p class="text-gray-600 mt-2">Student ID is missing from the URL.</p></div></div>`;
+            return;
+        }
 
-      <div class="pt-2">
-        <button type="submit" 
-          class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm 
-                 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 
-                 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 
-                 transition-all duration-200 transform hover:scale-105">
-          Sign In
-        </button>
-      </div>
-    </form>
-  </div>
+        const professorMap = await fetchProfessorMap();
+        const { data: student, error: studentError } = await supabase.from('sybaf_students').select('name').eq('id', studentId).single();
+        if (studentError || !student) { console.error("Student not found:", studentError); document.getElementById('studentName').textContent = "Unknown Student"; return; }
+        
+        // 3. Update UI with Name and Dynamic QR Links
+        document.getElementById('studentName').textContent = student.name;
+        const qrDataUrl = `QR.html?id=${encodeURIComponent(studentId)}&name=${encodeURIComponent(student.name)}`;
+        document.getElementById('qrLink').href = qrDataUrl;
+        document.getElementById('viewQrButton').href = qrDataUrl;
+        
+        // 4. Fetch Data & Render Dashboard
+        const { data: allLectures } = await supabase.from('sybaf_lectures').select('NO, LECTURE');
+        const { data: attendedLectures } = await supabase.from('sybaf_lectures').select('NO, LECTURE, DATE, TIME').contains('attendees', [studentId]);
+        
+        // === 👇 NEW DATA FETCH ADDED HERE 👇 ===
+        // Fetches activities where the student's ID is in the 'attendees' array
+        const { data: attendedActivities } = await supabase.from('sybaf_events').select('NO, EVENTS, DATE, TIME').contains('attendees', [studentId]);
+        // === 👆 END OF NEW DATA FETCH 👆 ===
+        
+        if (!allLectures || !attendedLectures) return;
 
-  <script type="module">
-    import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+        const totalLectures = allLectures.length;
+        const attendedCount = attendedLectures.length;
+        const attendedLectureIds = new Set(attendedLectures.map(lec => lec.NO));
+        const attendancePercent = totalLectures > 0 ? Math.round((attendedCount / totalLectures) * 100) : 0;
 
-    // 🔑 Replace with your Supabase credentials
-    const supabaseUrl = "https://pwgdubtbvqnmivtupbvx.supabase.co";
-    const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB3Z2R1YnRidnFubWl2dHVwYnZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUwOTUzMTAsImV4cCI6MjA3MDY3MTMxMH0.kCn6JMv0kTQrkoJ7OmaxCbwZNzewRNtuOg-35nYXYXg";
-    const supabase = createClient(supabaseUrl, supabaseKey);
+        document.getElementById('attendancePercent').textContent = `${attendancePercent}%`;
+        document.getElementById('missedClasses').textContent = `${totalLectures - attendedCount} classes missed.`;
+        
+        const statusTextElement = document.getElementById('attendanceStatusText');
+        const progressCircle = document.getElementById('progress-circle');
+        if (attendancePercent >= 75) {
+            statusTextElement.textContent = "You're Safe!";
+            statusTextElement.className = 'text-2xl font-bold text-green-600';
+            progressCircle.setAttribute('class', 'progress-ring__circle text-[#b84fff]');
+        } else if (attendancePercent >= 60) {
+            statusTextElement.textContent = 'Warning!';
+            statusTextElement.className = 'text-2xl font-bold text-orange-500';
+            progressCircle.setAttribute('class', 'progress-ring__circle text-orange-500');
+        } else {
+            statusTextElement.textContent = 'Danger Zone!';
+            statusTextElement.className = 'text-2xl font-bold text-red-500';
+            progressCircle.setAttribute('class', 'progress-ring__circle text-red-500');
+        }
+        
+        setTimeout(() => setProgress(attendancePercent), 100);
+        displayAttendedLectures(attendedLectures, professorMap);
+        displayDynamicSubjectBreakdown(allLectures, attendedLectureIds, professorMap);
 
-    // Course mapping
-    const courseMap = {
-      "FY BA": "fyba", "FY B COM": "fybcom", "FY BSC": "fybsc", 
-      "FY B.COM (MGMT STUDIES)": "fybms", "FY B.COM (A/C & FINANCE)": "fybaf", 
-      "FY B.COM (FINANCIAL MKT)": "fybfm", "FY B.SC (COMPUTER.SCI)": "fybsccs",
-      "SY BA": "syba", "SY B COM": "sybcom", "SY BSC": "sybsc", 
-      "SY B.COM (MGMT STUDIES)": "sybms", "SY B.COM (A/C & FINANCE)": "sybaf", 
-      "SY B.COM (FINANCIAL MKT)": "sybfm", "SY B.SC (COMPUTER.SCI)": "sybsccs",
-      "TY BA": "tyba", "TY B COM": "tybcom", "TY BSC": "tybsc", 
-      "TY B.COM (MGMT STUDIES)": "tybms", "TY B.COM (A/C & FINANCE)": "tybaf", 
-      "TY B.COM (FINANCIAL MKT)": "tybfm", "TY B.SC (COMPUTER.SCI)": "tybsccs"
-    };
-
-    function setCookie(name, value, days = 1) {
-      const date = new Date();
-      date.setTime(date.getTime() + (days*24*60*60*1000));
-      document.cookie = `${name}=${value};expires=${date.toUTCString()};path=/`;
+        // === 👇 NEW FUNCTION CALL ADDED HERE 👇 ===
+        displayActivities(attendedActivities);
+        // === 👆 END OF NEW FUNCTION CALL 👆 ===
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-      lucide.createIcons();
-
-      const roleStudentRadio = document.getElementById('role-student');
-      const roleRegistrarRadio = document.getElementById('role-registrar');
-      const courseSelectionWrapper = document.getElementById('course-selection-wrapper');
-
-      const updateCourseVisibility = () => {
-        // This logic ensures the course selection is visible when the page loads
-        // and doesn't hide when the role is changed to Registrar.
-        if (roleStudentRadio.checked) {
-          courseSelectionWrapper.style.maxHeight = courseSelectionWrapper.scrollHeight + 'px';
-          courseSelectionWrapper.style.opacity = '1';
-          courseSelectionWrapper.style.marginTop = '1.5rem';
-        }
-      };
-
-      roleStudentRadio.addEventListener('change', updateCourseVisibility);
-      roleRegistrarRadio.addEventListener('change', updateCourseVisibility);
-      updateCourseVisibility(); // Set initial visibility on page load
-
-      // Login handler
-      document.getElementById("loginForm").addEventListener("submit", async (e) => {
-        e.preventDefault();
-
-        const userId = document.getElementById("userId").value.trim();
-        const password = document.getElementById("password").value.trim();
-        const role = document.querySelector("input[name='role']:checked").value.toLowerCase();
-        const courseRaw = document.getElementById("course").value;
-        const course = courseMap[courseRaw] || "";
-
-        // Call the secure database function 'login_user'
-        const { data: users, error } = await supabase.rpc('login_user', {
-          user_id_input: userId,
-          password_input: password,
-          role_input: role,
-          course_input: course
-        });
-
-        // The RPC returns an array. If it's empty or there's an error, login failed.
-        if (error || !users || users.length === 0) {
-          console.error('Login error:', error);
-          alert("Invalid login credentials!");
-          return;
-        }
-        
-        // Login was successful, get the user data from the first element of the array
-        const loggedInUser = users[0];
-
-        setCookie("ID", loggedInUser.ID);
-        setCookie("role", loggedInUser.role);
-        
-        // Set the course cookie for both students and registrars for session context
-        if (course) {
-          setCookie("course", course);
-        }
-
-        window.location.href = "Home.html";
-      });
+        main();
+        lucide.createIcons();
     });
-  </script>
+</script>
 </body>
 </html>
