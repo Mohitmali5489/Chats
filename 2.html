@@ -2,64 +2,36 @@
 <html>
 <head>
   <meta charset="utf-8" />
-  <title>HLS player (hls.js)</title>
+  <title>Tata Play Stream Test</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 12px; }
-    video { width: 100%; max-width: 1000px; height: auto; background: #000; }
-    .note { color: #555; font-size: 0.9em; margin-top: 8px; }
+    body { font-family: Arial; background: #111; color: #eee; text-align: center; }
+    video { width: 90%; max-width: 900px; background: #000; margin-top: 20px; }
   </style>
 </head>
 <body>
-  <h1>HLS.js Player</h1>
+  <h1>🎥 Tata Play Stream Test</h1>
+  <video id="video" controls autoplay></video>
 
-  <video id="video" controls></video>
-
-  <div class="note">
-    Paste your .m3u8 URL into the variable `m3u8Url` below. If the stream requires special headers that the browser blocks, see the server-proxy option.
-  </div>
-
-  <!-- hls.js from CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.0/dist/hls.min.js"></script>
-
+  <!-- hls.js -->
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
   <script>
-    // === EDIT THIS: put your m3u8 URL here ===
+    const video = document.getElementById("video");
+
+    // Paste your Tata Play signed URL here
     const m3u8Url = "https://tataplay.slivcdn.com/hls/live/2011747-b/TEN1HD/hdntl=exp=1757505691~acl=%2f*~id=81516335-f3df-4265-bf99-e76c7b3acf54~data=hdntl~hmac=59dbbd284ef71a4c4bc8fdd708e96929c8c95e1bebecf2ed44bdf4aeb988cae4/master_3500.m3u8";
 
-    const video = document.getElementById('video');
-
     if (Hls.isSupported()) {
-      const hls = new Hls({
-        // You can tune Hls config here if needed
-      });
-
-      // Optional: try to add custom headers on XHR requests.
-      // NOTE: browsers forbid setting some headers (User-Agent/Referer/Origin/Host).
-      // Allowed headers (e.g., Authorization) may be set here if server accepts them.
-      hls.config.xhrSetup = function (xhr, url) {
-        // Example: set an Authorization header (only works if the server accepts it)
-        // xhr.setRequestHeader('Authorization', 'Bearer <token>');
-        // xhr.withCredentials = true; // if the server uses cookies and supports CORS with credentials
-      };
-
+      const hls = new Hls();
       hls.loadSource(m3u8Url);
       hls.attachMedia(video);
-      hls.on(Hls.Events.MANIFEST_PARSED, function() {
-        // autoplay attempt
-        video.play().catch(()=>{ /* autoplay blocked by browser */});
+      hls.on(Hls.Events.MANIFEST_PARSED, () => {
+        video.play().catch(() => console.log("Autoplay blocked"));
       });
-
-      hls.on(Hls.Events.ERROR, function (event, data) {
-        console.warn('HLS error', event, data);
-      });
-
-    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-      // Safari / iOS native support
+    } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
+      // Safari supports HLS natively
       video.src = m3u8Url;
-      video.addEventListener('loadedmetadata', function() {
-        video.play().catch(()=>{});
-      });
     } else {
-      alert('HLS not supported in this browser.');
+      alert("Your browser does not support HLS");
     }
   </script>
 </body>
