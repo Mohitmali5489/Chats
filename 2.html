@@ -97,10 +97,9 @@
     <script>
         // --- SUPABASE CONFIGURATION ---
         const SUPABASE_URL = 'https://fuovcuzaxfkyqrridrgy.supabase.co';
+        // **IMPORTANT**: PASTE YOUR NEW 'anon' KEY FROM THE SUPABASE DASHBOARD HERE
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ1b3ZjdXpheGZreXFycmlkcmd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU0NzIyMjAsImV4cCI6MjA2MTA0ODIyMH0._PkkfWXcn4j6cjBh-yLJjDevrmhuxKxVbcdQUSgCsSk';
         
-        // **CORRECTED**: Initialize the client with a different variable name ('supabaseClient')
-        // to avoid conflict with the global 'supabase' object from the script tag.
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         // --- UI ELEMENTS ---
@@ -121,7 +120,6 @@
         }
 
         async function fetchStudentData(studentId) {
-            // **CORRECTED**: Use the new 'supabaseClient' variable
             const { data: student, error } = await supabaseClient
                 .from('students')
                 .select('*')
@@ -136,7 +134,6 @@
         }
 
         async function fetchProjectData(studentId) {
-            // **CORRECTED**: Use the new 'supabaseClient' variable
             const { data: assignment, error: assignmentError } = await supabaseClient
                 .from('projectassignments')
                 .select('TopicID')
@@ -149,7 +146,6 @@
             
             const topicId = assignment.TopicID;
 
-            // **CORRECTED**: Use the new 'supabaseClient' variable
             const { data: topic, error: topicError } = await supabaseClient
                 .from('topics')
                 .select('*')
@@ -161,7 +157,6 @@
                  throw new Error('Could not retrieve project details.');
             }
 
-            // **CORRECTED**: Use the new 'supabaseClient' variable
             const { data: teamAssignments, error: teamError } = await supabaseClient
                 .from('projectassignments')
                 .select('StudentID')
@@ -174,7 +169,6 @@
             
             const teamMemberIds = teamAssignments.map(a => a.StudentID);
 
-            // **CORRECTED**: Use the new 'supabaseClient' variable
             const { data: teamMembers, error: membersError } = await supabaseClient
                 .from('students')
                 .select('StudentID, Name')
