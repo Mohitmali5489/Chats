@@ -4,91 +4,166 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Project Details - Supabase</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+      // This script runs early to prevent a "flash of the wrong theme."
+      (function() {
+        const theme = new URLSearchParams(window.location.search).get('theme') || localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', theme);
+        if (theme) localStorage.setItem('theme', theme);
+      })();
+    </script>
+
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
+        /* 🎨 --- Color & Theme Variables --- 🎨 */
+        :root {
+            --primary-accent: #b84fff;
+            --primary-gradient: linear-gradient(135deg, #b84fff, #8f00ff);
+            --font-family: 'Inter', sans-serif;
+            
+            --bg-gradient-light: linear-gradient(180deg, #f5f5f7, #e9e9ed);
+            --card-bg-light: rgba(255, 255, 255, 0.7);
+            --text-primary-light: #121212;
+            --text-secondary-light: #5f5f5f;
+            --border-color-light: #e0e0e0;
+            --shadow-light: 0 4px 20px rgba(0, 0, 0, 0.06);
+
+            --bg-gradient-dark: linear-gradient(180deg, #2a2a3d, #1e1e2e);
+            --card-bg-dark: rgba(42, 42, 61, 0.7);
+            --text-primary-dark: #f0f0f0;
+            --text-secondary-dark: #a0a0b0;
+            --border-color-dark: #4a4a6a;
+            --shadow-dark: 0 4px 20px rgba(0, 0, 0, 0.2);
         }
-        .gradient-bg {
-            background: linear-gradient(135deg, #1e3a8a, #3b0764);
+        
+        [data-theme="light"] {
+            --bg-gradient: var(--bg-gradient-light);
+            --card-bg: var(--card-bg-light);
+            --text-primary: var(--text-primary-light);
+            --text-secondary: var(--text-secondary-light);
+            --border-color: var(--border-color-light);
+            --shadow: var(--shadow-light);
+        }
+
+        [data-theme="dark"] {
+            --bg-gradient: var(--bg-gradient-dark);
+            --card-bg: var(--card-bg-dark);
+            --text-primary: var(--text-primary-dark);
+            --text-secondary: var(--text-secondary-dark);
+            --border-color: var(--border-color-dark);
+            --shadow: var(--shadow-dark);
+        }
+
+        body {
+            font-family: var(--font-family);
+            background: var(--bg-gradient);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        .upload-btn {
+            display: inline-block;
+            background: var(--primary-gradient);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            text-align: center;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .upload-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(143,0,255,0.3);
+        }
+        .upload-btn:disabled {
+            background: var(--text-secondary);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        #file-chosen {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+            margin-top: 8px;
         }
     </style>
 </head>
-<body class="bg-gray-900 text-gray-200 antialiased">
+<body class="antialiased">
 
     <div id="app" class="min-h-screen p-4 sm:p-6 lg:p-8 flex flex-col items-center justify-center">
 
-        <header class="w-full max-w-4xl mx-auto mb-6 text-center">
+        <header class="w-full max-w-2xl mx-auto mb-6 text-center">
             <div class="flex items-center justify-center gap-3">
-                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-400"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-                <h1 class="text-3xl font-bold text-white">Student Project Dashboard</h1>
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--primary-accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                <h1 class="text-3xl font-bold" style="color: var(--text-primary);">Project Dashboard</h1>
             </div>
-            <p class="text-gray-400 mt-1">Birla College of Arts, Science & Commerce (BAF)</p>
+            <p style="color: var(--text-secondary);" class="mt-1">Birla College of Arts, Science & Commerce (BAF)</p>
         </header>
 
-        <main id="main-content" class="w-full max-w-4xl mx-auto">
+        <main id="main-content" class="w-full max-w-2xl mx-auto">
             <div id="loading" class="text-center p-8">
-                <div class="flex justify-center items-center space-x-2">
-                    <div class="w-4 h-4 rounded-full animate-pulse bg-blue-400"></div>
-                    <div class="w-4 h-4 rounded-full animate-pulse bg-blue-400" style="animation-delay: 0.2s;"></div>
-                    <div class="w-4 h-4 rounded-full animate-pulse bg-blue-400" style="animation-delay: 0.4s;"></div>
-                </div>
-                <p class="text-lg mt-4">Fetching project details from Supabase...</p>
+                <p class="text-lg mt-4" style="color: var(--text-secondary);">Fetching project details...</p>
             </div>
             
-            <div id="error" class="hidden text-center bg-red-900/50 border border-red-700 p-8 rounded-2xl shadow-lg">
-                <h2 id="error-title" class="text-2xl font-bold text-red-300">Student Not Found</h2>
-                <p id="error-message" class="mt-2 text-red-400">Could not find a student with the provided ID. Please check the URL and try again.</p>
-                <p class="mt-4 text-xs text-gray-500">Example URL: `.../file.html?id=5241836`</p>
+            <div id="error" class="hidden text-center p-8 rounded-2xl" style="background: var(--card-bg); border: 1px solid var(--border-color); backdrop-filter: blur(10px); box-shadow: var(--shadow);">
+                <h2 id="error-title" class="text-2xl font-bold text-red-500"></h2>
+                <p id="error-message" class="mt-2" style="color: var(--text-secondary);"></p>
             </div>
 
             <div id="project-details" class="hidden">
-                <div class="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-2xl shadow-2xl overflow-hidden">
+                <div style="background: var(--card-bg); backdrop-filter: blur(10px); border: 1px solid var(--border-color);" class="rounded-2xl shadow-2xl overflow-hidden">
                     <div class="p-6 sm:p-8">
                         <div class="flex items-center gap-4 mb-6">
-                            <div class="w-16 h-16 rounded-full gradient-bg flex items-center justify-center text-2xl font-bold text-white" id="student-initials"></div>
+                            <div class="w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold text-white" id="student-initials" style="background: var(--primary-gradient);"></div>
                             <div>
-                                <h2 class="text-2xl sm:text-3xl font-bold text-white" id="student-name"></h2>
-                                <p class="text-sm text-gray-400" id="student-id"></p>
+                                <h2 class="text-2xl sm:text-3xl font-bold" style="color: var(--text-primary);" id="student-name"></h2>
+                                <p class="text-sm" style="color: var(--text-secondary);" id="student-id"></p>
                             </div>
                         </div>
 
                         <div class="space-y-4">
                              <div>
-                                <h3 class="text-sm font-semibold text-blue-400 uppercase tracking-wider">Project Title</h3>
-                                <p class="text-xl text-gray-100 leading-relaxed" id="project-title">No project assigned.</p>
+                                <h3 class="text-sm font-semibold uppercase tracking-wider" style="color: var(--primary-accent);">Project Title</h3>
+                                <p class="text-xl leading-relaxed" style="color: var(--text-primary);" id="project-title">No project assigned.</p>
                             </div>
                              <div id="project-type-container">
-                                <h3 class="text-sm font-semibold text-blue-400 uppercase tracking-wider">Project Type</h3>
+                                <h3 class="text-sm font-semibold uppercase tracking-wider" style="color: var(--primary-accent);">Project Type</h3>
                                 <span class="inline-block px-3 py-1 text-sm font-medium rounded-full" id="project-type"></span>
                             </div>
                         </div>
                     </div>
 
-                    <div id="team-members-section" class="hidden bg-gray-900/60 px-6 sm:px-8 py-6 border-t border-gray-700">
-                        <h3 class="text-lg font-semibold text-white mb-4">Team Members</h3>
-                        <ul id="team-members-list" class="space-y-3">
-                           </ul>
+                    <div id="team-members-section" class="hidden px-6 sm:px-8 py-6 border-t" style="background: rgba(0,0,0,0.1); border-color: var(--border-color);">
+                        <h3 class="text-lg font-semibold mb-4" style="color: var(--text-primary);">Team Members</h3>
+                        <ul id="team-members-list" class="space-y-3"></ul>
+                    </div>
+                    
+                    <div id="file-upload-section" class="hidden p-6 sm:p-8 border-t" style="border-color: var(--border-color);">
+                         <h3 class="text-lg font-semibold mb-4" style="color: var(--text-primary);">Final Project Submission</h3>
+                         <div id="upload-ui">
+                             </div>
                     </div>
                 </div>
             </div>
         </main>
         
-        <footer class="w-full max-w-4xl mx-auto mt-8 text-center text-gray-500 text-sm">
+        <footer class="w-full max-w-2xl mx-auto mt-8 text-center text-sm" style="color: var(--text-secondary);">
              <p>&copy; 2025 BAF Project Management. All Rights Reserved.</p>
         </footer>
     </div>
 
-    <script>
+    <script type="module">
         // --- SUPABASE CONFIGURATION ---
+        const { createClient } = supabase;
         const SUPABASE_URL = 'https://fuovcuzaxfkyqrridrgy.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ1b3ZjdXpheGZreXFycmlkcmd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU0NzIyMjAsImV4cCI6MjA2MTA0ODIyMH0._PkkfWXcn4j6cjBh-yLJjDevrmhuxKxVbcdQUSgCsSk';
-        
-        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
 
         // --- UI ELEMENTS ---
         const loadingEl = document.getElementById('loading');
@@ -98,7 +173,6 @@
         const errorMessageEl = document.getElementById('error-message');
 
         // --- APPLICATION LOGIC ---
-
         function showError(title, message) {
             loadingEl.style.display = 'none';
             projectDetailsEl.style.display = 'none';
@@ -108,115 +182,141 @@
         }
 
         async function fetchStudentData(studentId) {
-            const { data: student, error } = await supabaseClient
-                .from('students')
-                .select('*')
-                // FIXED: Use lowercase 'studentid'
-                .eq('studentid', studentId)
-                .single();
-
-            if (error || !student) {
-                console.error('Error fetching student:', error);
-                throw new Error('Student not found.');
-            }
+            const { data: student, error } = await supabaseClient.from('students').select('*').eq('studentid', studentId).single();
+            if (error || !student) throw new Error('Student not found.');
             return student;
         }
 
         async function fetchProjectData(studentId) {
-            const { data: assignment, error: assignmentError } = await supabaseClient
-                .from('projectassignments')
-                // FIXED: Use lowercase 'topicid' and 'studentid'
-                .select('topicid')
-                .eq('studentid', studentId)
-                .single();
-
-            if (assignmentError || !assignment) {
-                // This is not an error, student just might not have a project
-                return { topic: null, team: [] };
-            }
+            const { data: assignment, error } = await supabaseClient.from('projectassignments').select('topicid').eq('studentid', studentId).single();
+            if (error || !assignment) return { topic: null, team: [] };
             
-            // FIXED: access lowercase 'topicid'
             const topicId = assignment.topicid;
+            const { data: topic, error: topicError } = await supabaseClient.from('topics').select('*').eq('topicid', topicId).single();
+            if (topicError) throw new Error('Could not retrieve project details.');
 
-            const { data: topic, error: topicError } = await supabaseClient
-                .from('topics')
-                .select('*')
-                // FIXED: Use lowercase 'topicid'
-                .eq('topicid', topicId)
-                .single();
+            const { data: teamAssignments, error: teamError } = await supabaseClient.from('projectassignments').select('studentid').eq('topicid', topicId);
+            if (teamError) throw new Error('Could not retrieve team members.');
             
-            if (topicError) {
-                 console.error('Error fetching topic:', topicError);
-                 throw new Error('Could not retrieve project details.');
-            }
-
-            const { data: teamAssignments, error: teamError } = await supabaseClient
-                .from('projectassignments')
-                // FIXED: Use lowercase 'studentid' and 'topicid'
-                .select('studentid')
-                .eq('topicid', topicId);
-            
-            if (teamError) {
-                 console.error('Error fetching team:', teamError);
-                 throw new Error('Could not retrieve team members.');
-            }
-            
-            // FIXED: access lowercase 'studentid'
             const teamMemberIds = teamAssignments.map(a => a.studentid);
-
-            const { data: teamMembers, error: membersError } = await supabaseClient
-                .from('students')
-                // FIXED: Use lowercase 'studentid' and 'name'
-                .select('studentid, name')
-                .in('studentid', teamMemberIds);
-            
-             if (membersError) {
-                  console.error('Error fetching member details:', membersError);
-                  throw new Error('Could not retrieve team member details.');
-            }
+            const { data: teamMembers, error: membersError } = await supabaseClient.from('students').select('studentid, name').in('studentid', teamMemberIds);
+            if (membersError) throw new Error('Could not retrieve team member details.');
 
             return { topic, team: teamMembers };
         }
+        
+        async function fetchAndDisplayFileUploadStatus(topicId, currentStudentId) {
+            const uploadSection = document.getElementById('file-upload-section');
+            const uploadUI = document.getElementById('upload-ui');
+            uploadSection.style.display = 'block';
 
-        window.onload = async function() {
+            const { data, error } = await supabaseClient.from('project_files').select('*, students(name)').eq('topic_id', topicId).single();
+
+            if (data) { // File already submitted
+                const publicURL = supabaseClient.storage.from('FP').getPublicUrl(data.file_path);
+                uploadUI.innerHTML = `
+                    <p style="color: var(--text-secondary);">Your group has already submitted the project file.</p>
+                    <p class="mt-2 text-sm" style="color: var(--text-secondary);">Submitted by: <strong>${data.students.name}</strong> on ${new Date(data.uploaded_at).toLocaleDateString()}</p>
+                    <a href="${publicURL.data.publicUrl}" target="_blank" class="upload-btn mt-4">Download Submitted File</a>
+                `;
+            } else { // Show upload form
+                uploadUI.innerHTML = `
+                    <p style="color: var(--text-secondary);">Your group has not submitted the project file yet. Any member can upload it once.</p>
+                    <input type="file" id="file-input" accept=".pdf,.doc,.docx,.zip" style="display: none;">
+                    <button id="select-file-btn" class="upload-btn mt-4">Select File</button>
+                    <p id="file-chosen">No file chosen</p>
+                    <button id="upload-btn" class="upload-btn mt-2" disabled>Upload and Submit</button>
+                    <div id="upload-status" class="mt-2 text-sm"></div>
+                `;
+                setupUploadListeners(topicId, currentStudentId);
+            }
+        }
+
+        function setupUploadListeners(topicId, currentStudentId) {
+            const fileInput = document.getElementById('file-input');
+            const selectBtn = document.getElementById('select-file-btn');
+            const uploadBtn = document.getElementById('upload-btn');
+            const fileChosenEl = document.getElementById('file-chosen');
+            const uploadStatusEl = document.getElementById('upload-status');
+
+            selectBtn.onclick = () => fileInput.click();
+            
+            fileInput.onchange = () => {
+                if (fileInput.files.length > 0) {
+                    fileChosenEl.textContent = fileInput.files[0].name;
+                    uploadBtn.disabled = false;
+                } else {
+                    fileChosenEl.textContent = 'No file chosen';
+                    uploadBtn.disabled = true;
+                }
+            };
+            
+            uploadBtn.onclick = async () => {
+                const file = fileInput.files[0];
+                if (!file) return;
+
+                uploadBtn.disabled = true;
+                uploadBtn.textContent = 'Uploading...';
+                uploadStatusEl.textContent = '';
+                uploadStatusEl.style.color = 'var(--text-secondary)';
+
+                const filePath = `${topicId}-${file.name.replace(/\s/g, '_')}`;
+
+                try {
+                    const { error: uploadError } = await supabaseClient.storage.from('FP').upload(filePath, file);
+                    if (uploadError) throw uploadError;
+
+                    const { error: dbError } = await supabaseClient.from('project_files').insert({
+                        topic_id: topicId,
+                        file_path: filePath,
+                        uploader_student_id: currentStudentId
+                    });
+                    if (dbError) throw dbError;
+                    
+                    uploadStatusEl.textContent = '✅ Success! File submitted.';
+                    uploadStatusEl.style.color = 'green';
+                    setTimeout(() => fetchAndDisplayFileUploadStatus(topicId, currentStudentId), 1500); // Refresh UI
+
+                } catch (error) {
+                    console.error('Upload failed:', error);
+                    uploadStatusEl.textContent = `❌ Error: ${error.message}`;
+                    uploadStatusEl.style.color = 'red';
+                    uploadBtn.disabled = false;
+                    uploadBtn.textContent = 'Upload and Submit';
+                }
+            };
+        }
+
+        window.onload = async () => {
             const urlParams = new URLSearchParams(window.location.search);
             const studentIdParam = urlParams.get('id');
 
             if (!studentIdParam) {
-                showError("No Student ID Provided", "Please provide a student ID in the URL to see project details.");
-                return;
+                return showError("No Student ID Provided", "Please provide a student ID in the URL.");
             }
 
             try {
                 const studentId = parseInt(studentIdParam, 10);
-                
-                const [student, projectData] = await Promise.all([
-                    fetchStudentData(studentId),
-                    fetchProjectData(studentId)
-                ]);
+                const [student, projectData] = await Promise.all([fetchStudentData(studentId), fetchProjectData(studentId)]);
 
-                // FIXED: Access lowercase properties from the student object
                 document.getElementById('student-name').textContent = student.name;
                 document.getElementById('student-id').textContent = `Student ID: ${student.studentid}`;
-                const nameParts = student.name.split(' ');
-                const initials = nameParts.length > 1 
-                    ? `${nameParts[0][0]}${nameParts[nameParts.length - 1][0]}` 
-                    : nameParts[0][0];
+                const initials = (student.name.split(' ').map(n => n[0]).join('')).slice(0, 2);
                 document.getElementById('student-initials').textContent = initials.toUpperCase();
-
-                // FIXED: Access lowercase properties from topic and student
-                if (projectData.topic && student.type) {
+                
+                if (projectData.topic) {
                     document.getElementById('project-title').textContent = projectData.topic.topicname;
                     const projectTypeEl = document.getElementById('project-type');
                     projectTypeEl.textContent = student.type;
 
                     if (student.type.toLowerCase() === 'group') {
-                        projectTypeEl.classList.add('bg-green-800', 'text-green-200');
+                        projectTypeEl.style.cssText = 'background-color: rgba(34, 197, 94, 0.2); color: #22c55e;';
                         displayTeamMembers(studentId, projectData.team);
                     } else {
-                        projectTypeEl.classList.add('bg-blue-800', 'text-blue-200');
-                        document.getElementById('team-members-section').style.display = 'none';
+                        projectTypeEl.style.cssText = 'background-color: rgba(59, 130, 246, 0.2); color: #3b82f6;';
                     }
+                    // Fetch and display upload status after getting topic info
+                    fetchAndDisplayFileUploadStatus(projectData.topic.topicid, studentId);
                 } else {
                     document.getElementById('project-title').textContent = 'No project has been assigned to this student yet.';
                     document.getElementById('project-type-container').style.display = 'none';
@@ -226,36 +326,25 @@
                 projectDetailsEl.style.display = 'block';
 
             } catch (error) {
-                console.error("Initialization failed:", error);
                 showError("Error Loading Data", error.message);
             }
         };
 
         function displayTeamMembers(currentStudentId, teamMembers) {
             const teamMembersList = document.getElementById('team-members-list');
+            const section = document.getElementById('team-members-section');
             teamMembersList.innerHTML = '';
             
-            // FIXED: Access lowercase 'studentid'
             const otherMembers = teamMembers.filter(m => m.studentid !== currentStudentId);
 
-            if (otherMembers.length === 0) {
-                 teamMembersList.innerHTML = `<li class="text-gray-400">You are the only member on this project.</li>`;
-            } else {
-                otherMembers.forEach(member => {
+            if (otherMembers.length > 0) {
+                 otherMembers.forEach(member => {
                     const li = document.createElement('li');
-                    li.className = 'flex items-center justify-between bg-gray-800/70 p-3 rounded-lg';
-                    // FIXED: Access lowercase 'name' and 'studentid'
-                    li.innerHTML = `
-                        <div>
-                            <p class="font-medium text-gray-200">${member.name}</p>
-                            <p class="text-xs text-gray-500">ID: ${member.studentid}</p>
-                        </div>
-                        <span class="text-xs font-semibold text-gray-400">Team Member</span>
-                    `;
+                    li.innerHTML = `<div class="flex items-center justify-between"><p>${member.name}</p><p class="text-xs" style="color: var(--text-secondary);">ID: ${member.studentid}</p></div>`;
                     teamMembersList.appendChild(li);
                 });
+                 section.style.display = 'block';
             }
-            document.getElementById('team-members-section').style.display = 'block';
         }
     </script>
 </body>
