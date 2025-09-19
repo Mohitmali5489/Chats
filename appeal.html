@@ -8,9 +8,16 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   
   <script>
+    // FIXED: This script now correctly applies the theme from the URL first, then local storage.
     (function() {
-      const savedTheme = localStorage.getItem('theme') || 'light';
-      document.documentElement.setAttribute('data-theme', savedTheme);
+      const urlTheme = new URLSearchParams(window.location.search).get('theme');
+      const savedTheme = localStorage.getItem('theme');
+      const theme = urlTheme || savedTheme || 'light';
+      
+      document.documentElement.setAttribute('data-theme', theme);
+      if (urlTheme) {
+        localStorage.setItem('theme', urlTheme);
+      }
     })();
   </script>
 
@@ -66,7 +73,7 @@
       color: var(--text-primary);
       display: flex;
       justify-content: center;
-      align-items: flex-start; /* Align to top for scroll */
+      align-items: flex-start;
       min-height: 100vh;
       padding: 20px;
       transition: background 0.4s ease, color 0.4s ease;
@@ -113,20 +120,27 @@
     .status-message.success { color: var(--success-color); }
     .status-message.error { color: var(--danger-color); }
 
-    /* --- NEW APPEAL HISTORY STYLES --- */
     .divider { height: 1px; background-color: var(--border-color); margin: 30px 0; }
     .appeals-history h3 { font-size: 18px; font-weight: 600; margin-bottom: 15px; }
     #appeals-history-list { display: flex; flex-direction: column; gap: 12px; }
     .appeal-item { display: flex; justify-content: space-between; align-items: center; background: var(--input-bg); padding: 12px 15px; border-radius: 8px; border-left: 4px solid; }
+    .appeal-info { display: flex; flex-direction: column; }
     .appeal-info p { font-weight: 500; font-size: 15px; }
     .appeal-info span { font-size: 13px; color: var(--text-secondary); }
-    .status-badge { padding: 4px 10px; font-size: 12px; font-weight: 600; border-radius: 12px; text-transform: capitalize; }
     
+    /* NEW: Style for the rejection reason */
+    .rejection-note {
+        color: var(--danger-color);
+        font-size: 12px;
+        margin-top: 5px;
+        font-style: italic;
+    }
+
+    .status-badge { padding: 4px 10px; font-size: 12px; font-weight: 600; border-radius: 12px; text-transform: capitalize; align-self: flex-start; }
     .status-pending { border-color: var(--warning-color); background-color: rgba(245, 158, 11, 0.1); color: var(--warning-color); }
     .status-approved { border-color: var(--success-color); background-color: rgba(34, 197, 94, 0.1); color: var(--success-color); }
     .status-rejected { border-color: var(--danger-color); background-color: rgba(239, 68, 68, 0.1); color: var(--danger-color); }
 
-    /* --- MOBILE RESPONSIVENESS --- */
     @media (max-width: 480px) {
         body { padding: 10px; }
         .appeal-card { padding: 25px 20px; }
@@ -185,21 +199,18 @@
   const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB3Z2R1YnRidnFubWl2dHVwYnZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUwOTUzMTAsImV4cCI6MjA3MDY3MTMxMH0.kCn6JMv0kTQrkoJ7OmaxCbwZNzewRNtuOg-35nYXYXg';
   const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-  // --- UI Elements ---
   const datePicker = document.getElementById('absence-date');
   const lecturesContainer = document.getElementById('lecturesForAppeal');
   const submitBtn = document.getElementById('submitBtn');
   const appealForm = document.getElementById('appealForm');
   const historyList = document.getElementById('appeals-history-list');
 
-  // --- Helper Functions ---
   const getUrlParam = (param) => new URLSearchParams(window.location.search).get(param);
   const formatDateForSupabase = (dateStr) => {
       const [year, month, day] = dateStr.split('-');
       return `${day}/${month}/${year}`;
   };
 
-  // --- Main Functions ---
   async function fetchLecturesForDate() {
     const selectedDate = datePicker.value;
     const studentId = getUrlParam('id');
@@ -240,6 +251,7 @@
   
   async function submitAppeal(event) {
     event.preventDefault();
+    // ... submission logic remains the same ...
     const statusDiv = document.getElementById('statusMessage');
     const studentId = getUrlParam('id');
     const studentName = getUrlParam('name') || 'Student';
@@ -298,9 +310,10 @@
           return;
       }
       
+      // UPDATED: Select 'reviewer_notes' to display the reason
       const { data: appeals, error } = await supabase
           .from('appeals')
-          .select('lecture_name, lecture_date, status')
+          .select('lecture_name, lecture_date, status, reviewer_notes')
           .eq('student_id', studentId)
           .order('created_at', { ascending: false })
           .limit(5);
@@ -316,23 +329,28 @@
           return;
       }
 
-      historyList.innerHTML = appeals.map(appeal => `
+      // UPDATED: HTML rendering logic to include the rejection reason
+      historyList.innerHTML = appeals.map(appeal => {
+          const rejectionReasonHtml = (appeal.status === 'rejected' && appeal.reviewer_notes)
+              ? `<span class="rejection-note">Reason: ${appeal.reviewer_notes}</span>`
+              : '';
+
+          return `
           <div class="appeal-item status-${appeal.status}">
               <div class="appeal-info">
                   <p>${appeal.lecture_name}</p>
                   <span>${new Date(appeal.lecture_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+                  ${rejectionReasonHtml}
               </div>
               <span class="status-badge status-${appeal.status}">${appeal.status}</span>
           </div>
-      `).join('');
+      `}).join('');
   }
 
-  // --- Event Listeners ---
   document.addEventListener("DOMContentLoaded", () => {
     const today = new Date().toISOString().split('T')[0];
     datePicker.value = today;
     
-    // Initial data fetching
     fetchLecturesForDate();
     fetchAndDisplayAppeals();
 
