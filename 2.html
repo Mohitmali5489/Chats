@@ -3,11 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Project Details</title>
+    <title>Student Project Details - Supabase</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Supabase Client Library -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -34,13 +36,18 @@
         <main id="main-content" class="w-full max-w-4xl mx-auto">
             <!-- Loading State -->
             <div id="loading" class="text-center p-8">
-                <p class="text-lg">Loading project details...</p>
+                <div class="flex justify-center items-center space-x-2">
+                    <div class="w-4 h-4 rounded-full animate-pulse bg-blue-400"></div>
+                    <div class="w-4 h-4 rounded-full animate-pulse bg-blue-400" style="animation-delay: 0.2s;"></div>
+                    <div class="w-4 h-4 rounded-full animate-pulse bg-blue-400" style="animation-delay: 0.4s;"></div>
+                </div>
+                <p class="text-lg mt-4">Fetching project details from Supabase...</p>
             </div>
             
             <!-- Error State -->
             <div id="error" class="hidden text-center bg-red-900/50 border border-red-700 p-8 rounded-2xl shadow-lg">
-                <h2 class="text-2xl font-bold text-red-300">Student Not Found</h2>
-                <p class="mt-2 text-red-400">Could not find a student with the provided ID. Please check the URL and try again.</p>
+                <h2 id="error-title" class="text-2xl font-bold text-red-300">Student Not Found</h2>
+                <p id="error-message" class="mt-2 text-red-400">Could not find a student with the provided ID. Please check the URL and try again.</p>
                 <p class="mt-4 text-xs text-gray-500">Example URL: `.../file.html?id=5241836`</p>
             </div>
 
@@ -88,270 +95,178 @@
     </div>
 
     <script>
-        // --- EMBEDDED DATA FROM CSVs ---
+        // --- SUPABASE CONFIGURATION ---
+        const SUPABASE_URL = 'https://fuovcuzaxfkyqrridrgy.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ1b3ZjdXpheGZreXFycmlkcmd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU0NzIyMjAsImV4cCI6MjA2MTA0ODIyMH0._PkkfWXcn4j6cjBh-yLJjDevrmhuxKxVbcdQUSgCsSk';
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        const studentsData = [
-            { "ID": 5241836, "Name": "Madassir Ansari", "Topic": "AI-Driven Tax Compliance Solutions for Small Businesses", "Type": "Group" },
-            { "ID": 5170186, "Name": "Sakshi Bhalerao", "Topic": "Role of Artificial Intelligence in Modern Accounting Systems", "Type": "Individual" },
-            { "ID": 5246612, "Name": "Riya Bhoir", "Topic": "Risk management practices in local insurance companies", "Type": "Group" },
-            { "ID": 5205249, "Name": "Vedika Bhoir", "Topic": "Income tax planning strategies for salaried individuals", "Type": "Group" },
-            { "ID": 5195018, "Name": "Manthan Bhopi", "Topic": "AI Based Fraud Detection Systems in Financial Institutions", "Type": "Group" },
-            { "ID": 5220968, "Name": "Janhvi Bhor", "Topic": null, "Type": null },
-            { "ID": 5170185, "Name": "Vaishnavi Chaudhari", "Topic": null, "Type": null },
-            { "ID": 5141926, "Name": "Khushi Chauhan", "Topic": "Analysis of non performing asset in regional banks (Home loans)", "Type": "Group" },
-            { "ID": 5200170, "Name": "Bhavik Chhabria", "Topic": "Customer preference for cash vs digital payments in local shops", "Type": "Group" },
-            { "ID": 5211986, "Name": "Dipti Davane", "Topic": "Fintech Adoption and Its Impact on Traditional Banking services ", "Type": "Group" },
-            { "ID": 5039067, "Name": "Aakansha Dhone", "Topic": "Income tax planning strategies for salaried individuals", "Type": "Group" },
-            { "ID": 5074731, "Name": "Asmita Dhone", "Topic": "Income tax planning strategies for salaried individuals", "Type": "Group" },
-            { "ID": 5368471, "Name": "Latika Dhone", "Topic": "Role of Artificial intelligence in modern accounting system", "Type": "Group" },
-            { "ID": 5229989, "Name": "Rihant Donde", "Topic": "Portfolio Management Strategies among Retail Investors ", "Type": "Individual" },
-            { "ID": 5029261, "Name": "Sahil Gautam", "Topic": "Role of Artificial Intelligence in Modern Accounting Systems", "Type": "Group" },
-            { "ID": 5197173, "Name": "Chhakuli Gavale", "Topic": "Analysis of non performing assets in regional bank", "Type": "Group" },
-            { "ID": 5220970, "Name": "Mayuri Ghangaonkar", "Topic": "Income tax planning strategies for salaried individuals", "Type": "Group" },
-            { "ID": 5145736, "Name": "Nandini Gond", "Topic": "Role of Artificial intelligence in modern accounting system", "Type": "Group" },
-            { "ID": 5196596, "Name": "Abhishek Gupta", "Topic": "Comparative study of financial knowledge in local area and surrounding?", "Type": "Group" },
-            { "ID": 5178435, "Name": "Achal Gupta", "Topic": "Fintech Adoption and Its Impact on Traditional Banking services ", "Type": "Group" },
-            { "ID": 5216593, "Name": "Kisana Gupta", "Topic": "Analysis of non performing asset in regional banks (Home loans)", "Type": "Group" },
-            { "ID": 5217703, "Name": "Krish Gupta", "Topic": "EFFECTIVENESS DIRECT AND INDIRECT TAXATION IN LOCLA BUSINESSES ", "Type": "Group" },
-            { "ID": 5186483, "Name": "Mohini Gupta", "Topic": "Analysis of non performing assets in regional bank", "Type": "Group" },
-            { "ID": 5249233, "Name": "Namrata Gupta", "Topic": "Unpaid dues and their ripple effect on small business growth", "Type": "Group" },
-            { "ID": 5091276, "Name": "Roshni Gupta", "Topic": "Impact of alcohol and drugs addition", "Type": "Group" },
-            { "ID": 5147162, "Name": "Shibu Gupta", "Topic": null, "Type": null },
-            { "ID": 5220969, "Name": "ShivaKumar Gupta", "Topic": "EFFECTIVENESS DIRECT AND INDIRECT TAXATION IN LOCLA BUSINESSES ", "Type": "Group" },
-            { "ID": 5195831, "Name": "Janhavi Jadhav", "Topic": "Risk management practices in local insurance companies", "Type": "Group" },
-            { "ID": 5248056, "Name": "Ruchita Jadhav", "Topic": "An analytical study of investors satisfaction and awareness towards mutual fund in Kalyan region.", "Type": "Group" },
-            { "ID": 5049545, "Name": "Sakshi Jadhav", "Topic": null, "Type": null },
-            { "ID": 5225136, "Name": "Swarangi Jadhav", "Topic": "AI Based Fraud Detection Systems in Financial Institutions", "Type": "Group" },
-            { "ID": 5192415, "Name": "Ashmit Jaiswal", "Topic": "Comparative study of financial knowledge in local area and surrounding?", "Type": "Group" },
-            { "ID": 5049541, "Name": "Ronit Kanjan", "Topic": null, "Type": null },
-            { "ID": 5214873, "Name": "Saylee Kanse", "Topic": "Role of Artificial intelligence in modern accounting system", "Type": "Group" },
-            { "ID": 5145801, "Name": "Smita Karekar", "Topic": "comparative study of financial statements in local business", "Type": "Individual" },
-            { "ID": 5054154, "Name": "Isha Kashivale", "Topic": "Working Capital Management Practices in Retail Outlets", "Type": "Individual" },
-            { "ID": 5448542, "Name": "Anshika Kashyap", "Topic": "Customer preference for cash vs digital payments in local shops", "Type": "Group" },
-            { "ID": 5213664, "Name": "Harshita Kashyap", "Topic": "Analysis of non performing asset in regional banks (Home loans)", "Type": "Group" },
-            { "ID": 5046234, "Name": "Sudiksha Kedare", "Topic": "Evaluating the impact of recent tax reforms on small enterprises", "Type": "Group" },
-            { "ID": 5432455, "Name": "Prince Kesarwani", "Topic": "Analysis of non performing assets in regional bank", "Type": "Group" },
-            { "ID": 5229988, "Name": "Gulzar Khan", "Topic": "Social media in Brand promotion", "Type": "Group" },
-            { "ID": 5216592, "Name": "Kishankumar Kondajogali", "Topic": "Income tax planning strategies for salaried individuals", "Type": "Individual" },
-            { "ID": 5136502, "Name": "Aparna Konkar", "Topic": "Working Capital Management Practices in Retail Outlets", "Type": "Individual" },
-            { "ID": 5200166, "Name": "Tanushree Kori", "Topic": "Income tax planning strategies for salaried individuals", "Type": "Group" },
-            { "ID": 5357865, "Name": "Abhishek Kot", "Topic": "Fintech Adoption and Its Impact on Traditional Banking Services", "Type": "Group" },
-            { "ID": 5098319, "Name": "Niraj Kot", "Topic": "AI Based fraud Detection systems in Financial Institutions", "Type": "Group" },
-            { "ID": 5136504, "Name": "Bhumi Lohani", "Topic": "Unpaid dues and their ripple effect on small business growth", "Type": "Group" },
-            { "ID": 5207872, "Name": "Mohit Mali", "Topic": "Youth Employment Challenges and the Role of Skill Development : A Field-Based Survey", "Type": "Individual" },
-            { "ID": 5136500, "Name": "Neha Mallah", "Topic": "Carbon footprint calculation and reporting in local organization", "Type": "Individual" },
-            { "ID": 5042281, "Name": "Pooja Mallesh", "Topic": "Social media in Brand promotion", "Type": "Group" },
-            { "ID": 5206378, "Name": "Vikas Maurya", "Topic": "Income tax planning strategies for salaried individuals", "Type": "Group" },
-            { "ID": 5183048, "Name": "Arashad Md", "Topic": "EFFECTIVENESS DIRECT AND INDIRECT TAXATION IN LOCLA BUSINESSES ", "Type": "Group" },
-            { "ID": 5241837, "Name": "Sanika Mhamunkar", "Topic": "AI Based fraud Detection systems in Financial Institutions", "Type": "Group" },
-            { "ID": 5028119, "Name": "Jay Mhaske", "Topic": "EFFECTIVENESS DIRECT AND INDIRECT TAXATION IN LOCLA BUSINESSES ", "Type": "Group" },
-            { "ID": 5272500, "Name": "Priyanka Mishra", "Topic": "Evaluating the impact of recent tax reforms on small enterprises", "Type": "Group" },
-            { "ID": 5251553, "Name": "Shruti Mohite", "Topic": "Digital literacy among senior citizens", "Type": "Individual" },
-            { "ID": 5218573, "Name": "MohdYusha Momin", "Topic": "AI-Driven Tax Compliance Solutions for Small Businesses", "Type": "Group" },
-            { "ID": 5211988, "Name": "Priya Narvade", "Topic": "Role of Artificial intelligence in modern accounting system", "Type": "Group" },
-            { "ID": 5357380, "Name": "Sandesh Nichite", "Topic": "AI Based fraud Detection systems in Financial Institutions", "Type": "Group" },
-            { "ID": 5113559, "Name": "Antara Nikam", "Topic": "Impact of microfinance or small business", "Type": "Group" },
-            { "ID": 5226244, "Name": "Prachi Palande", "Topic": "Income tax planning strategies for salaried individuals", "Type": "Group" },
-            { "ID": 5147160, "Name": "Juhi Pandey", "Topic": "Analysis of internal control system in manufacturing firm", "Type": "Individual" },
-            { "ID": 5147161, "Name": "Bhumika Patil", "Topic": "AI Based fraud Detection systems in Financial Institutions", "Type": "Group" },
-            { "ID": 5034154, "Name": "Devanshu Patil", "Topic": "Fintech Adoption and Its Impact on Traditional Banking Services", "Type": "Group" },
-            { "ID": 5191702, "Name": "Diya Patil", "Topic": "Risk management practices in local insurance companies", "Type": "Group" },
-            { "ID": 5043669, "Name": "Harsh Patil", "Topic": "Fintech Adoption and Its Impact on Traditional Banking Services", "Type": "Group" },
-            { "ID": 5382955, "Name": "Maithili Patil", "Topic": "AI Based fraud Detection systems in Financial Institutions", "Type": "Group" },
-            { "ID": 5029262, "Name": "Pooja Pawar", "Topic": "Social media in Brand promotion", "Type": "Group" },
-            { "ID": 5027075, "Name": "Seema Prajapati", "Topic": "An analytical study of investors satisfaction and awareness towards mutual fund in Kalyan region.", "Type": "Group" },
-            { "ID": 5046321, "Name": "Muskan Prasad", "Topic": "Income tax planning strategies for salaried individuals", "Type": "Group" },
-            { "ID": 5178434, "Name": "Kranti Rajak", "Topic": "Fintech Adoption and Its Impact on Traditional Banking services ", "Type": "Group" },
-            { "ID": 5170184, "Name": "Shraddha Rajawat", "Topic": "Unpaid dues and their ripple effect on small business growth", "Type": "Group" },
-            { "ID": 5229986, "Name": "Niti Rajwade", "Topic": "Risk management practices in local insurance companies", "Type": "Group" },
-            { "ID": 5218585, "Name": "Ravina Rana", "Topic": "Role of Artificial intelligence in modern accounting system", "Type": "Group" },
-            { "ID": 5196550, "Name": "Shruti Rasure", "Topic": "Effectiveness of Direct and indirect taxation in local buisness", "Type": "Individual" },
-            { "ID": 5236900, "Name": "Sneha Reddy", "Topic": "Fintech Adoption and Its Impact on Traditional Banking services ", "Type": "Group" },
-            { "ID": 5407563, "Name": "LavpreetKaur Sahota", "Topic": "Social media in Brand promotion", "Type": "Group" },
-            { "ID": 5248352, "Name": "Iqra Shaikh", "Topic": "An analytical study of investors satisfaction and awareness towards mutual fund in Kalyan region.", "Type": "Group" },
-            { "ID": 5242671, "Name": "MohdShafahad Shaikh", "Topic": "Effectiveness of direct and indirect tax", "Type": "Individual" },
-            { "ID": 5272501, "Name": "Sadiya Shaikh", "Topic": "Evaluating the impact of recent tax reforms on small enterprises", "Type": "Group" },
-            { "ID": 5214119, "Name": "SajibMohamed Shaikh", "Topic": "AI-Driven Tax Compliance Solutions for Small Businesses", "Type": "Group" },
-            { "ID": 5049543, "Name": "Zikra Shaikh", "Topic": "AI Based Fraud Detection Systems in Financial Institutions", "Type": "Group" },
-            { "ID": 5200169, "Name": "Zubiya Shaikh", "Topic": "Impact of alcohol and drugs addition", "Type": "Group" },
-            { "ID": 5080462, "Name": "Ramlal Sharma", "Topic": "Social media in Brand promotion", "Type": "Group" },
-            { "ID": 5217802, "Name": "Shivam Sharma", "Topic": "AI Based Fraud Detection Systems in Financial Institutions", "Type": "Group" },
-            { "ID": 5229987, "Name": "Soumya Sharma", "Topic": "An analytical study of investors satisfaction and awareness towards mutual fund in Kalyan region.", "Type": "Group" },
-            { "ID": 5236899, "Name": "Shashikant Shimpi", "Topic": "AI Based Fraud Detection Systems in Financial Institutions", "Type": "Group" },
-            { "ID": 5034155, "Name": "Priyadarshani Shivkumar", "Topic": "Analysis of non performing asset in regional banks (Home loans)", "Type": "Group" },
-            { "ID": 5080463, "Name": "Muskan Shrivastav", "Topic": "Analysis of non performing asset in regional banks (Home loans)", "Type": "Group" },
-            { "ID": 5200168, "Name": "MuskanKujal Siddique", "Topic": null, "Type": null },
-            { "ID": 5225390, "Name": "Shagun Singh", "Topic": "Unpaid dues and their ripple effect on small business growth", "Type": "Group" },
-            { "ID": 5220972, "Name": "Shalini Singh", "Topic": "Evaluating the impact of recent tax reforms on small enterprises", "Type": "Group" },
-            { "ID": 5174088, "Name": "Tushar Singh", "Topic": "Impact of microfinance or small business", "Type": "Group" },
-            { "ID": 5029825, "Name": "Vivek Singh", "Topic": null, "Type": null },
-            { "ID": 5098317, "Name": "Yuvraj Singh", "Topic": "AI-Driven Tax Compliance Solutions for Small Businesses", "Type": "Group" },
-            { "ID": 5067963, "Name": "Parth Sogam", "Topic": "Customer preference for cash vs digital payments in local shops", "Type": "Group" },
-            { "ID": 5230987, "Name": "Aditya Sugdare", "Topic": "Customer preference for cash vs digital payments in local shops", "Type": "Group" },
-            { "ID": 5211987, "Name": "Juned Tadavi", "Topic": "Impact of alcohol and drugs addition", "Type": "Group" },
-            { "ID": 5356514, "Name": "Tanushree Talekar", "Topic": "Risk management practices in local insurance companies", "Type": "Group" },
-            { "ID": 5316723, "Name": "Dipen Tare", "Topic": "Fintech Adoption and Its Impact on Traditional Banking Services", "Type": "Group" },
-            { "ID": 5234917, "Name": "Putrappa Tengale", "Topic": "Analysis of non performing assets in regional bank", "Type": "Group" },
-            { "ID": 5248148, "Name": "Samidha Thakur", "Topic": "Analysis of non performing assets in regional bank", "Type": "Group" },
-            { "ID": 5172859, "Name": "Akash Tiwari", "Topic": "Role of Artificial Intelligence in Modern Accounting Systems", "Type": "Group" },
-            { "ID": 5136501, "Name": "Ayush Tiwari", "Topic": "Role of Artificial Intelligence in Modern Accounting Systems", "Type": "Group" },
-            { "ID": 5209102, "Name": "Bhumika Tiwari", "Topic": "Income tax planning strategies for salaried individuals", "Type": "Group" },
-            { "ID": 5049542, "Name": "Divyansh Tiwari", "Topic": "Role of Artificial Intelligence in Modern Accounting Systems", "Type": "Group" },
-            { "ID": 5057118, "Name": "Riya Tripathi", "Topic": "Impact of microfinance or small business", "Type": "Group" },
-            { "ID": 5177158, "Name": "Shivam Tripathi", "Topic": "Role of Artificial Intelligence in Modern Accounting Systems", "Type": "Group" },
-            { "ID": 5098318, "Name": "Dhruv Vasani", "Topic": "Income tax planning strategies for salaried individuals", "Type": "Group" },
-            { "ID": 5206379, "Name": "Kashish Vishwakarma", "Topic": "Fintech Adoption and Its Impact on Traditional Banking services ", "Type": "Group" },
-            { "ID": 5221686, "Name": "Vishakha Wagh", "Topic": "An analytical study of investors satisfaction and awareness towards mutual fund in Kalyan region.", "Type": "Group" },
-            { "ID": 5153419, "Name": "Anamika Yadav", "Topic": "Customer preference for cash vs digital payments in local shops", "Type": "Group" },
-            { "ID": 5282993, "Name": "Avinash Yadav", "Topic": "Comparative study of financial knowledge in local area and surrounding?", "Type": "Group" },
-            { "ID": 5027072, "Name": "Harsh Yadav", "Topic": "The Role of Social Media in Modern Business Strategies", "Type": "Individual" },
-            { "ID": 5080464, "Name": "Kajal Yadav", "Topic": "Comparative study of financial knowledge in local area and surrounding?", "Type": "Group" },
-            { "ID": 5117959, "Name": "Prajwal Yadav", "Topic": "Impact of microfinance or small business", "Type": "Group" },
-            { "ID": 5129442, "Name": "Saurabh Yadav", "Topic": "EFFECTIVENESS DIRECT AND INDIRECT TAXATION IN LOCLA BUSINESSES ", "Type": "Group" },
-            { "ID": 5196070, "Name": "Sumit Yadav", "Topic": "AI-Driven Tax Compliance Solutions for Small Businesses", "Type": "Group" },
-            { "ID": 5147163, "Name": "Suraj Yadav", "Topic": "Unpaid dues and their ripple effect on small business growth", "Type": "Group" },
-            { "ID": 5243248, "Name": "Sumit Zunjarrao", "Topic": "Fintech Adoption and Its Impact on Traditional Banking Services", "Type": "Group" },
-            { "ID": 5729699, "Name": "Parthak Prajapati", "Topic": "Comparative study of financial knowledge in local area and surrounding?", "Type": "Group" }
-        ];
-
-        const topicsData = [
-            { "fp_id": 1, "Topics": "Analysis of non performing asset in regional banks (Home loans)", "Name 1": 5213664, "Name 2": 5034155, "Name 3": 5141926, "Name 4": 5080463, "Name 5": 5216593 },
-            { "fp_id": 2, "Topics": "Income tax planning strategies for salaried individuals", "Name 1": 5220970, "Name 2": 5046321, "Name 3": 5200166, "Name 4": 5098318, "Name 5": 5206378 },
-            { "fp_id": 3, "Topics": "Income tax planning strategies for salaried individuals", "Name 1": 5226244, "Name 2": 5205249, "Name 3": 5074731, "Name 4": 5039067, "Name 5": 5209102 },
-            { "fp_id": 4, "Topics": "Analysis of non performing assets in regional bank", "Name 1": 5248148, "Name 2": 5186483, "Name 3": 5197173, "Name 4": 5234917, "Name 5": 5432455 },
-            { "fp_id": 5, "Topics": "Role of Artificial intelligence in modern accounting system", "Name 1": 5214873, "Name 2": 5211988, "Name 3": 5145736, "Name 4": 5218585, "Name 5": 5368471 },
-            { "fp_id": 6, "Topics": "Role of Artificial Intelligence in Modern Accounting Systems", "Name 1": 5177158, "Name 2": 5029261, "Name 3": 5049542, "Name 4": 5172859, "Name 5": 5136501 },
-            { "fp_id": 7, "Topics": "AI-Driven Tax Compliance Solutions for Small Businesses", "Name 1": 5241836, "Name 2": 5098317, "Name 3": 5196070, "Name 4": 5218573, "Name 5": 5214119 },
-            { "fp_id": 8, "Topics": "Fintech Adoption and Its Impact on Traditional Banking services ", "Name 1": 5236900, "Name 2": 5206379, "Name 3": 5211986, "Name 4": 5178435, "Name 5": 5178434 },
-            { "fp_id": 9, "Topics": "Evaluating the impact of recent tax reforms on small enterprises", "Name 1": 5220972, "Name 2": 5272501, "Name 3": 5046234, "Name 4": 5272500, "Name 5": null },
-            { "fp_id": 10, "Topics": "An analytical study of investors satisfaction and awareness towards mutual fund in Kalyan region.", "Name 1": 5248056, "Name 2": 5027075, "Name 3": 5248352, "Name 4": 5229987, "Name 5": 5221686 },
-            { "fp_id": 11, "Topics": "Unpaid dues and their ripple effect on small business growth", "Name 1": 5136504, "Name 2": 5225390, "Name 3": 5170184, "Name 4": 5249233, "Name 5": 5147163 },
-            { "fp_id": 12, "Topics": "Fintech Adoption and Its Impact on Traditional Banking Services", "Name 1": 5357865, "Name 2": 5243248, "Name 3": 5043669, "Name 4": 5034154, "Name 5": 5316723 },
-            { "fp_id": 13, "Topics": "Comparative study of financial knowledge in local area and surrounding?", "Name 1": 5196596, "Name 2": 5192415, "Name 3": 5729699, "Name 4": 5080464, "Name 5": 5282993 },
-            { "fp_id": 14, "Topics": "AI Based fraud Detection systems in Financial Institutions", "Name 1": 5147161, "Name 2": 5241837, "Name 3": 5382955, "Name 4": 5098319, "Name 5": 5357380 },
-            { "fp_id": 15, "Topics": "AI Based Fraud Detection Systems in Financial Institutions", "Name 1": 5225136, "Name 2": 5049543, "Name 3": 5236899, "Name 4": 5195018, "Name 5": 5217802 },
-            { "fp_id": 16, "Topics": "EFFECTIVENESS DIRECT AND INDIRECT TAXATION IN LOCLA BUSINESSES ", "Name 1": 5217703, "Name 2": 5220969, "Name 3": 5028119, "Name 4": 5183048, "Name 5": 5129442 },
-            { "fp_id": 17, "Topics": "Impact of microfinance or small business", "Name 1": 5057118, "Name 2": 5117959, "Name 3": 5113559, "Name 4": 5174088, "Name 5": null },
-            { "fp_id": 18, "Topics": "Customer preference for cash vs digital payments in local shops", "Name 1": 5067963, "Name 2": 5230987, "Name 3": 5200170, "Name 4": 5153419, "Name 5": 5448542 },
-            { "fp_id": 19, "Topics": "Risk management practices in local insurance companies", "Name 1": 5191702, "Name 2": 5246612, "Name 3": 5356514, "Name 4": 5229986, "Name 5": 5195831 },
-            { "fp_id": 20, "Topics": "Social media in Brand promotion", "Name 1": 5407563, "Name 2": 5080462, "Name 3": 5229988, "Name 4": 5029262, "Name 5": 5042281 },
-            { "fp_id": 21, "Topics": "Impact of alcohol and drugs addition", "Name 1": 5200169, "Name 2": 5091276, "Name 3": 5211987, "Name 4": null, "Name 5": null },
-            { "fp_id": 22, "Topics": "Youth Employment Challenges and the Role of Skill Development : A Field-Based Survey", "Name 1": 5207872, "Name 2": null, "Name 3": null, "Name 4": null, "Name 5": null },
-            { "fp_id": 23, "Topics": "The Role of Social Media in Modern Business Strategies", "Name 1": 5027072, "Name 2": null, "Name 3": null, "Name 4": null, "Name 5": null },
-            { "fp_id": 24, "Topics": "Carbon footprint calculation and reporting in local organization", "Name 1": 5136500, "Name 2": null, "Name 3": null, "Name 4": null, "Name 5": null },
-            { "fp_id": 25, "Topics": "Digital literacy among senior citizens", "Name 1": 5251553, "Name 2": null, "Name 3": null, "Name 4": null, "Name 5": null },
-            { "fp_id": 26, "Topics": "Working Capital Management Practices in Retail Outlets", "Name 1": 5054154, "Name 2": null, "Name 3": null, "Name 4": null, "Name 5": null },
-            { "fp_id": 27, "Topics": "comparative study of financial statements in local business", "Name 1": 5145801, "Name 2": null, "Name 3": null, "Name 4": null, "Name 5": null },
-            { "fp_id": 28, "Topics": "Portfolio Management Strategies among Retail Investors ", "Name 1": 5229989, "Name 2": null, "Name 3": null, "Name 4": null, "Name 5": null },
-            { "fp_id": 29, "Topics": "Analysis of internal control system in manufacturing firm", "Name 1": 5147160, "Name 2": null, "Name 3": null, "Name 4": null, "Name 5": null },
-            { "fp_id": 30, "Topics": "Income tax planning strategies for salaried individuals", "Name 1": 5216592, "Name 2": null, "Name 3": null, "Name 4": null, "Name 5": null },
-            { "fp_id": 31, "Topics": "Effectiveness of direct and indirect tax", "Name 1": 5242671, "Name 2": null, "Name 3": null, "Name 4": null, "Name 5": null },
-            { "fp_id": 32, "Topics": "Effectiveness of Direct and indirect taxation in local buisness", "Name 1": 5196550, "Name 2": null, "Name 3": null, "Name 4": null, "Name 5": null },
-            { "fp_id": 33, "Topics": "Role of Artificial Intelligence in Modern Accounting Systems", "Name 1": 5170186, "Name 2": null, "Name 3": null, "Name 4": null, "Name 5": null },
-            { "fp_id": 34, "Topics": "Working Capital Management Practices in Retail Outlets", "Name 1": 5136502, "Name 2": null, "Name 3": null, "Name 4": null, "Name 5": null }
-        ];
+        // --- UI ELEMENTS ---
+        const loadingEl = document.getElementById('loading');
+        const errorEl = document.getElementById('error');
+        const projectDetailsEl = document.getElementById('project-details');
+        const errorTitleEl = document.getElementById('error-title');
+        const errorMessageEl = document.getElementById('error-message');
 
         // --- APPLICATION LOGIC ---
 
-        window.onload = function() {
+        function showError(title, message) {
+            loadingEl.style.display = 'none';
+            projectDetailsEl.style.display = 'none';
+            errorTitleEl.textContent = title;
+            errorMessageEl.textContent = message;
+            errorEl.style.display = 'block';
+        }
+
+        async function fetchStudentData(studentId) {
+            // Fetch student details from the 'Students' table
+            // Assumes table has columns: StudentID, Name, Type
+            const { data: student, error } = await supabase
+                .from('Students')
+                .select('*')
+                .eq('StudentID', studentId)
+                .single(); // .single() expects exactly one row
+
+            if (error || !student) {
+                console.error('Error fetching student:', error);
+                throw new Error('Student not found.');
+            }
+            return student;
+        }
+
+        async function fetchProjectData(studentId) {
+            // Find the project assignment for the student
+            // Assumes 'ProjectAssignments' has: StudentID, TopicID
+            const { data: assignment, error: assignmentError } = await supabase
+                .from('ProjectAssignments')
+                .select('TopicID')
+                .eq('StudentID', studentId)
+                .single();
+
+            if (assignmentError || !assignment) {
+                // Not an error, student might just not have a project
+                return { topic: null, team: [] };
+            }
+            
+            const topicId = assignment.TopicID;
+
+            // Fetch the topic details using the TopicID
+            // Assumes 'Topics' has: TopicID, TopicName
+            const { data: topic, error: topicError } = await supabase
+                .from('Topics')
+                .select('*')
+                .eq('TopicID', topicId)
+                .single();
+            
+            if (topicError) {
+                 console.error('Error fetching topic:', topicError);
+                 throw new Error('Could not retrieve project details.');
+            }
+
+            // Fetch all students who are assigned to this topic to get team members
+            const { data: teamAssignments, error: teamError } = await supabase
+                .from('ProjectAssignments')
+                .select('StudentID')
+                .eq('TopicID', topicId);
+            
+            if (teamError) {
+                 console.error('Error fetching team:', teamError);
+                 throw new Error('Could not retrieve team members.');
+            }
+            
+            const teamMemberIds = teamAssignments.map(a => a.StudentID);
+
+            // Fetch the names of the team members
+            const { data: teamMembers, error: membersError } = await supabase
+                .from('Students')
+                .select('StudentID, Name')
+                .in('StudentID', teamMemberIds);
+            
+             if (membersError) {
+                 console.error('Error fetching member details:', membersError);
+                 throw new Error('Could not retrieve team member details.');
+            }
+
+            return { topic, team: teamMembers };
+        }
+
+        window.onload = async function() {
             const urlParams = new URLSearchParams(window.location.search);
             const studentIdParam = urlParams.get('id');
 
-            const loadingEl = document.getElementById('loading');
-            const errorEl = document.getElementById('error');
-            const projectDetailsEl = document.getElementById('project-details');
-
             if (!studentIdParam) {
-                loadingEl.style.display = 'none';
-                errorEl.querySelector('h2').textContent = "No Student ID Provided";
-                errorEl.querySelector('p').textContent = "Please provide a student ID in the URL to see project details.";
-                errorEl.style.display = 'block';
+                showError("No Student ID Provided", "Please provide a student ID in the URL to see project details.");
                 return;
             }
 
-            const studentId = parseInt(studentIdParam, 10);
-            const student = studentsData.find(s => s.ID === studentId);
+            try {
+                const studentId = parseInt(studentIdParam, 10);
+                
+                // Fetch all data concurrently
+                const [student, projectData] = await Promise.all([
+                    fetchStudentData(studentId),
+                    fetchProjectData(studentId)
+                ]);
 
-            if (!student) {
+                // Populate UI with fetched data
+                document.getElementById('student-name').textContent = student.Name;
+                document.getElementById('student-id').textContent = `Student ID: ${student.StudentID}`;
+                const nameParts = student.Name.split(' ');
+                const initials = nameParts.length > 1 
+                    ? `${nameParts[0][0]}${nameParts[nameParts.length - 1][0]}` 
+                    : nameParts[0][0];
+                document.getElementById('student-initials').textContent = initials.toUpperCase();
+
+                if (projectData.topic && student.Type) {
+                    document.getElementById('project-title').textContent = projectData.topic.TopicName;
+                    const projectTypeEl = document.getElementById('project-type');
+                    projectTypeEl.textContent = student.Type;
+
+                    if (student.Type.toLowerCase() === 'group') {
+                        projectTypeEl.classList.add('bg-green-800', 'text-green-200');
+                        displayTeamMembers(studentId, projectData.team);
+                    } else {
+                        projectTypeEl.classList.add('bg-blue-800', 'text-blue-200');
+                        document.getElementById('team-members-section').style.display = 'none';
+                    }
+                } else {
+                    document.getElementById('project-title').textContent = 'No project has been assigned to this student yet.';
+                    document.getElementById('project-type-container').style.display = 'none';
+                }
+
+                // Show the content
                 loadingEl.style.display = 'none';
-                errorEl.style.display = 'block';
-                return;
+                projectDetailsEl.style.display = 'block';
+
+            } catch (error) {
+                console.error("Initialization failed:", error);
+                showError("Error Loading Data", error.message);
             }
-
-            // Student found, populate basic info
-            document.getElementById('student-name').textContent = student.Name;
-            document.getElementById('student-id').textContent = `Student ID: ${student.ID}`;
-            const nameParts = student.Name.split(' ');
-            const initials = nameParts.length > 1 
-                ? `${nameParts[0][0]}${nameParts[nameParts.length - 1][0]}` 
-                : nameParts[0][0];
-            document.getElementById('student-initials').textContent = initials.toUpperCase();
-
-
-            if (student.Topic && student.Type) {
-                 document.getElementById('project-title').textContent = student.Topic;
-                 const projectTypeEl = document.getElementById('project-type');
-                 projectTypeEl.textContent = student.Type;
-
-                 if (student.Type.toLowerCase() === 'group') {
-                     projectTypeEl.classList.add('bg-green-800', 'text-green-200');
-                     displayTeamMembers(studentId);
-                 } else {
-                     projectTypeEl.classList.add('bg-blue-800', 'text-blue-200');
-                     document.getElementById('team-members-section').style.display = 'none';
-                 }
-            } else {
-                document.getElementById('project-title').textContent = 'No project has been assigned to this student yet.';
-                document.getElementById('project-type-container').style.display = 'none';
-            }
-           
-
-            // Show the content
-            loadingEl.style.display = 'none';
-            projectDetailsEl.style.display = 'block';
         };
 
-        function displayTeamMembers(currentStudentId) {
-            // Find which topic this student belongs to
-            let topicGroup = null;
-            for (const topic of topicsData) {
-                const studentIdsInTopic = [topic['Name 1'], topic['Name 2'], topic['Name 3'], topic['Name 4'], topic['Name 5']];
-                if (studentIdsInTopic.includes(currentStudentId)) {
-                    topicGroup = topic;
-                    break;
-                }
-            }
-            
-            if (!topicGroup) return;
-
-            const teamMemberIds = [topicGroup['Name 1'], topicGroup['Name 2'], topicGroup['Name 3'], topicGroup['Name 4'], topicGroup['Name 5']]
-                .filter(id => id != null && id !== currentStudentId); // Filter out nulls and the current student
-
+        function displayTeamMembers(currentStudentId, teamMembers) {
             const teamMembersList = document.getElementById('team-members-list');
             teamMembersList.innerHTML = ''; // Clear previous entries
+            
+            const otherMembers = teamMembers.filter(m => m.StudentID !== currentStudentId);
 
-            if (teamMemberIds.length === 0) {
-                 teamMembersList.innerHTML = `<li class="text-gray-400">No other team members found for this project.</li>`;
+            if (otherMembers.length === 0) {
+                 teamMembersList.innerHTML = `<li class="text-gray-400">You are the only member on this project.</li>`;
             } else {
-                teamMemberIds.forEach(id => {
-                    const member = studentsData.find(s => s.ID === id);
-                    if (member) {
-                        const li = document.createElement('li');
-                        li.className = 'flex items-center justify-between bg-gray-800/70 p-3 rounded-lg';
-                        li.innerHTML = `
-                            <div>
-                                <p class="font-medium text-gray-200">${member.Name}</p>
-                                <p class="text-xs text-gray-500">ID: ${member.ID}</p>
-                            </div>
-                            <span class="text-xs font-semibold text-gray-400">Team Member</span>
-                        `;
-                        teamMembersList.appendChild(li);
-                    }
+                otherMembers.forEach(member => {
+                    const li = document.createElement('li');
+                    li.className = 'flex items-center justify-between bg-gray-800/70 p-3 rounded-lg';
+                    li.innerHTML = `
+                        <div>
+                            <p class="font-medium text-gray-200">${member.Name}</p>
+                            <p class="text-xs text-gray-500">ID: ${member.StudentID}</p>
+                        </div>
+                        <span class="text-xs font-semibold text-gray-400">Team Member</span>
+                    `;
+                    teamMembersList.appendChild(li);
                 });
             }
             document.getElementById('team-members-section').style.display = 'block';
         }
-
     </script>
 </body>
 </html>
