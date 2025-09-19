@@ -210,21 +210,31 @@
             const uploadUI = document.getElementById('upload-ui');
             uploadSection.style.display = 'block';
 
-            // FIXED: Explicitly define the foreign key relationship for the query
-            const { data, error } = await supabaseClient
+            // == START: ROBUST 2-STEP FETCH LOGIC ==
+            // Step 1: Check for an existing file submission.
+            const { data: file, error: fileError } = await supabaseClient
                 .from('project_files')
-                .select('*, uploader_student_id:students(name)')
+                .select('file_path, uploader_student_id, uploaded_at')
                 .eq('topic_id', topicId)
                 .single();
 
-            if (data) { // File already submitted
-                const publicURL = supabaseClient.storage.from('FP').getPublicUrl(data.file_path);
+            if (file) { // File already submitted
+                // Step 2: Get the name of the student who uploaded it.
+                const { data: uploader, error: uploaderError } = await supabaseClient
+                    .from('students')
+                    .select('name')
+                    .eq('studentid', file.uploader_student_id)
+                    .single();
+                
+                const uploaderName = uploader ? uploader.name : 'An unknown member';
+                const publicURL = supabaseClient.storage.from('FP').getPublicUrl(file.file_path);
+
                 uploadUI.innerHTML = `
                     <p style="color: var(--text-secondary);">Your group has already submitted the project file.</p>
-                    <p class="mt-2 text-sm" style="color: var(--text-secondary);">Submitted by: <strong>${data.uploader_student_id.name}</strong> on ${new Date(data.uploaded_at).toLocaleDateString()}</p>
+                    <p class="mt-2 text-sm" style="color: var(--text-secondary);">Submitted by: <strong>${uploaderName}</strong> on ${new Date(file.uploaded_at).toLocaleDateString()}</p>
                     <a href="${publicURL.data.publicUrl}" target="_blank" class="upload-btn mt-4">Download Submitted File</a>
                 `;
-            } else { // Show upload form
+            } else { // No file found, show the upload form
                 uploadUI.innerHTML = `
                     <p style="color: var(--text-secondary);">Your group has not submitted the project file yet. Any member can upload it once.</p>
                     <input type="file" id="file-input" accept=".pdf,.doc,.docx,.zip" style="display: none;">
@@ -235,6 +245,7 @@
                 `;
                 setupUploadListeners(topicId, currentStudentId);
             }
+            // == END: ROBUST 2-STEP FETCH LOGIC ==
         }
 
         function setupUploadListeners(topicId, currentStudentId) {
