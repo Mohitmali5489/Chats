@@ -8,7 +8,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   
   <script>
-    // This script runs early to prevent a "flash of the wrong theme."
     (function() {
       const savedTheme = localStorage.getItem('theme') || 'light';
       document.documentElement.setAttribute('data-theme', savedTheme);
@@ -16,12 +15,12 @@
   </script>
 
   <style>
-    /* 🎨 --- CORE THEME & VARIABLES --- 🎨 */
     :root {
       --primary-accent: #b84fff;
       --primary-gradient: linear-gradient(90deg, #b84fff, #8f00ff);
-      --danger-color: #e53935;
-      --success-color: #43a047;
+      --danger-color: #ef4444;
+      --success-color: #22c55e;
+      --warning-color: #f59e0b;
       --font-family: 'Inter', sans-serif;
       --bg-gradient-light: linear-gradient(180deg, #f5f5f7, #e9e9ed);
       --card-bg-light: rgba(255, 255, 255, 0.9);
@@ -59,7 +58,6 @@
       --input-bg: var(--input-bg-dark);
     }
 
-    /* 🧱 --- BASE & LAYOUT STYLES --- 🧱 */
     * { box-sizing: border-box; margin: 0; padding: 0; }
     
     body {
@@ -68,13 +66,12 @@
       color: var(--text-primary);
       display: flex;
       justify-content: center;
-      align-items: center;
+      align-items: flex-start; /* Align to top for scroll */
       min-height: 100vh;
       padding: 20px;
       transition: background 0.4s ease, color 0.4s ease;
     }
 
-    /* ✨ --- APPEAL CARD & FORM --- ✨ */
     .appeal-card {
       background: var(--card-bg);
       backdrop-filter: blur(10px);
@@ -87,146 +84,69 @@
       max-width: 520px;
       animation: fadeIn 0.5s ease;
     }
-
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(10px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-
-    .card-header {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      margin-bottom: 25px;
-      border-bottom: 1px solid var(--border-color);
-      padding-bottom: 20px;
-    }
     
-    .back-button {
-        background: var(--input-bg);
-        border: 1px solid var(--border-color);
-        color: var(--text-primary);
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        transition: all 0.2s ease;
-    }
-
-    .back-button:hover {
-        transform: scale(1.1);
-        border-color: var(--primary-accent);
-    }
-    
+    .card-header { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; border-bottom: 1px solid var(--border-color); padding-bottom: 20px; }
+    .back-button { background: var(--input-bg); border: 1px solid var(--border-color); color: var(--text-primary); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease; }
+    .back-button:hover { transform: scale(1.1); border-color: var(--primary-accent); }
     .card-header h2 { font-size: 22px; font-weight: 600; }
     .input-group { margin-bottom: 20px; }
     .input-group label { display: block; font-weight: 500; margin-bottom: 8px; font-size: 14px; color: var(--text-secondary); }
 
-    .input-field, .textarea-field {
-      width: 100%;
-      padding: 14px;
-      background-color: var(--input-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
-      color: var(--text-primary);
-      font-family: var(--font-family);
-      font-size: 16px;
-      transition: border-color 0.3s, box-shadow 0.3s;
-    }
-
-    .input-field:focus, .textarea-field:focus {
-      outline: none;
-      border-color: var(--primary-accent);
-      box-shadow: 0 0 0 3px rgba(184, 79, 255, 0.2);
-    }
-    
+    .input-field, .textarea-field { width: 100%; padding: 14px; background-color: var(--input-bg); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-primary); font-family: var(--font-family); font-size: 16px; transition: border-color 0.3s, box-shadow 0.3s; }
+    .input-field:focus, .textarea-field:focus { outline: none; border-color: var(--primary-accent); box-shadow: 0 0 0 3px rgba(184, 79, 255, 0.2); }
     .textarea-field { resize: vertical; min-height: 120px; }
 
-    /* --- NEW LECTURE LIST STYLES --- */
-    #lecturesForAppeal {
-        margin-top: -10px;
-        margin-bottom: 20px;
-        padding: 15px;
-        border-radius: 8px;
-        background-color: var(--input-bg);
-        border: 1px solid var(--border-color);
-        max-height: 200px;
-        overflow-y: auto;
-    }
-    .lecture-item {
-        display: flex;
-        align-items: center;
-        padding: 10px 5px;
-        border-bottom: 1px solid var(--border-color);
-    }
-    .lecture-item:last-child {
-        border-bottom: none;
-    }
-    .lecture-item input[type="checkbox"] {
-        width: 18px;
-        height: 18px;
-        accent-color: var(--primary-accent);
-        margin-right: 12px;
-    }
-    .lecture-details {
-        display: flex;
-        justify-content: space-between;
-        width: 100%;
-        align-items: center;
-    }
+    #lecturesForAppeal { margin-top: -10px; margin-bottom: 20px; padding: 15px; border-radius: 8px; background-color: var(--input-bg); border: 1px solid var(--border-color); max-height: 200px; overflow-y: auto; }
+    .lecture-item { display: flex; align-items: center; padding: 10px 5px; border-bottom: 1px solid var(--border-color); }
+    .lecture-item:last-child { border-bottom: none; }
+    .lecture-item input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--primary-accent); margin-right: 12px; flex-shrink: 0; }
+    .lecture-details { display: flex; justify-content: space-between; width: 100%; align-items: center; }
     .lecture-details p { font-weight: 500; }
     .lecture-details span { font-size: 14px; color: var(--text-secondary); }
-    .loader {
-        text-align: center;
-        padding: 20px;
-        color: var(--text-secondary);
-    }
+    .loader { text-align: center; padding: 20px; color: var(--text-secondary); }
 
-    .submit-button {
-      width: 100%;
-      padding: 14px;
-      background: var(--primary-gradient);
-      color: white;
-      font-weight: 600;
-      font-size: 16px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      margin-top: 10px;
-      transition: transform 0.2s, box-shadow 0.3s;
-      opacity: 0.5;
-      pointer-events: none; /* Initially disabled */
-    }
-    .submit-button:not(:disabled) {
-        opacity: 1;
-        pointer-events: auto;
-    }
-    .submit-button:hover:not(:disabled) {
-      box-shadow: 0 4px 15px rgba(143, 0, 255, 0.3);
-      transform: translateY(-2px);
-    }
+    .submit-button { width: 100%; padding: 14px; background: var(--primary-gradient); color: white; font-weight: 600; font-size: 16px; border: none; border-radius: 8px; cursor: pointer; margin-top: 10px; transition: all 0.3s; opacity: 0.5; pointer-events: none; }
+    .submit-button:not(:disabled) { opacity: 1; pointer-events: auto; }
+    .submit-button:hover:not(:disabled) { box-shadow: 0 4px 15px rgba(143, 0, 255, 0.3); transform: translateY(-2px); }
     
     .status-message { text-align: center; font-size: 14px; margin-top: 20px; height: 20px; }
     .status-message.success { color: var(--success-color); }
     .status-message.error { color: var(--danger-color); }
+
+    /* --- NEW APPEAL HISTORY STYLES --- */
+    .divider { height: 1px; background-color: var(--border-color); margin: 30px 0; }
+    .appeals-history h3 { font-size: 18px; font-weight: 600; margin-bottom: 15px; }
+    #appeals-history-list { display: flex; flex-direction: column; gap: 12px; }
+    .appeal-item { display: flex; justify-content: space-between; align-items: center; background: var(--input-bg); padding: 12px 15px; border-radius: 8px; border-left: 4px solid; }
+    .appeal-info p { font-weight: 500; font-size: 15px; }
+    .appeal-info span { font-size: 13px; color: var(--text-secondary); }
+    .status-badge { padding: 4px 10px; font-size: 12px; font-weight: 600; border-radius: 12px; text-transform: capitalize; }
+    
+    .status-pending { border-color: var(--warning-color); background-color: rgba(245, 158, 11, 0.1); color: var(--warning-color); }
+    .status-approved { border-color: var(--success-color); background-color: rgba(34, 197, 94, 0.1); color: var(--success-color); }
+    .status-rejected { border-color: var(--danger-color); background-color: rgba(239, 68, 68, 0.1); color: var(--danger-color); }
+
+    /* --- MOBILE RESPONSIVENESS --- */
+    @media (max-width: 480px) {
+        body { padding: 10px; }
+        .appeal-card { padding: 25px 20px; }
+        .card-header h2 { font-size: 20px; }
+    }
   </style>
 </head>
 <body>
 
   <div class="appeal-card">
-    <div class="card-header">
+    <header class="card-header">
        <button class="back-button" onclick="history.back()" aria-label="Go Back">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
               <line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline>
           </svg>
        </button>
        <h2>Attendance Appeal</h2>
-    </div>
+    </header>
     
-    <form id="appealForm" onsubmit="submitAppeal(event)">
+    <form id="appealForm">
       <div class="input-group">
         <label for="absence-date">Select Date of Absence</label>
         <input type="date" id="absence-date" class="input-field" required />
@@ -248,40 +168,50 @@
     </form>
     
     <div id="statusMessage" class="status-message"></div>
+
+    <div class="divider"></div>
+    <section class="appeals-history">
+        <h3>Your Recent Appeals</h3>
+        <div id="appeals-history-list">
+            <div class="loader">Loading appeal history...</div>
+        </div>
+    </section>
   </div>
 
 <script type="module">
   import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
   
-  // --- IMPORTANT: Use your actual Supabase credentials from the dashboard page ---
   const SUPABASE_URL = 'https://pwgdubtbvqnmivtupbvx.supabase.co';
   const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB3Z2R1YnRidnFubWl2dHVwYnZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUwOTUzMTAsImV4cCI6MjA3MDY3MTMxMH0.kCn6JMv0kTQrkoJ7OmaxCbwZNzewRNtuOg-35nYXYXg';
   const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
+  // --- UI Elements ---
   const datePicker = document.getElementById('absence-date');
   const lecturesContainer = document.getElementById('lecturesForAppeal');
   const submitBtn = document.getElementById('submitBtn');
+  const appealForm = document.getElementById('appealForm');
+  const historyList = document.getElementById('appeals-history-list');
 
-  // Function to fetch lectures for a given date
+  // --- Helper Functions ---
+  const getUrlParam = (param) => new URLSearchParams(window.location.search).get(param);
+  const formatDateForSupabase = (dateStr) => {
+      const [year, month, day] = dateStr.split('-');
+      return `${day}/${month}/${year}`;
+  };
+
+  // --- Main Functions ---
   async function fetchLecturesForDate() {
     const selectedDate = datePicker.value;
-    const urlParams = new URLSearchParams(window.location.search);
-    const studentId = urlParams.get('id');
-
+    const studentId = getUrlParam('id');
     if (!selectedDate || !studentId) return;
 
     lecturesContainer.classList.remove('hidden');
     lecturesContainer.innerHTML = `<div class="loader">Fetching lectures...</div>`;
     submitBtn.disabled = true;
 
-    // Format date from YYYY-MM-DD to DD/MM/YYYY
-    const [year, month, day] = selectedDate.split('-');
-    const formattedDate = `${day}/${month}/${year}`;
-
     const { data: lectures, error } = await supabase
-      .from('sybaf_lectures')
-      .select('NO, LECTURE, TIME, attendees')
-      .eq('DATE', formattedDate);
+      .from('sybaf_lectures').select('NO, LECTURE, TIME, attendees')
+      .eq('DATE', formatDateForSupabase(selectedDate));
 
     if (error) {
       console.error("Error fetching lectures:", error);
@@ -292,10 +222,10 @@
     const absentLectures = lectures.filter(lec => !lec.attendees || !lec.attendees.includes(studentId));
     
     if (absentLectures.length === 0) {
-      lecturesContainer.innerHTML = `<div class="loader">You were not marked absent for any lectures on this date.</div>`;
+      lecturesContainer.innerHTML = `<div class="loader">You have no absent lectures on this date.</div>`;
     } else {
       lecturesContainer.innerHTML = `
-        <label class="input-group-label" style="padding: 0 5px 10px; display:block;">Select lecture(s) to appeal:</label>
+        <label style="padding: 0 5px 10px; display:block;">Select lecture(s) to appeal:</label>
         ${absentLectures.map(lec => `
           <div class="lecture-item">
             <input type="checkbox" id="lec-${lec.NO}" name="selectedLectures" value="${lec.NO}">
@@ -303,21 +233,17 @@
               <p>${lec.LECTURE}</p>
               <span>${lec.TIME}</span>
             </label>
-          </div>
-        `).join('')}
+          </div>`).join('')}
       `;
     }
   }
   
-  // Handle form submission
   async function submitAppeal(event) {
     event.preventDefault();
     const statusDiv = document.getElementById('statusMessage');
-    const urlParams = new URLSearchParams(window.location.search);
+    const studentId = getUrlParam('id');
+    const studentName = getUrlParam('name') || 'Student';
     
-    // --- Data Collection ---
-    const studentId = urlParams.get('id');
-    const studentName = urlParams.get('name') || 'Student'; // Pass name in URL from dashboard
     const reason = document.getElementById('reason').value;
     const proofFile = document.getElementById('proof').files[0];
     const selectedCheckboxes = document.querySelectorAll('input[name="selectedLectures"]:checked');
@@ -334,64 +260,84 @@
 
     try {
         let proof_url = null;
-        // 1. Upload file if it exists
         if (proofFile) {
             const filePath = `public/${studentId}-${Date.now()}-${proofFile.name}`;
-            const { data: uploadData, error: uploadError } = await supabase.storage
-                .from('appeals') // Your bucket name
-                .upload(filePath, proofFile);
-            
+            const { error: uploadError } = await supabase.storage.from('appeals').upload(filePath, proofFile);
             if (uploadError) throw uploadError;
-
-            // 2. Get public URL of the uploaded file
             const { data: urlData } = supabase.storage.from('appeals').getPublicUrl(filePath);
             proof_url = urlData.publicUrl;
         }
 
-        // 3. Prepare appeal records for each selected lecture
         const appealsToInsert = Array.from(selectedCheckboxes).map(checkbox => {
             const lectureLabel = document.querySelector(`label[for="${checkbox.id}"] p`).textContent;
-            return {
-                student_id: parseInt(studentId),
-                student_name: studentName,
-                lecture_id: parseInt(checkbox.value),
-                lecture_name: lectureLabel,
-                lecture_date: datePicker.value, // Store as YYYY-MM-DD
-                reason: reason,
-                proof_url: proof_url,
-                status: 'pending' // Default status
-            };
+            return { student_id: parseInt(studentId), student_name: studentName, lecture_id: parseInt(checkbox.value), lecture_name: lectureLabel, lecture_date: datePicker.value, reason: reason, proof_url: proof_url, status: 'pending' };
         });
 
-        // 4. Insert all appeals into the database
         const { error: insertError } = await supabase.from('appeals').insert(appealsToInsert);
         if (insertError) throw insertError;
 
         statusDiv.textContent = "Appeal submitted successfully!";
         statusDiv.className = 'status-message success';
-        document.getElementById('appealForm').reset();
+        appealForm.reset();
         lecturesContainer.classList.add('hidden');
+        await fetchAndDisplayAppeals(); // Refresh the history list
 
     } catch(error) {
         console.error("Submission Error:", error);
         statusDiv.textContent = `Error: ${error.message}`;
         statusDiv.className = 'status-message error';
     } finally {
-       // Re-enable button after a short delay
-       setTimeout(() => { submitBtn.disabled = false; }, 2000);
+       setTimeout(() => { submitBtn.disabled = false; statusDiv.textContent = ""; }, 4000);
     }
   }
 
-  // Event Listeners
+  async function fetchAndDisplayAppeals() {
+      const studentId = getUrlParam('id');
+      if (!studentId) {
+          historyList.innerHTML = `<div class="loader" style="color:var(--danger-color);">Student ID not found.</div>`;
+          return;
+      }
+      
+      const { data: appeals, error } = await supabase
+          .from('appeals')
+          .select('lecture_name, lecture_date, status')
+          .eq('student_id', studentId)
+          .order('created_at', { ascending: false })
+          .limit(5);
+
+      if (error) {
+          console.error("Error fetching appeal history:", error);
+          historyList.innerHTML = `<div class="loader" style="color:var(--danger-color);">Could not load history.</div>`;
+          return;
+      }
+
+      if (appeals.length === 0) {
+          historyList.innerHTML = `<div class="loader">You have no past appeals.</div>`;
+          return;
+      }
+
+      historyList.innerHTML = appeals.map(appeal => `
+          <div class="appeal-item status-${appeal.status}">
+              <div class="appeal-info">
+                  <p>${appeal.lecture_name}</p>
+                  <span>${new Date(appeal.lecture_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+              </div>
+              <span class="status-badge status-${appeal.status}">${appeal.status}</span>
+          </div>
+      `).join('');
+  }
+
+  // --- Event Listeners ---
   document.addEventListener("DOMContentLoaded", () => {
     const today = new Date().toISOString().split('T')[0];
     datePicker.value = today;
-    fetchLecturesForDate(); // Fetch lectures for today's date on load
     
-    // Add event listener to the form itself for submission
-    document.getElementById('appealForm').addEventListener('submit', submitAppeal);
+    // Initial data fetching
+    fetchLecturesForDate();
+    fetchAndDisplayAppeals();
 
-    // Enable/disable submit button based on checkbox selection
+    appealForm.addEventListener('submit', submitAppeal);
+
     lecturesContainer.addEventListener('change', () => {
         const anyChecked = document.querySelector('input[name="selectedLectures"]:checked');
         submitBtn.disabled = !anyChecked;
