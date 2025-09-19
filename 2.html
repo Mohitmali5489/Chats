@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Project Details - Supabase</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <title>Student Project Details - BAFs App</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <script>
@@ -55,21 +54,203 @@
             --border-color: var(--border-color-dark);
             --shadow: var(--shadow-dark);
         }
-
+        
+        /* 🧱 --- Base & Layout Styles --- 🧱 */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
         body {
             font-family: var(--font-family);
             background: var(--bg-gradient);
             color: var(--text-primary);
             min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem 1rem;
         }
 
+        #app-container {
+            width: 100%;
+            max-width: 42rem; /* 672px */
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        /* 🔝 --- Header --- 🔝 */
+        header {
+            text-align: center;
+        }
+        .header-title-group {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+        }
+        header h1 {
+            font-size: 1.875rem; /* 30px */
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        header p {
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+
+        /* 🔄 --- Loading State --- 🔄 */
+        #loading {
+            text-align: center;
+            padding: 2rem;
+        }
+        .loader {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .loader-dot {
+            width: 0.75rem;
+            height: 0.75rem;
+            background-color: var(--primary-accent);
+            border-radius: 50%;
+            animation: pulse 1.4s infinite ease-in-out both;
+        }
+        .loader-dot:nth-child(1) { animation-delay: -0.32s; }
+        .loader-dot:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes pulse {
+          0%, 80%, 100% { transform: scale(0); }
+          40% { transform: scale(1.0); }
+        }
+        #loading p {
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+        }
+
+        /* ❌ --- Error State --- ❌ */
+        #error {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow);
+            padding: 2rem;
+            border-radius: 1rem;
+            text-align: center;
+        }
+        #error-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #ef4444; /* red-500 */
+        }
+        #error-message {
+            margin-top: 0.5rem;
+            color: var(--text-secondary);
+        }
+
+        /* 📄 --- Main Card --- 📄 */
+        .main-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            border-radius: 1rem; /* 16px */
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+        .card-content {
+            padding: 1.5rem 2rem;
+        }
+        .student-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .student-initials {
+            width: 4rem; /* 64px */
+            height: 4rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            background: var(--primary-gradient);
+            flex-shrink: 0;
+        }
+        #student-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        #student-id {
+            font-size: 0.875rem; /* 14px */
+            color: var(--text-secondary);
+        }
+        
+        .project-details-grid {
+            display: grid;
+            gap: 1rem;
+        }
+        .project-detail-item h3 {
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--primary-accent);
+        }
+        #project-title {
+            font-size: 1.25rem; /* 20px */
+            line-height: 1.6;
+            color: var(--text-primary);
+        }
+        #project-type {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            border-radius: 9999px;
+        }
+
+        /* 👥 --- Team Members & File Upload Section --- 👥 */
+        .card-footer-section {
+            padding: 1.5rem 2rem;
+            border-top: 1px solid var(--border-color);
+            background: rgba(0,0,0,0.02);
+        }
+        [data-theme="dark"] .card-footer-section {
+             background: rgba(0,0,0,0.1);
+        }
+        .card-footer-section h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+        #team-members-list {
+            list-style: none;
+            display: grid;
+            gap: 0.75rem;
+        }
+        #team-members-list li {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        #team-members-list .member-id {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        /* 📤 --- Upload Button --- 📤 */
         .upload-btn {
             display: inline-block;
             background: var(--primary-gradient);
             color: white;
-            padding: 10px 20px;
+            padding: 0.625rem 1.25rem;
             border-radius: 8px;
             font-weight: 600;
+            text-decoration: none;
             text-align: center;
             border: none;
             cursor: pointer;
@@ -86,81 +267,98 @@
             transform: none;
             box-shadow: none;
         }
-        
         #file-chosen {
             color: var(--text-secondary);
             font-size: 0.9em;
-            margin-top: 8px;
+            margin-top: 0.75rem;
+        }
+        .upload-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+
+        /* 👣 --- Footer --- 👣 */
+        footer {
+            text-align: center;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
         }
     </style>
 </head>
-<body class="antialiased">
+<body>
 
-    <div id="app" class="min-h-screen p-4 sm:p-6 lg:p-8 flex flex-col items-center justify-center">
-
-        <header class="w-full max-w-2xl mx-auto mb-6 text-center">
-            <div class="flex items-center justify-center gap-3">
+    <div id="app-container">
+        <header>
+            <div class="header-title-group">
                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--primary-accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-                <h1 class="text-3xl font-bold" style="color: var(--text-primary);">Project Dashboard</h1>
+                <h1>Project Dashboard</h1>
             </div>
-            <p style="color: var(--text-secondary);" class="mt-1">Birla College of Arts, Science & Commerce (BAF)</p>
+            <p>Birla College of Arts, Science & Commerce (BAF)</p>
         </header>
 
-        <main id="main-content" class="w-full max-w-2xl mx-auto">
-            <div id="loading" class="text-center p-8">
-                <p class="text-lg mt-4" style="color: var(--text-secondary);">Fetching project details...</p>
+        <main id="main-content">
+            <div id="loading">
+                <div class="loader">
+                  <div class="loader-dot"></div>
+                  <div class="loader-dot"></div>
+                  <div class="loader-dot"></div>
+                </div>
+                <p>Fetching project details...</p>
             </div>
             
-            <div id="error" class="hidden text-center p-8 rounded-2xl" style="background: var(--card-bg); border: 1px solid var(--border-color); backdrop-filter: blur(10px); box-shadow: var(--shadow);">
-                <h2 id="error-title" class="text-2xl font-bold text-red-500"></h2>
-                <p id="error-message" class="mt-2" style="color: var(--text-secondary);"></p>
+            <div id="error" class="hidden">
+                <h2 id="error-title"></h2>
+                <p id="error-message"></p>
             </div>
 
             <div id="project-details" class="hidden">
-                <div style="background: var(--card-bg); backdrop-filter: blur(10px); border: 1px solid var(--border-color);" class="rounded-2xl shadow-2xl overflow-hidden">
-                    <div class="p-6 sm:p-8">
-                        <div class="flex items-center gap-4 mb-6">
-                            <div class="w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold text-white" id="student-initials" style="background: var(--primary-gradient);"></div>
+                <div class="main-card">
+                    <div class="card-content">
+                        <div class="student-info">
+                            <div class="student-initials" id="student-initials"></div>
                             <div>
-                                <h2 class="text-2xl sm:text-3xl font-bold" style="color: var(--text-primary);" id="student-name"></h2>
-                                <p class="text-sm" style="color: var(--text-secondary);" id="student-id"></p>
+                                <h2 id="student-name"></h2>
+                                <p id="student-id"></p>
                             </div>
                         </div>
 
-                        <div class="space-y-4">
-                             <div>
-                                <h3 class="text-sm font-semibold uppercase tracking-wider" style="color: var(--primary-accent);">Project Title</h3>
-                                <p class="text-xl leading-relaxed" style="color: var(--text-primary);" id="project-title">No project assigned.</p>
+                        <div class="project-details-grid">
+                            <div class="project-detail-item">
+                                <h3>Project Title</h3>
+                                <p id="project-title">No project assigned.</p>
                             </div>
-                             <div id="project-type-container">
-                                <h3 class="text-sm font-semibold uppercase tracking-wider" style="color: var(--primary-accent);">Project Type</h3>
-                                <span class="inline-block px-3 py-1 text-sm font-medium rounded-full" id="project-type"></span>
+                            <div id="project-type-container" class="project-detail-item">
+                                <h3>Project Type</h3>
+                                <span id="project-type"></span>
                             </div>
                         </div>
                     </div>
 
-                    <div id="team-members-section" class="hidden px-6 sm:px-8 py-6 border-t" style="background: rgba(0,0,0,0.1); border-color: var(--border-color);">
-                        <h3 class="text-lg font-semibold mb-4" style="color: var(--text-primary);">Team Members</h3>
-                        <ul id="team-members-list" class="space-y-3"></ul>
+                    <div id="team-members-section" class="card-footer-section hidden">
+                        <h3>Team Members</h3>
+                        <ul id="team-members-list"></ul>
                     </div>
                     
-                    <div id="file-upload-section" class="hidden p-6 sm:p-8 border-t" style="border-color: var(--border-color);">
-                         <h3 class="text-lg font-semibold mb-4" style="color: var(--text-primary);">Final Project Submission</h3>
-                         <div id="upload-ui">
-                             </div>
+                    <div id="file-upload-section" class="card-footer-section hidden">
+                          <h3>Final Project Submission</h3>
+                          <div id="upload-ui">
+                              </div>
                     </div>
                 </div>
             </div>
         </main>
         
-        <footer class="w-full max-w-2xl mx-auto mt-8 text-center text-sm" style="color: var(--text-secondary);">
-             <p>&copy; 2025 BAF Project Management. All Rights Reserved.</p>
+        <footer>
+            <p>&copy; 2025 BAF Project Management. All Rights Reserved.</p>
         </footer>
     </div>
 
     <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
         // --- SUPABASE CONFIGURATION ---
-        const { createClient } = supabase;
         const SUPABASE_URL = 'https://fuovcuzaxfkyqrridrgy.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ1b3ZjdXpheGZreXFycmlkcmd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU0NzIyMjAsImV4cCI6MjA2MTA0ODIyMH0._PkkfWXcn4j6cjBh-yLJjDevrmhuxKxVbcdQUSgCsSk';
         const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -178,28 +376,28 @@
             projectDetailsEl.style.display = 'none';
             errorTitleEl.textContent = title;
             errorMessageEl.textContent = message;
-            errorEl.style.display = 'block';
+            errorEl.classList.remove('hidden');
         }
 
         async function fetchStudentData(studentId) {
-            const { data: student, error } = await supabaseClient.from('students').select('*').eq('studentid', studentId).single();
-            if (error || !student) throw new Error('Student not found.');
+            const { data: student, error } = await supabaseClient.from('Students').select('*').eq('StudentID', studentId).single();
+            if (error || !student) throw new Error('Student not found. Please check the ID in the URL.');
             return student;
         }
 
         async function fetchProjectData(studentId) {
-            const { data: assignment, error } = await supabaseClient.from('projectassignments').select('topicid').eq('studentid', studentId).single();
+            const { data: assignment, error } = await supabaseClient.from('ProjectAssignments').select('TopicID').eq('StudentID', studentId).single();
             if (error || !assignment) return { topic: null, team: [] };
             
-            const topicId = assignment.topicid;
-            const { data: topic, error: topicError } = await supabaseClient.from('topics').select('*').eq('topicid', topicId).single();
+            const topicId = assignment.TopicID;
+            const { data: topic, error: topicError } = await supabaseClient.from('Topics').select('*').eq('TopicID', topicId).single();
             if (topicError) throw new Error('Could not retrieve project details.');
 
-            const { data: teamAssignments, error: teamError } = await supabaseClient.from('projectassignments').select('studentid').eq('topicid', topicId);
+            const { data: teamAssignments, error: teamError } = await supabaseClient.from('ProjectAssignments').select('StudentID').eq('TopicID', topicId);
             if (teamError) throw new Error('Could not retrieve team members.');
             
-            const teamMemberIds = teamAssignments.map(a => a.studentid);
-            const { data: teamMembers, error: membersError } = await supabaseClient.from('students').select('studentid, name').in('studentid', teamMemberIds);
+            const teamMemberIds = teamAssignments.map(a => a.StudentID);
+            const { data: teamMembers, error: membersError } = await supabaseClient.from('Students').select('StudentID, Name').in('StudentID', teamMemberIds);
             if (membersError) throw new Error('Could not retrieve team member details.');
 
             return { topic, team: teamMembers };
@@ -208,39 +406,29 @@
         async function fetchAndDisplayFileUploadStatus(topicId, currentStudentId) {
             const uploadSection = document.getElementById('file-upload-section');
             const uploadUI = document.getElementById('upload-ui');
-            uploadSection.style.display = 'block';
+            uploadSection.classList.remove('hidden');
 
-            // Step 1: Check for an existing file submission.
-            const { data: file, error: fileError } = await supabaseClient
-                .from('project_files')
-                .select('*') // Simplified the select for better caching compatibility
-                .eq('topic_id', topicId)
-                .single();
+            const { data: file, error } = await supabaseClient.from('project_files').select('*, Students(Name)').eq('topic_id', topicId).single();
 
-            if (file) { // File already submitted
-                // Step 2: Get the name of the student who uploaded it.
-                const { data: uploader, error: uploaderError } = await supabaseClient
-                    .from('students')
-                    .select('name')
-                    .eq('studentid', file.uploader_student_id)
-                    .single();
-                
-                const uploaderName = uploader ? uploader.name : 'An unknown member';
-                const publicURL = supabaseClient.storage.from('FP').getPublicUrl(file.file_path);
+            if (file) {
+                const uploaderName = file.Students ? file.Students.Name : 'An unknown member';
+                const { data: publicURL } = supabaseClient.storage.from('FP').getPublicUrl(file.file_path);
 
                 uploadUI.innerHTML = `
                     <p style="color: var(--text-secondary);">Your group has already submitted the project file.</p>
-                    <p class="mt-2 text-sm" style="color: var(--text-secondary);">Submitted by: <strong>${uploaderName}</strong> on ${new Date(file.uploaded_at).toLocaleDateString()}</p>
-                    <a href="${publicURL.data.publicUrl}" target="_blank" class="upload-btn mt-4">Download Submitted File</a>
+                    <p style="margin-top: 0.5rem; font-size: 0.875rem; color: var(--text-secondary);">Submitted by: <strong>${uploaderName}</strong> on ${new Date(file.uploaded_at).toLocaleDateString()}</p>
+                    <a href="${publicURL.publicUrl}" target="_blank" class="upload-btn" style="margin-top: 1rem;">Download Submitted File</a>
                 `;
-            } else { // No file found, show the upload form
+            } else {
                 uploadUI.innerHTML = `
                     <p style="color: var(--text-secondary);">Your group has not submitted the project file yet. Any member can upload it once.</p>
-                    <input type="file" id="file-input" accept=".pdf,.doc,.docx,.zip" style="display: none;">
-                    <button id="select-file-btn" class="upload-btn mt-4">Select File</button>
-                    <p id="file-chosen">No file chosen</p>
-                    <button id="upload-btn" class="upload-btn mt-2" disabled>Upload and Submit</button>
-                    <div id="upload-status" class="mt-2 text-sm"></div>
+                    <div class="upload-container" style="margin-top: 1rem;">
+                        <input type="file" id="file-input" accept=".pdf,.doc,.docx,.zip" style="display: none;">
+                        <button id="select-file-btn" class="upload-btn">Select File</button>
+                        <span id="file-chosen">No file chosen</span>
+                        <button id="upload-btn" class="upload-btn" disabled>Upload and Submit</button>
+                        <div id="upload-status" style="font-size: 0.875rem; margin-top: 0.5rem;"></div>
+                    </div>
                 `;
                 setupUploadListeners(topicId, currentStudentId);
             }
@@ -274,10 +462,9 @@
                 uploadStatusEl.textContent = '';
                 uploadStatusEl.style.color = 'var(--text-secondary)';
 
-                const filePath = `${topicId}-${file.name.replace(/\s/g, '_')}`;
+                const filePath = `${topicId}_${Date.now()}_${file.name.replace(/\s/g, '_')}`;
 
                 try {
-                    // Added { upsert: true } to overwrite if a file with the same name exists
                     const { error: uploadError } = await supabaseClient.storage.from('FP').upload(filePath, file, { upsert: true });
                     if (uploadError) throw uploadError;
 
@@ -289,13 +476,13 @@
                     if (dbError) throw dbError;
                     
                     uploadStatusEl.textContent = '✅ Success! File submitted.';
-                    uploadStatusEl.style.color = 'green';
-                    setTimeout(() => fetchAndDisplayFileUploadStatus(topicId, currentStudentId), 1500); // Refresh UI
+                    uploadStatusEl.style.color = '#22c55e'; // green-500
+                    setTimeout(() => fetchAndDisplayFileUploadStatus(topicId, currentStudentId), 1500);
 
                 } catch (error) {
                     console.error('Upload failed:', error);
                     uploadStatusEl.textContent = `❌ Error: ${error.message}`;
-                    uploadStatusEl.style.color = 'red';
+                    uploadStatusEl.style.color = '#ef4444'; // red-500
                     uploadBtn.disabled = false;
                     uploadBtn.textContent = 'Upload and Submit';
                 }
@@ -307,38 +494,45 @@
             const studentIdParam = urlParams.get('id');
 
             if (!studentIdParam) {
-                return showError("No Student ID Provided", "Please provide a student ID in the URL.");
+                return showError("No Student ID Provided", "Please provide a student ID in the URL to see project details. Example: ?id=5241836");
             }
 
             try {
                 const studentId = parseInt(studentIdParam, 10);
+                if (isNaN(studentId)) {
+                    return showError("Invalid Student ID", "The ID in the URL is not a valid number.");
+                }
+                
                 const [student, projectData] = await Promise.all([fetchStudentData(studentId), fetchProjectData(studentId)]);
 
-                document.getElementById('student-name').textContent = student.name;
-                document.getElementById('student-id').textContent = `Student ID: ${student.studentid}`;
-                const initials = (student.name.split(' ').map(n => n[0]).join('')).slice(0, 2);
+                document.getElementById('student-name').textContent = student.Name;
+                document.getElementById('student-id').textContent = `Student ID: ${student.StudentID}`;
+                const nameParts = student.Name.trim().split(' ');
+                const initials = nameParts.length > 1
+                    ? `${nameParts[0][0]}${nameParts[nameParts.length - 1][0]}`
+                    : nameParts[0].substring(0, 2);
                 document.getElementById('student-initials').textContent = initials.toUpperCase();
                 
                 if (projectData.topic) {
-                    document.getElementById('project-title').textContent = projectData.topic.topicname;
+                    document.getElementById('project-title').textContent = projectData.topic.TopicName;
                     const projectTypeEl = document.getElementById('project-type');
-                    projectTypeEl.textContent = student.type;
+                    projectTypeEl.textContent = student.Type;
 
-                    if (student.type.toLowerCase() === 'group') {
+                    if (student.Type && student.Type.toLowerCase() === 'group') {
                         projectTypeEl.style.cssText = 'background-color: rgba(34, 197, 94, 0.2); color: #22c55e;';
                         displayTeamMembers(studentId, projectData.team);
                     } else {
                         projectTypeEl.style.cssText = 'background-color: rgba(59, 130, 246, 0.2); color: #3b82f6;';
                     }
-                    // Fetch and display upload status after getting topic info
-                    fetchAndDisplayFileUploadStatus(projectData.topic.topicid, studentId);
+                    
+                    fetchAndDisplayFileUploadStatus(projectData.topic.TopicID, studentId);
                 } else {
                     document.getElementById('project-title').textContent = 'No project has been assigned to this student yet.';
                     document.getElementById('project-type-container').style.display = 'none';
                 }
 
                 loadingEl.style.display = 'none';
-                projectDetailsEl.style.display = 'block';
+                projectDetailsEl.classList.remove('hidden');
 
             } catch (error) {
                 console.error("Initialization failed:", error);
@@ -351,15 +545,18 @@
             const section = document.getElementById('team-members-section');
             teamMembersList.innerHTML = '';
             
-            const otherMembers = teamMembers.filter(m => m.studentid !== currentStudentId);
+            const otherMembers = teamMembers.filter(m => m.StudentID !== currentStudentId);
 
             if (otherMembers.length > 0) {
                  otherMembers.forEach(member => {
-                    const li = document.createElement('li');
-                    li.innerHTML = `<div class="flex items-center justify-between"><p>${member.name}</p><p class="text-xs" style="color: var(--text-secondary);">ID: ${member.studentid}</p></div>`;
-                    teamMembersList.appendChild(li);
-                });
-                 section.style.display = 'block';
+                     const li = document.createElement('li');
+                     li.innerHTML = `
+                        <span>${member.Name}</span>
+                        <span class="member-id">ID: ${member.StudentID}</span>
+                    `;
+                     teamMembersList.appendChild(li);
+                 });
+                 section.classList.remove('hidden');
             }
         }
     </script>
