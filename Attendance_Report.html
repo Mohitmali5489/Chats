@@ -52,8 +52,8 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <section class="bg-[var(--card-bg)] p-6 rounded-2xl theme-shadow border border-[var(--border-color)]">
                 <h2 class="text-lg font-semibold text-[var(--text-primary)] mb-4 flex items-center gap-2">
-                     <i data-lucide="award" class="w-5 h-5 text-[var(--icon-color)]"></i>
-                     Academic Score
+                      <i data-lucide="award" class="w-5 h-5 text-[var(--icon-color)]"></i>
+                      Academic Score
                 </h2>
                 <div id="blacklist-status-container" class="text-center mb-3">
                     <span class="px-3 py-1 text-sm font-semibold rounded-full bg-gray-200 text-gray-700">Checking status...</span>
@@ -106,12 +106,18 @@
                  <p class="text-[var(--text-secondary)] text-sm">Loading roles...</p>
              </div>
         </section>
-        <section>
-            <a id="viewQrButton" href="#" class="flex items-center justify-center w-full gap-2 py-3 px-4 bg-gradient-to-r from-[#b84fff] to-[#8f00ff] text-white font-semibold rounded-xl theme-shadow hover:opacity-90 transition-opacity">
+
+        <section class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <a id="viewQrButton" href="#" class="flex items-center justify-center w-full gap-3 py-3 px-4 bg-gradient-to-r from-[#b84fff] to-[#8f00ff] text-white font-semibold rounded-xl theme-shadow hover:opacity-90 transition-opacity">
                 <i data-lucide="user-square-2" class="w-6 h-6"></i>
                 <span>View My QR Code</span>
             </a>
+            <a id="appealButton" href="#" class="flex items-center justify-center w-full gap-3 py-3 px-4 bg-gradient-to-r from-slate-700 to-slate-800 text-white font-semibold rounded-xl theme-shadow hover:opacity-90 transition-opacity">
+                <i data-lucide="shield-question" class="w-6 h-6"></i>
+                <span>Appeal an Absence</span>
+            </a>
         </section>
+
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <section>
                 <h2 class="text-lg font-semibold text-[var(--text-primary)] mb-4 px-2 flex items-center gap-2">
@@ -174,7 +180,6 @@
 
     // --- Helper Functions ---
     async function fetchProfessorMap() {
-        // ... (rest of the functions are the same)
         const { data, error } = await supabase.from('sybaf_prof').select('subject, name');
         if (error) { console.error("Error fetching professor map:", error); return {}; }
         return data.reduce((map, item) => { map[item.subject] = item.name; return map; }, {});
@@ -304,9 +309,15 @@
             }
             
             document.getElementById('studentName').textContent = student.name;
+            
+            // --- DYNAMICALLY SET URLs FOR BUTTONS ---
             const qrDataUrl = `QR.html?id=${encodeURIComponent(studentId)}&name=${encodeURIComponent(student.name)}`;
             document.getElementById('qrLink').href = qrDataUrl;
             document.getElementById('viewQrButton').href = qrDataUrl;
+            
+            // NEW: Set URL for the appeal button
+            const appealUrl = `appeal.html?id=${encodeURIComponent(studentId)}&name=${encodeURIComponent(student.name)}&theme=${theme}`;
+            document.getElementById('appealButton').href = appealUrl;
             
             const allLectures = lecturesRes.data || [];
             const attendedLectures = allLectures.filter(lec => lec.attendees?.includes(studentId));
@@ -346,7 +357,6 @@
             console.error("An error occurred in the main function:", error);
             document.body.innerHTML = `<div class="h-screen flex items-center justify-center text-center p-4"><div class="bg-white p-8 rounded-xl shadow-lg"><h1 class="text-2xl font-bold text-red-600">Oops!</h1><p class="text-gray-600 mt-2">Something went wrong. Please try again later.</p></div></div>`;
         } finally {
-            // This robust function will now handle rendering the icons
             waitForLucideAndRenderIcons();
         }
     }
