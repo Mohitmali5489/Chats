@@ -98,7 +98,10 @@
         // --- SUPABASE CONFIGURATION ---
         const SUPABASE_URL = 'https://fuovcuzaxfkyqrridrgy.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ1b3ZjdXpheGZreXFycmlkcmd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU0NzIyMjAsImV4cCI6MjA2MTA0ODIyMH0._PkkfWXcn4j6cjBh-yLJjDevrmhuxKxVbcdQUSgCsSk';
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        
+        // **CORRECTED**: Initialize the client with a different variable name ('supabaseClient')
+        // to avoid conflict with the global 'supabase' object from the script tag.
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         // --- UI ELEMENTS ---
         const loadingEl = document.getElementById('loading');
@@ -118,13 +121,12 @@
         }
 
         async function fetchStudentData(studentId) {
-            // Fetch student details from the 'Students' table
-            // Assumes table has columns: StudentID, Name, Type
-            const { data: student, error } = await supabase
-                .from('Students')
+            // **CORRECTED**: Use the new 'supabaseClient' variable
+            const { data: student, error } = await supabaseClient
+                .from('students')
                 .select('*')
                 .eq('StudentID', studentId)
-                .single(); // .single() expects exactly one row
+                .single();
 
             if (error || !student) {
                 console.error('Error fetching student:', error);
@@ -134,25 +136,22 @@
         }
 
         async function fetchProjectData(studentId) {
-            // Find the project assignment for the student
-            // Assumes 'ProjectAssignments' has: StudentID, TopicID
-            const { data: assignment, error: assignmentError } = await supabase
-                .from('ProjectAssignments')
+            // **CORRECTED**: Use the new 'supabaseClient' variable
+            const { data: assignment, error: assignmentError } = await supabaseClient
+                .from('projectassignments')
                 .select('TopicID')
                 .eq('StudentID', studentId)
                 .single();
 
             if (assignmentError || !assignment) {
-                // Not an error, student might just not have a project
                 return { topic: null, team: [] };
             }
             
             const topicId = assignment.TopicID;
 
-            // Fetch the topic details using the TopicID
-            // Assumes 'Topics' has: TopicID, TopicName
-            const { data: topic, error: topicError } = await supabase
-                .from('Topics')
+            // **CORRECTED**: Use the new 'supabaseClient' variable
+            const { data: topic, error: topicError } = await supabaseClient
+                .from('topics')
                 .select('*')
                 .eq('TopicID', topicId)
                 .single();
@@ -162,9 +161,9 @@
                  throw new Error('Could not retrieve project details.');
             }
 
-            // Fetch all students who are assigned to this topic to get team members
-            const { data: teamAssignments, error: teamError } = await supabase
-                .from('ProjectAssignments')
+            // **CORRECTED**: Use the new 'supabaseClient' variable
+            const { data: teamAssignments, error: teamError } = await supabaseClient
+                .from('projectassignments')
                 .select('StudentID')
                 .eq('TopicID', topicId);
             
@@ -175,9 +174,9 @@
             
             const teamMemberIds = teamAssignments.map(a => a.StudentID);
 
-            // Fetch the names of the team members
-            const { data: teamMembers, error: membersError } = await supabase
-                .from('Students')
+            // **CORRECTED**: Use the new 'supabaseClient' variable
+            const { data: teamMembers, error: membersError } = await supabaseClient
+                .from('students')
                 .select('StudentID, Name')
                 .in('StudentID', teamMemberIds);
             
@@ -201,13 +200,11 @@
             try {
                 const studentId = parseInt(studentIdParam, 10);
                 
-                // Fetch all data concurrently
                 const [student, projectData] = await Promise.all([
                     fetchStudentData(studentId),
                     fetchProjectData(studentId)
                 ]);
 
-                // Populate UI with fetched data
                 document.getElementById('student-name').textContent = student.Name;
                 document.getElementById('student-id').textContent = `Student ID: ${student.StudentID}`;
                 const nameParts = student.Name.split(' ');
@@ -233,7 +230,6 @@
                     document.getElementById('project-type-container').style.display = 'none';
                 }
 
-                // Show the content
                 loadingEl.style.display = 'none';
                 projectDetailsEl.style.display = 'block';
 
@@ -245,7 +241,7 @@
 
         function displayTeamMembers(currentStudentId, teamMembers) {
             const teamMembersList = document.getElementById('team-members-list');
-            teamMembersList.innerHTML = ''; // Clear previous entries
+            teamMembersList.innerHTML = '';
             
             const otherMembers = teamMembers.filter(m => m.StudentID !== currentStudentId);
 
@@ -270,3 +266,4 @@
     </script>
 </body>
 </html>
+
