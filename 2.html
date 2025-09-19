@@ -210,11 +210,10 @@
             const uploadUI = document.getElementById('upload-ui');
             uploadSection.style.display = 'block';
 
-            // == START: ROBUST 2-STEP FETCH LOGIC ==
             // Step 1: Check for an existing file submission.
             const { data: file, error: fileError } = await supabaseClient
                 .from('project_files')
-                .select('file_path, uploader_student_id, uploaded_at')
+                .select('*') // Simplified the select for better caching compatibility
                 .eq('topic_id', topicId)
                 .single();
 
@@ -245,7 +244,6 @@
                 `;
                 setupUploadListeners(topicId, currentStudentId);
             }
-            // == END: ROBUST 2-STEP FETCH LOGIC ==
         }
 
         function setupUploadListeners(topicId, currentStudentId) {
@@ -279,7 +277,8 @@
                 const filePath = `${topicId}-${file.name.replace(/\s/g, '_')}`;
 
                 try {
-                    const { error: uploadError } = await supabaseClient.storage.from('FP').upload(filePath, file);
+                    // Added { upsert: true } to overwrite if a file with the same name exists
+                    const { error: uploadError } = await supabaseClient.storage.from('FP').upload(filePath, file, { upsert: true });
                     if (uploadError) throw uploadError;
 
                     const { error: dbError } = await supabaseClient.from('project_files').insert({
