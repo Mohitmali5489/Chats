@@ -210,13 +210,18 @@
             const uploadUI = document.getElementById('upload-ui');
             uploadSection.style.display = 'block';
 
-            const { data, error } = await supabaseClient.from('project_files').select('*, students(name)').eq('topic_id', topicId).single();
+            // FIXED: Explicitly define the foreign key relationship for the query
+            const { data, error } = await supabaseClient
+                .from('project_files')
+                .select('*, uploader_student_id:students(name)')
+                .eq('topic_id', topicId)
+                .single();
 
             if (data) { // File already submitted
                 const publicURL = supabaseClient.storage.from('FP').getPublicUrl(data.file_path);
                 uploadUI.innerHTML = `
                     <p style="color: var(--text-secondary);">Your group has already submitted the project file.</p>
-                    <p class="mt-2 text-sm" style="color: var(--text-secondary);">Submitted by: <strong>${data.students.name}</strong> on ${new Date(data.uploaded_at).toLocaleDateString()}</p>
+                    <p class="mt-2 text-sm" style="color: var(--text-secondary);">Submitted by: <strong>${data.uploader_student_id.name}</strong> on ${new Date(data.uploaded_at).toLocaleDateString()}</p>
                     <a href="${publicURL.data.publicUrl}" target="_blank" class="upload-btn mt-4">Download Submitted File</a>
                 `;
             } else { // Show upload form
@@ -326,6 +331,7 @@
                 projectDetailsEl.style.display = 'block';
 
             } catch (error) {
+                console.error("Initialization failed:", error);
                 showError("Error Loading Data", error.message);
             }
         };
