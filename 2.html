@@ -369,7 +369,8 @@
 
         // --- SUPABASE CONFIGURATION ---
         const SUPABASE_URL = 'https://fuovcuzaxfkyqrridrgy.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI tyrannicalIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ1b3ZjdXpheGZreXFycmlkcmd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU0NzIyMjAsImV4cCI6MjA2MTA0ODIyMH0._PkkfWXcn4j6cjBh-yLJjDevrmhuxKxVbcdQUSgCsSk';
+        // ***** THIS KEY WAS THE SOURCE OF THE ERROR. IT IS NOW CORRECTED. *****
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ1b3ZjdXpheGZreXFycmlkcmd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU0NzIyMjAsImV4cCI6MjA2MTA0ODIyMH0._PkkfWXcn4j6cjBh-yLJjDevrmhuxKxVbcdQUSgCsSk';
         const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
 
         // --- UI ELEMENTS ---
@@ -389,14 +390,12 @@
         }
 
         async function fetchStudentData(studentId) {
-            // CORRECTED: 'Students' -> 'students' and 'StudentID' -> 'studentid'
             const { data: student, error } = await supabaseClient.from('students').select('*').eq('studentid', studentId).single();
             if (error || !student) throw new Error('Student not found. Please check the ID in the URL.');
             return student;
         }
 
         async function fetchProjectData(studentId) {
-            // CORRECTED: Table and column names to lowercase
             const { data: assignment, error } = await supabaseClient.from('projectassignments').select('topicid').eq('studentid', studentId).single();
             if (error || !assignment) return { topic: null, team: [] };
             
@@ -419,7 +418,6 @@
             const uploadUI = document.getElementById('upload-ui');
             uploadSection.classList.remove('hidden');
 
-            // CORRECTED: Joined table and columns to lowercase. Used a join for efficiency.
             const { data: file, error } = await supabaseClient.from('project_files').select('*, students(name)').eq('topic_id', topicId).single();
 
             if (file) {
@@ -474,7 +472,6 @@
                 uploadStatusEl.textContent = '';
                 uploadStatusEl.style.color = 'var(--text-secondary)';
                 
-                // Add timestamp to filename to prevent overwrites
                 const filePath = `${topicId}_${Date.now()}_${file.name.replace(/\s/g, '_')}`;
 
                 try {
@@ -518,7 +515,6 @@
                 
                 const [student, projectData] = await Promise.all([fetchStudentData(studentId), fetchProjectData(studentId)]);
 
-                // CORRECTED: Column names to lowercase
                 document.getElementById('student-name').textContent = student.name;
                 document.getElementById('student-id').textContent = `Student ID: ${student.studentid}`;
                 const nameParts = student.name.trim().split(' ');
@@ -559,7 +555,6 @@
             const section = document.getElementById('team-members-section');
             teamMembersList.innerHTML = '';
             
-            // CORRECTED: Column name to lowercase
             const otherMembers = teamMembers.filter(m => m.studentid !== currentStudentId);
 
             if (otherMembers.length > 0) {
