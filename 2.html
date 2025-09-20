@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Project Details - BAFs App</title>
+    <title>Field Project Dashboard - BAFs App</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <script>
@@ -23,18 +23,18 @@
             --font-family: 'Inter', sans-serif;
             
             --bg-gradient-light: linear-gradient(180deg, #f5f5f7, #e9e9ed);
-            --card-bg-light: rgba(255, 255, 255, 0.7);
+            --card-bg-light: rgba(255, 255, 255, 0.8);
             --text-primary-light: #121212;
             --text-secondary-light: #5f5f5f;
             --border-color-light: #e0e0e0;
-            --shadow-light: 0 4px 20px rgba(0, 0, 0, 0.06);
+            --shadow-light: 0 4px_25px rgba(0, 0, 0, 0.07);
 
             --bg-gradient-dark: linear-gradient(180deg, #2a2a3d, #1e1e2e);
-            --card-bg-dark: rgba(42, 42, 61, 0.7);
+            --card-bg-dark: rgba(42, 42, 61, 0.8);
             --text-primary-dark: #f0f0f0;
             --text-secondary-dark: #a0a0b0;
             --border-color-dark: #4a4a6a;
-            --shadow-dark: 0 4px 20px rgba(0, 0, 0, 0.2);
+            --shadow-dark: 0 4px_25px rgba(0, 0, 0, 0.2);
         }
         
         [data-theme="light"] {
@@ -73,239 +73,90 @@
 
         #app-container {
             width: 100%;
-            max-width: 42rem; /* 672px */
+            max-width: 42rem;
             display: flex;
             flex-direction: column;
             gap: 1.5rem;
         }
 
         /* 🔝 --- Header --- 🔝 */
-        header {
-            text-align: center;
-        }
-        .header-title-group {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.75rem;
-        }
+        header { text-align: center; }
         header h1 {
-            font-size: 1.875rem; /* 30px */
+            font-size: 2.25rem; /* 36px */
             font-weight: 700;
-            color: var(--text-primary);
         }
-        header p {
-            color: var(--text-secondary);
-            margin-top: 0.25rem;
+        .gradient-text {
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
         }
-
-        /* 🔄 --- Loading State --- 🔄 */
-        #loading {
-            text-align: center;
-            padding: 2rem;
-        }
-        .loader {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-        }
-        .loader-dot {
-            width: 0.75rem;
-            height: 0.75rem;
-            background-color: var(--primary-accent);
-            border-radius: 50%;
-            animation: pulse 1.4s infinite ease-in-out both;
-        }
+        
+        /* 🔄 --- Loading & Animation --- 🔄 */
+        #loading { text-align: center; padding: 2rem; }
+        .loader { display: flex; justify-content: center; align-items: center; gap: 0.5rem; margin-bottom: 1rem; }
+        .loader-dot { width: 0.75rem; height: 0.75rem; background-color: var(--primary-accent); border-radius: 50%; animation: pulse 1.4s infinite ease-in-out both; }
         .loader-dot:nth-child(1) { animation-delay: -0.32s; }
         .loader-dot:nth-child(2) { animation-delay: -0.16s; }
-        @keyframes pulse {
-          0%, 80%, 100% { transform: scale(0); }
-          40% { transform: scale(1.0); }
+        @keyframes pulse { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1.0); } }
+        #loading p { font-size: 1.125rem; color: var(--text-secondary); }
+
+        @keyframes card-enter {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        #loading p {
-            font-size: 1.125rem;
-            color: var(--text-secondary);
+        #project-details.loaded {
+            animation: card-enter 0.6s ease-out forwards;
         }
 
         /* ❌ --- Error State --- ❌ */
-        #error {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            backdrop-filter: blur(10px);
-            box-shadow: var(--shadow);
-            padding: 2rem;
-            border-radius: 1rem;
-            text-align: center;
-        }
-        #error-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #ef4444; /* red-500 */
-        }
-        #error-message {
-            margin-top: 0.5rem;
-            color: var(--text-secondary);
-        }
+        #error { background: var(--card-bg); border: 1px solid var(--border-color); backdrop-filter: blur(10px); box-shadow: var(--shadow); padding: 2rem; border-radius: 1rem; text-align: center; }
+        #error-title { font-size: 1.5rem; font-weight: 700; color: #ef4444; }
+        #error-message { margin-top: 0.5rem; color: var(--text-secondary); }
 
         /* 📄 --- Main Card --- 📄 */
-        .main-card {
-            background: var(--card-bg);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--border-color);
-            border-radius: 1rem; /* 16px */
-            box-shadow: var(--shadow);
-            overflow: hidden;
-        }
-        .card-content {
-            padding: 1.5rem;
-        }
-        @media (min-width: 640px) {
-            .card-content { padding: 2rem; }
-        }
+        .main-card { background: var(--card-bg); backdrop-filter: blur(12px); border: 1px solid var(--border-color); border-radius: 1rem; box-shadow: var(--shadow); overflow: hidden; }
+        .card-content { padding: 1.5rem; }
+        @media (min-width: 640px) { .card-content { padding: 2rem; } }
 
-        .student-info {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-        .student-initials {
-            width: 4rem; /* 64px */
-            height: 4rem;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: white;
-            background: var(--primary-gradient);
-            flex-shrink: 0;
-        }
-        #student-name {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-        #student-id {
-            font-size: 0.875rem; /* 14px */
-            color: var(--text-secondary);
-        }
+        .student-info { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
+        .student-initials { width: 4rem; height: 4rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 700; color: white; background: var(--primary-gradient); flex-shrink: 0; }
+        #student-name { font-size: 1.5rem; font-weight: 700; color: var(--text-primary); }
+        #student-id { font-size: 0.875rem; color: var(--text-secondary); }
         
-        .project-details-grid {
-            display: grid;
-            gap: 1.5rem;
-        }
-        .project-detail-item h3 {
-            font-size: 0.875rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--primary-accent);
-            margin-bottom: 0.25rem;
-        }
-        #project-title {
-            font-size: 1.25rem; /* 20px */
-            line-height: 1.6;
-            color: var(--text-primary);
-        }
-        #project-type {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            font-size: 0.875rem;
-            font-weight: 500;
-            border-radius: 9999px;
-        }
+        .project-details-grid { display: grid; gap: 1.5rem; }
+        .project-detail-item h3 { font-size: 0.875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--primary-accent); margin-bottom: 0.25rem; }
+        #project-title { font-size: 1.25rem; line-height: 1.6; color: var(--text-primary); }
+        #project-type { display: inline-block; padding: 0.25rem 0.75rem; font-size: 0.875rem; font-weight: 500; border-radius: 9999px; }
 
         /* 👥 --- Team Members & File Upload Section --- 👥 */
-        .card-footer-section {
-            padding: 1.5rem;
-            border-top: 1px solid var(--border-color);
-            background: rgba(0,0,0,0.02);
-        }
-         @media (min-width: 640px) {
-            .card-footer-section { padding: 1.5rem 2rem; }
-        }
-        [data-theme="dark"] .card-footer-section {
-             background: rgba(0,0,0,0.1);
-        }
-        .card-footer-section h3 {
-            font-size: 1.125rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-            color: var(--text-primary);
-        }
-        #team-members-list {
-            list-style: none;
-            display: grid;
-            gap: 0.75rem;
-        }
-        #team-members-list li {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        #team-members-list .member-id {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-        }
+        .card-footer-section { padding: 1.5rem; border-top: 1px solid var(--border-color); background: rgba(0,0,0,0.02); }
+        @media (min-width: 640px) { .card-footer-section { padding: 1.5rem 2rem; } }
+        [data-theme="dark"] .card-footer-section { background: rgba(0,0,0,0.1); }
+        .card-footer-section h3 { font-size: 1.125rem; font-weight: 600; margin-bottom: 1rem; color: var(--text-primary); }
+        
+        #team-members-list { list-style: none; display: grid; gap: 0.5rem; }
+        #team-members-list li { display: flex; align-items: center; justify-content: space-between; padding: 0.5rem; border-radius: 6px; transition: background-color 0.2s ease; }
+        #team-members-list li:hover { background-color: rgba(128, 128, 128, 0.1); }
+        #team-members-list .member-id { font-size: 0.75rem; color: var(--text-secondary); }
 
         /* 📤 --- Upload Button --- 📤 */
-        .upload-btn {
-            display: inline-block;
-            background: var(--primary-gradient);
-            color: white;
-            padding: 0.625rem 1.25rem;
-            border-radius: 8px;
-            font-weight: 600;
-            text-decoration: none;
-            text-align: center;
-            border: none;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        .upload-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(143,0,255,0.3);
-        }
-        .upload-btn:disabled {
-            background: var(--text-secondary);
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-        #file-chosen {
-            color: var(--text-secondary);
-            font-size: 0.9em;
-            margin-top: 0.75rem;
-        }
-        .upload-container {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 0.5rem;
-        }
+        .upload-btn { display: inline-flex; align-items: center; gap: 0.5rem; background: var(--primary-gradient); color: white; padding: 0.625rem 1.25rem; border-radius: 8px; font-weight: 600; text-decoration: none; text-align: center; border: none; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .upload-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(143,0,255,0.3); }
+        .upload-btn:disabled { background: var(--text-secondary); cursor: not-allowed; transform: none; box-shadow: none; }
+        .upload-btn svg { width: 1.125rem; height: 1.125rem; }
+        #file-chosen { color: var(--text-secondary); font-size: 0.9em; margin-top: 0.75rem; }
+        .upload-container { display: flex; flex-direction: column; align-items: flex-start; gap: 0.5rem; }
 
         /* 👣 --- Footer --- 👣 */
-        footer {
-            text-align: center;
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-        }
+        footer { text-align: center; font-size: 0.875rem; color: var(--text-secondary); }
     </style>
 </head>
 <body>
 
     <div id="app-container">
         <header>
-            <div class="header-title-group">
-                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--primary-accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-                <h1>Project Dashboard</h1>
-            </div>
-            <p>Birla College of Arts, Science & Commerce (BAF)</p>
+            <h1 class="gradient-text">Field Project Dashboard</h1>
         </header>
 
         <main id="main-content">
@@ -369,7 +220,6 @@
 
         // --- SUPABASE CONFIGURATION ---
         const SUPABASE_URL = 'https://fuovcuzaxfkyqrridrgy.supabase.co';
-        // ***** THIS KEY WAS THE SOURCE OF THE ERROR. IT IS NOW CORRECTED. *****
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ1b3ZjdXpheGZreXFycmlkcmd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU0NzIyMjAsImV4cCI6MjA2MTA0ODIyMH0._PkkfWXcn4j6cjBh-yLJjDevrmhuxKxVbcdQUSgCsSk';
         const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -427,14 +277,20 @@
                 uploadUI.innerHTML = `
                     <p style="color: var(--text-secondary);">Your group has already submitted the project file.</p>
                     <p style="margin-top: 0.5rem; font-size: 0.875rem; color: var(--text-secondary);">Submitted by: <strong>${uploaderName}</strong> on ${new Date(file.uploaded_at).toLocaleDateString()}</p>
-                    <a href="${publicURL.publicUrl}" target="_blank" class="upload-btn" style="margin-top: 1rem;">Download Submitted File</a>
+                    <a href="${publicURL.publicUrl}" target="_blank" class="upload-btn" style="margin-top: 1rem;">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M10.75 2.75a.75.75 0 00-1.5 0v8.614L6.295 8.235a.75.75 0 10-1.09 1.03l4.25 4.5a.75.75 0 001.09 0l4.25-4.5a.75.75 0 00-1.09-1.03l-2.955 3.129V2.75z" /><path d="M3.5 12.75a.75.75 0 00-1.5 0v2.5A2.75 2.75 0 004.75 18h10.5A2.75 2.75 0 0018 15.25v-2.5a.75.75 0 00-1.5 0v2.5c0 .69-.56 1.25-1.25 1.25H4.75c-.69 0-1.25-.56-1.25-1.25v-2.5z" /></svg>
+                        Download Submitted File
+                    </a>
                 `;
             } else {
                 uploadUI.innerHTML = `
                     <p style="color: var(--text-secondary);">Your group has not submitted the project file yet. Any member can upload it once.</p>
                     <div class="upload-container" style="margin-top: 1rem;">
                         <input type="file" id="file-input" accept=".pdf,.doc,.docx,.zip" class="hidden">
-                        <button id="select-file-btn" class="upload-btn">Select File</button>
+                        <button id="select-file-btn" class="upload-btn">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M9.25 13.25a.75.75 0 001.5 0V4.636l2.955 3.129a.75.75 0 001.09-1.03l-4.25-4.5a.75.75 0 00-1.09 0l-4.25 4.5a.75.75 0 101.09 1.03L9.25 4.636v8.614z" /><path d="M3.5 12.75a.75.75 0 00-1.5 0v2.5A2.75 2.75 0 004.75 18h10.5A2.75 2.75 0 0018 15.25v-2.5a.75.75 0 00-1.5 0v2.5c0 .69-.56 1.25-1.25 1.25H4.75c-.69 0-1.25-.56-1.25-1.25v-2.5z" /></svg>
+                            Select File
+                        </button>
                         <span id="file-chosen">No file chosen</span>
                         <button id="upload-btn" class="upload-btn" disabled>Upload and Submit</button>
                         <div id="upload-status" style="font-size: 0.875rem; margin-top: 0.5rem;"></div>
@@ -486,13 +342,13 @@
                     if (dbError) throw dbError;
                     
                     uploadStatusEl.textContent = '✅ Success! File submitted.';
-                    uploadStatusEl.style.color = '#22c55e'; // green-500
+                    uploadStatusEl.style.color = '#22c55e';
                     setTimeout(() => fetchAndDisplayFileUploadStatus(topicId, currentStudentId), 1500);
 
                 } catch (error) {
                     console.error('Upload failed:', error);
                     uploadStatusEl.textContent = `❌ Error: ${error.message}`;
-                    uploadStatusEl.style.color = '#ef4444'; // red-500
+                    uploadStatusEl.style.color = '#ef4444';
                     uploadBtn.disabled = false;
                     uploadBtn.textContent = 'Upload and Submit';
                 }
@@ -543,6 +399,7 @@
 
                 loadingEl.style.display = 'none';
                 projectDetailsEl.classList.remove('hidden');
+                projectDetailsEl.classList.add('loaded'); // Trigger animation
 
             } catch (error) {
                 console.error("Initialization failed:", error);
