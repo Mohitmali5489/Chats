@@ -108,8 +108,12 @@
         #project-details.loaded {
             animation: card-enter 0.6s ease-out forwards;
         }
-
+        
         /* 📄 --- Card & Content Styles --- 📄 */
+        #error { background: var(--card-bg); border: 1px solid var(--border-color); backdrop-filter: blur(10px); box-shadow: var(--shadow); padding: 2rem; border-radius: 1rem; text-align: center; }
+        #error-title { font-size: 1.5rem; font-weight: 700; color: #ef4444; }
+        #error-message { margin-top: 0.5rem; color: var(--text-secondary); }
+
         .main-card { background: var(--card-bg); backdrop-filter: blur(12px); border: 1px solid var(--border-color); border-radius: 1rem; box-shadow: var(--shadow); overflow: hidden; }
         .card-content { padding: 1.5rem; }
         @media (min-width: 640px) { .card-content { padding: 2rem; } }
@@ -181,15 +185,43 @@
         const loadingEl = document.getElementById('loading');
         const errorEl = document.getElementById('error');
         const projectDetailsEl = document.getElementById('project-details');
+        const errorTitleEl = document.getElementById('error-title');
+        const errorMessageEl = document.getElementById('error-message');
         
-        function showError(title, message) { /* ... */ }
-        async function fetchStudentData(studentId) { /* ... */ }
-        async function fetchProjectData(studentId) { /* ... */ }
-        
-        // --- UPDATED FILE STATUS/UPLOAD LOGIC ---
+        function showError(title, message) {
+            loadingEl.style.display = 'none';
+            projectDetailsEl.classList.add('hidden');
+            errorTitleEl.textContent = title;
+            errorMessageEl.textContent = message;
+            errorEl.classList.remove('hidden');
+        }
+
+        async function fetchStudentData(studentId) {
+            const { data: student, error } = await supabaseClient.from('students').select('*').eq('studentid', studentId).single();
+            if (error || !student) throw new Error('Student not found. Please check the ID in the URL.');
+            return student;
+        }
+
+        async function fetchProjectData(studentId) {
+            const { data: assignment, error } = await supabaseClient.from('projectassignments').select('topicid').eq('studentid', studentId).single();
+            if (error || !assignment) return { topic: null, team: [] };
+            
+            const topicId = assignment.topicid;
+            const { data: topic, error: topicError } = await supabaseClient.from('topics').select('*').eq('topicid', topicId).single();
+            if (topicError) throw new Error('Could not retrieve project details.');
+
+            const { data: teamAssignments, error: teamError } = await supabaseClient.from('projectassignments').select('studentid').eq('topicid', topicId);
+            if (teamError) throw new Error('Could not retrieve team members.');
+            
+            const teamMemberIds = teamAssignments.map(a => a.studentid);
+            const { data: teamMembers, error: membersError } = await supabaseClient.from('students').select('studentid, name').in('studentid', teamMemberIds);
+            if (membersError) throw new Error('Could not retrieve team member details.');
+
+            return { topic, team: teamMembers };
+        }
 
         function getUploadFormHTML(isResubmission = false) {
-            const title = isResubmission ? 'Resubmit Your File' : 'Your group has not submitted the project file yet.';
+            const title = isResubmission ? 'Your previous submission was rejected. Please upload a new file.' : 'Your group has not submitted the project file yet.';
             const buttonText = isResubmission ? 'Upload New File' : 'Upload and Submit';
             return `
                 <p style="color: var(--text-secondary);">${title}</p>
@@ -228,24 +260,24 @@
             switch (status) {
                 case 'Approved':
                     statusHTML = `
-                        <div style="background-color: rgba(34, 197, 94, 0.1); border-left: 4px solid #22c55e; padding: 1rem;">
+                        <div style="background-color: rgba(34, 197, 94, 0.1); border-left: 4px solid #22c55e; padding: 1rem; border-radius: 0 0.5rem 0.5rem 0;">
                             <h4 style="color: #166534; font-weight: 700;">✅ Approved</h4>
                             <p style="color: var(--text-secondary); font-size: 0.9em; margin-top: 0.25rem;">Submitted by <strong>${uploader}</strong> on ${uploadDate}</p>
-                            ${comments ? `<p style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid rgba(34, 197, 94, 0.2);"><strong>Mentor Feedback:</strong> ${comments}</p>` : ''}
+                            ${comments ? `<p style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid rgba(34, 197, 94, 0.2); color: var(--text-secondary);"><strong>Mentor Feedback:</strong> ${comments}</p>` : ''}
                         </div>`;
                     break;
                 case 'Rejected':
                     statusHTML = `
-                        <div style="background-color: rgba(239, 68, 68, 0.1); border-left: 4px solid #ef4444; padding: 1rem;">
+                        <div style="background-color: rgba(239, 68, 68, 0.1); border-left: 4px solid #ef4444; padding: 1rem; border-radius: 0 0.5rem 0.5rem 0;">
                             <h4 style="color: #991b1b; font-weight: 700;">❌ Rejected - Resubmission Required</h4>
                              <p style="color: var(--text-secondary); font-size: 0.9em; margin-top: 0.25rem;">Last submission by <strong>${uploader}</strong> on ${uploadDate}</p>
-                            ${comments ? `<p style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid rgba(239, 68, 68, 0.2);"><strong>Mentor Feedback:</strong> ${comments}</p>` : ''}
+                            ${comments ? `<p style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid rgba(239, 68, 68, 0.2); color: var(--text-secondary);"><strong>Mentor Feedback:</strong> ${comments}</p>` : ''}
                             <button id="resubmit-btn" class="upload-btn" style="margin-top: 1rem;">Resubmit File</button>
                         </div>`;
                     break;
                 default: // Pending
                     statusHTML = `
-                        <div style="background-color: rgba(59, 130, 246, 0.1); border-left: 4px solid #3b82f6; padding: 1rem;">
+                        <div style="background-color: rgba(59, 130, 246, 0.1); border-left: 4px solid #3b82f6; padding: 1rem; border-radius: 0 0.5rem 0.5rem 0;">
                             <h4 style="color: #1e40af; font-weight: 700;">⏳ Pending Review</h4>
                             <p style="color: var(--text-secondary); font-size: 0.9em; margin-top: 0.25rem;">Your file has been submitted and is awaiting feedback from your mentor.</p>
                         </div>`;
@@ -271,7 +303,15 @@
             if (!selectBtn) return;
             selectBtn.onclick = () => fileInput.click();
             
-            fileInput.onchange = () => { /* ... */ };
+            fileInput.onchange = () => {
+                if (fileInput.files.length > 0) {
+                    fileChosenEl.textContent = fileInput.files[0].name;
+                    uploadBtn.disabled = false;
+                } else {
+                    fileChosenEl.textContent = 'No file chosen';
+                    uploadBtn.disabled = true;
+                }
+            };
 
             uploadBtn.onclick = async () => {
                 const file = fileInput.files[0];
@@ -301,10 +341,12 @@
                     if (dbError) throw dbError;
                     
                     uploadStatusEl.textContent = '✅ Success! File submitted for review.';
+                    uploadStatusEl.style.color = '#22c55e';
                     setTimeout(() => fetchAndDisplayFileUploadStatus(topicId, currentStudentId), 1500);
                 } catch (error) {
                     console.error('Upload failed:', error);
                     uploadStatusEl.textContent = `❌ Error: ${error.message}`;
+                    uploadStatusEl.style.color = '#ef4444';
                     uploadBtn.disabled = false;
                     uploadBtn.textContent = isResubmission ? 'Upload New File' : 'Upload and Submit';
                 }
@@ -312,11 +354,73 @@
         }
 
         window.onload = async () => {
-            // ... same as before, no changes needed here ...
-        };
-        
-        // ... other functions like displayTeamMembers remain the same ...
+            const urlParams = new URLSearchParams(window.location.search);
+            const studentIdParam = urlParams.get('id');
 
+            if (!studentIdParam) {
+                return showError("No Student ID Provided", "Please provide a student ID in the URL. Example: ?id=5241836");
+            }
+
+            try {
+                const studentId = parseInt(studentIdParam, 10);
+                if (isNaN(studentId)) {
+                    return showError("Invalid Student ID", "The ID in the URL is not a valid number.");
+                }
+                
+                const [student, projectData] = await Promise.all([fetchStudentData(studentId), fetchProjectData(studentId)]);
+
+                document.getElementById('student-name').textContent = student.name;
+                document.getElementById('student-id').textContent = `Student ID: ${student.studentid}`;
+                const nameParts = student.name.trim().split(' ');
+                const initials = nameParts.length > 1
+                    ? `${nameParts[0][0]}${nameParts[nameParts.length - 1][0]}`
+                    : nameParts[0].substring(0, 2);
+                document.getElementById('student-initials').textContent = initials.toUpperCase();
+                
+                if (projectData.topic) {
+                    document.getElementById('project-title').textContent = projectData.topic.topicname;
+                    const projectTypeEl = document.getElementById('project-type');
+                    projectTypeEl.textContent = student.type;
+
+                    if (student.type && student.type.toLowerCase() === 'group') {
+                        projectTypeEl.style.cssText = 'background-color: rgba(34, 197, 94, 0.2); color: #22c55e;';
+                        displayTeamMembers(studentId, projectData.team);
+                    } else {
+                        projectTypeEl.style.cssText = 'background-color: rgba(59, 130, 246, 0.2); color: #3b82f6;';
+                    }
+                    
+                    fetchAndDisplayFileUploadStatus(projectData.topic.topicid, studentId);
+                } else {
+                    document.getElementById('project-title').textContent = 'No project has been assigned to this student yet.';
+                    document.getElementById('project-type-container').style.display = 'none';
+                }
+
+                loadingEl.style.display = 'none';
+                projectDetailsEl.classList.remove('hidden');
+                projectDetailsEl.classList.add('loaded');
+
+            } catch (error) {
+                console.error("Initialization failed:", error);
+                showError("Error Loading Data", error.message);
+            }
+        };
+
+        function displayTeamMembers(currentStudentId, teamMembers) {
+            const teamMembersList = document.getElementById('team-members-list');
+            const section = document.getElementById('team-members-section');
+            teamMembersList.innerHTML = '';
+            
+            const otherMembers = teamMembers.filter(m => m.studentid !== currentStudentId);
+
+            if (otherMembers.length > 0) {
+                 otherMembers.forEach(member => {
+                     const li = document.createElement('li');
+                     li.innerHTML = `<span>${member.name}</span><span style="font-size: 0.75rem; color: var(--text-secondary);">ID: ${member.studentid}</span>`;
+                     teamMembersList.appendChild(li);
+                 });
+                 section.classList.remove('hidden');
+            }
+        }
     </script>
 </body>
 </html>
