@@ -73,7 +73,7 @@
                          <p class="text-center text-[var(--text-secondary)]">Calculating score...</p>
                     </div>
                 </div>
-                <div id="internals-impact" class="mt-4 text-sm text-left p-3 rounded-lg bg-gray-50 dark:bg-gray-800/20 border border-[var(--border-color)]">
+                <div id="internals-impact" class="mt-4 text-sm text-center p-3 rounded-lg bg-gray-50 dark:bg-gray-800/20 border border-[var(--border-color)]">
                     <p class="text-[var(--text-secondary)]">Assessing impact on internal marks...</p>
                 </div>
             </section>
@@ -185,24 +185,18 @@
         const statusContainer = document.getElementById('blacklist-status-container');
         const internalsImpactContainer = document.getElementById('internals-impact');
         
-        // MODIFIED: Updated logic for exam eligibility and vague deductions
+        // MODIFIED: Removed Exam Status text completely
         if (totalScore > 35) {
             statusContainer.innerHTML = `<span class="px-3 py-1 text-sm font-semibold rounded-full bg-green-100 text-green-800 flex items-center justify-center gap-1.5 w-fit mx-auto"><i data-lucide="shield-check" class="w-4 h-4"></i> Not Blacklisted</span>`;
             internalsImpactContainer.innerHTML = `
                 <p class="text-green-700 dark:text-green-400">
                     <strong class="font-semibold">Impact on Internals:</strong> You are eligible for full internal marks consideration.
-                </p>
-                <p class="text-green-700 dark:text-green-400 mt-2">
-                    <strong class="font-semibold">Exam Status:</strong> You are <strong>cleared</strong> to sit for the final examinations.
                 </p>`;
         } else {
             statusContainer.innerHTML = `<span class="px-3 py-1 text-sm font-semibold rounded-full bg-red-100 text-red-800 flex items-center justify-center gap-1.5 w-fit mx-auto"><i data-lucide="shield-alert" class="w-4 h-4"></i> Blacklisted</span>`;
             internalsImpactContainer.innerHTML = `
                 <p class="text-red-600 dark:text-red-400">
                     <strong class="font-semibold">Impact on Internals:</strong> Being blacklisted may result in a <strong>deduction of internal marks</strong> as per college guidelines.
-                </p>
-                 <p class="text-red-600 dark:text-red-400 mt-2">
-                    <strong class="font-semibold">Exam Status:</strong> You may be <strong>debarred</strong> from final examinations. Contact administration.
                 </p>`;
         }
     }
@@ -250,7 +244,6 @@
             const progressCircle = document.getElementById('progress-circle');
             const missedClassesElement = document.getElementById('missedClasses');
 
-            // MODIFIED: Removed exam status from this section
             if (attendancePercent >= 75) {
                 statusTextElement.textContent = "Term Granted";
                 statusTextElement.className = 'text-2xl font-bold text-green-600';
