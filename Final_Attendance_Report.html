@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Student Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root, [data-theme="light"] {
+            --bg-gradient: linear-gradient(180deg, #f5f5f7, #e9e9ed);
+            --card-bg: #ffffff;
+            --text-primary: #121212;
+            --text-secondary: #5f5f5f;
+            --border-color: #e0e0e0;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            --icon-color: #8f00ff;
+        }
+        [data-theme="dark"] {
+            --bg-gradient: linear-gradient(180deg, #2a2a3d, #1e1e2e);
+            --card-bg: #2a2a3d;
+            --text-primary: #f0f0f0;
+            --text-secondary: #a0a0b0;
+            --border-color: #4a4a6a;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            --icon-color: #b84fff;
+        }
+        body { font-family: 'Inter', sans-serif; background-image: var(--bg-gradient); color: var(--text-primary); }
+        .progress-ring__circle { transition: stroke-dashoffset 0.6s ease-out; transform: rotate(-90deg); transform-origin: 50% 50%; }
+        .theme-shadow { box-shadow: var(--shadow); }
+    </style>
+</head>
+<body class="min-h-screen">
+
+<div class="max-w-4xl mx-auto">
+    
+    <header class="bg-gradient-to-r from-[#b84fff] to-[#8f00ff] text-white rounded-b-2xl sticky top-0 z-10 shadow-lg">
+        <div class="flex justify-between items-center p-4 md:px-6">
+            <div>
+                <p class="text-sm opacity-80">Welcome back,</p>
+                <h1 id="studentName" class="text-2xl font-bold">Loading...</h1>
+            </div>
+            <a id="qrLink" href="#" aria-label="View QR Code" class="hover:opacity-80 transition-opacity duration-200 p-2">
+                <i data-lucide="qr-code" class="w-8 h-8"></i>
+            </a>
+        </div>
+    </header>
+
+    <main class="p-4 md:p-6 space-y-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <section class="bg-[var(--card-bg)] p-6 rounded-2xl theme-shadow border border-[var(--border-color)]">
+                <h2 class="text-lg font-semibold text-[var(--text-primary)] mb-4 flex items-center gap-2">
+                    <i data-lucide="award" class="w-5 h-5 text-[var(--icon-color)]"></i>
+                    Final Semester Status
+                </h2>
+                <div id="blacklist-status-container" class="text-center mb-3">
+                    <span class="px-3 py-1 text-sm font-semibold rounded-full bg-gray-200 text-gray-700">Checking status...</span>
+                </div>
+                <div class="flex items-center justify-center space-x-6">
+                    <div class="relative w-32 h-32">
+                        <svg class="w-full h-full" viewBox="0 0 100 100">
+                            <circle class="text-[var(--border-color)]" stroke-width="10" stroke="currentColor" fill="transparent" r="45" cx="50" cy="50" />
+                            <circle id="academic-score-circle" class="progress-ring__circle text-[var(--icon-color)]" stroke-width="10" stroke-linecap="round" stroke="currentColor" fill="transparent" r="45" cx="50" cy="50" />
+                        </svg>
+                        <div class="absolute inset-0 flex flex-col items-center justify-center">
+                            <span id="academicScore" class="text-3xl font-bold text-[var(--text-primary)]">--</span>
+                            <span class="text-xs text-[var(--text-secondary)]">Score</span>
+                        </div>
+                    </div>
+                    <div id="academic-score-breakdown" class="text-left text-sm w-40 space-y-1">
+                         <p class="text-center text-[var(--text-secondary)]">Calculating score...</p>
+                    </div>
+                </div>
+                <div id="internals-impact" class="mt-4 text-sm text-left p-3 rounded-lg bg-gray-50 dark:bg-gray-800/20 border border-[var(--border-color)]">
+                    <p class="text-[var(--text-secondary)]">Assessing impact on internal marks...</p>
+                </div>
+            </section>
+            
+            <section class="bg-[var(--card-bg)] p-6 rounded-2xl theme-shadow border border-[var(--border-color)]">
+                <h2 class="text-lg font-semibold text-[var(--text-primary)] mb-4 flex items-center gap-2">
+                    <i data-lucide="check-circle" class="w-5 h-5 text-[var(--icon-color)]"></i>
+                    Final Attendance
+                </h2>
+                <div class="flex items-center justify-center space-x-6">
+                    <div class="relative w-32 h-32">
+                        <svg class="w-full h-full" viewBox="0 0 100 100">
+                            <circle class="text-[var(--border-color)]" stroke-width="10" stroke="currentColor" fill="transparent" r="45" cx="50" cy="50" />
+                            <circle id="progress-circle" class="progress-ring__circle" stroke-width="10" stroke-linecap="round" stroke="currentColor" fill="transparent" r="45" cx="50" cy="50" />
+                        </svg>
+                        <div class="absolute inset-0 flex flex-col items-center justify-center">
+                            <span id="attendancePercent" class="text-3xl font-bold text-[var(--icon-color)]">--%</span>
+                        </div>
+                    </div>
+                    <div class="text-left">
+                        <p id="attendanceStatusText" class="text-2xl font-bold">--</p>
+                        <p class="text-sm text-[var(--text-secondary)] mt-1">Minimum 75% required.</p>
+                        <p id="missedClasses" class="text-sm text-[var(--text-secondary)]">-- classes missed.</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+        <section class="bg-[var(--card-bg)] p-6 rounded-2xl theme-shadow border border-[var(--border-color)]">
+             <h2 class="text-lg font-semibold text-[var(--text-primary)] mb-4 flex items-center gap-2">
+                <i data-lucide="tags" class="w-5 h-5 text-[var(--icon-color)]"></i>
+                My Roles & Tags
+             </h2>
+             <div id="roles-tags-list" class="flex flex-wrap gap-2">
+                 <p class="text-[var(--text-secondary)] text-sm">Loading roles...</p>
+             </div>
+        </section>
+        
+    </main>
+    <footer class="text-center text-sm text-gray-400 py-6">
+        <p>Powered by ClassCount</p>
+    </footer>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/lucide/dist/umd/lucide.min.js"></script>
+
+<script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+    const SUPABASE_URL = 'https://pwgdubtbvqnmivtupbvx.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB3Z2R1YnRidnFubWl2dHVwYnZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUwOTUzMTAsImV4cCI6MjA3MDY3MTMxMH0.kCn6JMv0kTQrkoJ7OmaxCbwZNzewRNtuOg-35nYXYXg';
+    const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    function waitForLucideAndRenderIcons() {
+        const maxRetries = 50;
+        let retries = 0;
+        const intervalId = setInterval(() => {
+            if (window.lucide) {
+                clearInterval(intervalId);
+                window.lucide.createIcons();
+                console.log("✅ Lucide icons rendered successfully.");
+            } else {
+                retries++;
+                if (retries > maxRetries) {
+                    clearInterval(intervalId);
+                    console.error("❌ Lucide script failed to load after 5 seconds.");
+                }
+            }
+        }, 100);
+    }
+
+    function setProgress(percent, circleId) {
+        const circle = document.getElementById(circleId);
+        if (!circle) return;
+        const radius = circle.r.baseVal.value;
+        const circumference = 2 * Math.PI * radius;
+        const clampedPercent = Math.max(0, Math.min(100, percent));
+        const offset = circumference - (clampedPercent / 100) * circumference;
+        circle.style.strokeDasharray = `${circumference} ${circumference}`;
+        circle.style.strokeDashoffset = offset;
+    }
+
+    // --- UI Display Functions ---
+    function displayRolesAndTags(roles) {
+        const container = document.getElementById('roles-tags-list');
+        if (!roles || roles.length === 0 || (roles.length === 1 && roles[0] === 'No Tags')) {
+            container.innerHTML = `<p class="text-[var(--text-secondary)] text-sm">No roles or special tags assigned.</p>`;
+            return;
+        }
+        container.innerHTML = roles.map(tag => 
+            `<span class="px-3 py-1 text-sm font-semibold rounded-full bg-purple-100 text-purple-800">${tag}</span>`
+        ).join('');
+    }
+
+    function displayAcademicScoreAndStatus(attendancePercent, tags, activitiesCount) {
+        const attendanceScore = attendancePercent * 0.5;
+        const validTags = tags ? tags.filter(tag => tag && tag.toLowerCase() !== 'no tags') : [];
+        const tagsBonus = validTags.length * 5;
+        const eventBonus = activitiesCount * 2;
+        let totalScore = Math.min(100, Math.round(attendanceScore + tagsBonus + eventBonus));
+
+        document.getElementById('academicScore').textContent = totalScore;
+        const breakdownContainer = document.getElementById('academic-score-breakdown');
+        breakdownContainer.innerHTML = `
+            <div class="flex justify-between"><span>Attendance:</span><span class="font-semibold">${attendanceScore.toFixed(1)} pts</span></div>
+            <div class="flex justify-between"><span>Roles Bonus:</span><span class="font-semibold">${tagsBonus} pts</span></div>
+            <div class="flex justify-between"><span>Events Bonus:</span><span class="font-semibold">${eventBonus} pts</span></div>
+        `;
+        setTimeout(() => setProgress(totalScore, 'academic-score-circle'), 100);
+
+        const statusContainer = document.getElementById('blacklist-status-container');
+        const internalsImpactContainer = document.getElementById('internals-impact');
+        
+        // MODIFIED: Updated logic for exam eligibility and vague deductions
+        if (totalScore > 35) {
+            statusContainer.innerHTML = `<span class="px-3 py-1 text-sm font-semibold rounded-full bg-green-100 text-green-800 flex items-center justify-center gap-1.5 w-fit mx-auto"><i data-lucide="shield-check" class="w-4 h-4"></i> Not Blacklisted</span>`;
+            internalsImpactContainer.innerHTML = `
+                <p class="text-green-700 dark:text-green-400">
+                    <strong class="font-semibold">Impact on Internals:</strong> You are eligible for full internal marks consideration.
+                </p>
+                <p class="text-green-700 dark:text-green-400 mt-2">
+                    <strong class="font-semibold">Exam Status:</strong> You are <strong>cleared</strong> to sit for the final examinations.
+                </p>`;
+        } else {
+            statusContainer.innerHTML = `<span class="px-3 py-1 text-sm font-semibold rounded-full bg-red-100 text-red-800 flex items-center justify-center gap-1.5 w-fit mx-auto"><i data-lucide="shield-alert" class="w-4 h-4"></i> Blacklisted</span>`;
+            internalsImpactContainer.innerHTML = `
+                <p class="text-red-600 dark:text-red-400">
+                    <strong class="font-semibold">Impact on Internals:</strong> Being blacklisted may result in a <strong>deduction of internal marks</strong> as per college guidelines.
+                </p>
+                 <p class="text-red-600 dark:text-red-400 mt-2">
+                    <strong class="font-semibold">Exam Status:</strong> You may be <strong>debarred</strong> from final examinations. Contact administration.
+                </p>`;
+        }
+    }
+    
+    // --- Main Application Logic ---
+    async function main() {
+        try {
+            const urlParams = new URLSearchParams(window.location.search);
+            const theme = urlParams.get('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', theme);
+            const studentId = urlParams.get('id');
+            if (!studentId) {
+                document.body.innerHTML = `<div class="h-screen flex items-center justify-center text-center p-4"><div class="bg-white p-8 rounded-xl shadow-lg"><h1 class="text-2xl font-bold text-red-600">Access Denied</h1><p class="text-gray-600 mt-2">Student ID is missing.</p></div></div>`;
+                return;
+            }
+
+            const [studentRes, lecturesRes, eventsRes] = await Promise.all([
+                 supabase.from('sybaf_students').select('name, roles').eq('id', studentId).single(),
+                 supabase.from('sybaf_lectures').select('attendees'),
+                 supabase.from('sybaf_events').select('attendees')
+            ]);
+            
+            const { data: student, error: studentError } = studentRes;
+            if (studentError || !student) { 
+                console.error("Student not found:", studentError); 
+                document.getElementById('studentName').textContent = "Unknown Student"; 
+                return; 
+            }
+            
+            document.getElementById('studentName').textContent = student.name;
+            
+            const qrDataUrl = `QR.html?id=${encodeURIComponent(studentId)}&name=${encodeURIComponent(student.name)}`;
+            document.getElementById('qrLink').href = qrDataUrl;
+            
+            const allLectures = lecturesRes.data || [];
+            const attendedLectures = allLectures.filter(lec => lec.attendees?.includes(studentId));
+            const attendedActivities = (eventsRes.data || []).filter(evt => evt.attendees?.includes(studentId));
+
+            const totalLectures = allLectures.length;
+            const attendedCount = attendedLectures.length;
+            const attendancePercent = totalLectures > 0 ? Math.round((attendedCount / totalLectures) * 100) : 0;
+
+            document.getElementById('attendancePercent').textContent = `${attendancePercent}%`;
+            const statusTextElement = document.getElementById('attendanceStatusText');
+            const progressCircle = document.getElementById('progress-circle');
+            const missedClassesElement = document.getElementById('missedClasses');
+
+            // MODIFIED: Removed exam status from this section
+            if (attendancePercent >= 75) {
+                statusTextElement.textContent = "Term Granted";
+                statusTextElement.className = 'text-2xl font-bold text-green-600';
+                progressCircle.setAttribute('class', 'progress-ring__circle text-[var(--icon-color)]');
+            } else {
+                statusTextElement.textContent = 'Defaulter';
+                statusTextElement.className = 'text-2xl font-bold text-red-500';
+                progressCircle.setAttribute('class', 'progress-ring__circle text-red-500');
+            }
+            missedClassesElement.textContent = `${totalLectures - attendedCount} classes missed.`;
+            setTimeout(() => setProgress(attendancePercent, 'progress-circle'), 100);
+
+            displayRolesAndTags(student.roles);
+            displayAcademicScoreAndStatus(attendancePercent, student.roles, attendedActivities.length);
+
+        } catch (error) {
+            console.error("An error occurred in the main function:", error);
+            document.body.innerHTML = `<div class="h-screen flex items-center justify-center text-center p-4"><div class="bg-white p-8 rounded-xl shadow-lg"><h1 class="text-2xl font-bold text-red-600">Oops!</h1><p class="text-gray-600 mt-2">Something went wrong. Please try again later.</p></div></div>`;
+        } finally {
+            waitForLucideAndRenderIcons();
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', main);
+</script>
+</body>
+</html>
