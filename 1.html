@@ -111,45 +111,7 @@
              </div>
         </section>
 
-        <section class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <a id="viewQrButton" href="#" class="flex items-center justify-center w-full gap-3 py-3 px-4 bg-gradient-to-r from-[#b84fff] to-[#8f00ff] text-white font-semibold rounded-xl theme-shadow hover:opacity-90 transition-opacity">
-                <i data-lucide="user-square-2" class="w-6 h-6"></i>
-                <span>View My QR Code</span>
-            </a>
-            <a id="appealButton" href="#" class="flex items-center justify-center w-full gap-3 py-3 px-4 bg-gradient-to-r from-slate-700 to-slate-800 text-white font-semibold rounded-xl theme-shadow hover:opacity-90 transition-opacity">
-                <i data-lucide="shield-question" class="w-6 h-6"></i>
-                <span>Appeal an Absence</span>
-            </a>
-        </section>
-
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <section>
-                <h2 class="text-lg font-semibold text-[var(--text-primary)] mb-4 px-2 flex items-center gap-2">
-                    <i data-lucide="book-open-check" class="w-5 h-5 text-[var(--icon-color)]"></i>
-                    Recently Attended
-                </h2>
-                <div id="lecturesList" class="space-y-3">
-                    <div class="text-center text-[var(--text-secondary)] p-4">Loading recent lectures...</div>
-                </div>
-            </section>
-            <section>
-                <h2 class="text-lg font-semibold text-[var(--text-primary)] mb-4 px-2 flex items-center gap-2">
-                    <i data-lucide="pie-chart" class="w-5 h-5 text-[var(--icon-color)]"></i>
-                    Subject Breakdown
-                </h2>
-                <div id="subject-list" class="grid grid-cols-1 gap-3">
-                    <div class="text-center text-[var(--text-secondary)] p-4">Calculating subject attendance...</div>
-                </div>
-            </section>
-        </div>
-        <section id="activities-section" class="hidden">
-            <h2 class="text-lg font-semibold text-[var(--text-primary)] mb-4 px-2 flex items-center gap-2">
-                <i data-lucide="puzzle" class="w-5 h-5 text-[var(--icon-color)]"></i>
-                Co-curricular Activities
-            </h2>
-            <div id="activitiesList" class="space-y-3"></div>
-        </section>
-    </main>
+        </main>
     <footer class="text-center text-sm text-gray-400 py-6">
         <p>Powered by ClassCount</p>
     </footer>
@@ -163,9 +125,8 @@
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB3Z2R1YnRidnFubWl2dHVwYnZ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUwOTUzMTAsImV4cCI6MjA3MDY3MTMxMH0.kCn6JMv0kTQrkoJ7OmaxCbwZNzewRNtuOg-35nYXYXg';
     const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // --- NEW ROBUST ICON LOADER ---
     function waitForLucideAndRenderIcons() {
-        const maxRetries = 50; // Try for 5 seconds
+        const maxRetries = 50;
         let retries = 0;
         const intervalId = setInterval(() => {
             if (window.lucide) {
@@ -176,17 +137,10 @@
                 retries++;
                 if (retries > maxRetries) {
                     clearInterval(intervalId);
-                    console.error("❌ Lucide script failed to load after 5 seconds. Check network connection or CDN status.");
+                    console.error("❌ Lucide script failed to load after 5 seconds.");
                 }
             }
         }, 100);
-    }
-
-    // --- Helper Functions ---
-    async function fetchProfessorMap() {
-        const { data, error } = await supabase.from('sybaf_prof').select('subject, name');
-        if (error) { console.error("Error fetching professor map:", error); return {}; }
-        return data.reduce((map, item) => { map[item.subject] = item.name; return map; }, {});
     }
 
     function setProgress(percent, circleId) {
@@ -231,7 +185,6 @@
         const statusContainer = document.getElementById('blacklist-status-container');
         const internalsImpactContainer = document.getElementById('internals-impact');
         
-        // MODIFIED: Added detailed impact messages
         if (totalScore > 35) {
             statusContainer.innerHTML = `<span class="px-3 py-1 text-sm font-semibold rounded-full bg-green-100 text-green-800 flex items-center justify-center gap-1.5 w-fit mx-auto"><i data-lucide="shield-check" class="w-4 h-4"></i> Not Blacklisted</span>`;
             internalsImpactContainer.innerHTML = `<p class="text-green-700 dark:text-green-400"><strong class="font-semibold">Impact on Internals:</strong> You are eligible for full internal marks consideration.</p>`;
@@ -241,55 +194,6 @@
         }
     }
     
-    function displayAttendedLectures(attendedLectures, professorMap) {
-        const list = document.getElementById("lecturesList");
-        if (!attendedLectures || attendedLectures.length === 0) {
-            list.innerHTML = `<div class="bg-[var(--card-bg)] p-4 rounded-xl text-center text-[var(--text-secondary)]">You haven't attended any lectures yet.</div>`;
-            return;
-        }
-        const recentAttended = attendedLectures.sort((a, b) => b.NO - a.NO).slice(0, 5);
-        list.innerHTML = recentAttended.map(lec => {
-            const professor = professorMap[lec.LECTURE] || 'N/A';
-            const [day, monthNum, year] = lec.DATE.split('/');
-            const month = new Date(year, monthNum - 1, day).toLocaleString('default', { month: 'short' }).toUpperCase();
-            return `<div class="flex items-center bg-[var(--card-bg)] p-4 rounded-xl theme-shadow border border-[var(--border-color)]"><div class="w-16 text-center bg-[var(--bg-gradient)] rounded-md p-2 border border-[var(--border-color)] flex-shrink-0"><p class="font-bold text-[var(--icon-color)] text-xl">${day}</p><p class="text-xs font-semibold text-[var(--text-secondary)]">${month}</p></div><div class="flex-1 pl-4"><p class="font-semibold text-[var(--text-primary)]">${lec.LECTURE}</p><p class="text-sm text-[var(--text-secondary)]">${professor}</p></div><span class="text-xs font-semibold text-[var(--icon-color)]">${lec.TIME}</span></div>`;
-        }).join('');
-    }
-
-    function displayActivities(attendedActivities) {
-        const section = document.getElementById("activities-section");
-        const list = document.getElementById("activitiesList");
-        if (!attendedActivities || attendedActivities.length === 0) return;
-        section.classList.remove('hidden');
-        const recentActivities = attendedActivities.sort((a, b) => b.NO - a.NO).slice(0, 5);
-        list.innerHTML = recentActivities.map(activity => {
-             const [day, monthNum, year] = activity.DATE.split('/');
-             const month = new Date(year, monthNum - 1, day).toLocaleString('default', { month: 'short' }).toUpperCase();
-             return `<div class="flex items-center bg-[var(--card-bg)] p-4 rounded-xl theme-shadow border border-[var(--border-color)]"><div class="w-16 text-center bg-[var(--bg-gradient)] rounded-md p-2 border border-[var(--border-color)] flex-shrink-0"><p class="font-bold text-[var(--icon-color)] text-xl">${day}</p><p class="text-xs font-semibold text-[var(--text-secondary)]">${month}</p></div><div class="flex-1 pl-4"><p class="font-semibold text-[var(--text-primary)]">${activity.EVENTS}</p><p class="text-sm text-[var(--text-secondary)]">Activity Participation</p></div><span class="text-xs font-semibold text-[var(--icon-color)]">${activity.TIME}</span></div>`;
-        }).join('');
-    }
-
-    function displayDynamicSubjectBreakdown(allLectures, attendedLectureIds, professorMap) {
-        const container = document.getElementById('subject-list');
-        if (!allLectures || allLectures.length === 0) {
-            container.innerHTML = `<div class="bg-[var(--card-bg)] p-4 rounded-xl text-center text-[var(--text-secondary)]">No subject data available.</div>`;
-            return;
-        }
-        const subjectStats = {};
-        allLectures.forEach(lecture => {
-            if (!subjectStats[lecture.LECTURE]) subjectStats[lecture.LECTURE] = { total: 0, attended: 0 };
-            subjectStats[lecture.LECTURE].total++;
-            if (attendedLectureIds.has(lecture.NO)) subjectStats[lecture.LECTURE].attended++;
-        });
-        container.innerHTML = Object.keys(subjectStats).sort().map(subjectName => {
-            const stats = subjectStats[subjectName];
-            const percentage = stats.total > 0 ? Math.round((stats.attended / stats.total) * 100) : 0;
-            const textColor = percentage < 75 ? 'text-red-500' : 'text-green-600';
-            const professor = professorMap[subjectName] || 'N/A';
-            return `<div class="bg-[var(--card-bg)] p-3 rounded-lg theme-shadow border border-[var(--border-color)] flex justify-between items-center"><div><p class="font-semibold text-[var(--text-primary)]">${subjectName}</p><p class="text-sm text-[var(--text-secondary)]">${professor}</p></div><div class="text-right"><p class="text-lg font-bold ${textColor}">${percentage}%</p><p class="text-xs text-[var(--text-secondary)]">${stats.attended}/${stats.total}</p></div></div>`;
-        }).join('');
-    }
-
     // --- Main Application Logic ---
     async function main() {
         try {
@@ -302,14 +206,12 @@
                 return;
             }
 
-            const [profMapRes, studentRes, lecturesRes, eventsRes] = await Promise.all([
-                 fetchProfessorMap(),
+            const [studentRes, lecturesRes, eventsRes] = await Promise.all([
                  supabase.from('sybaf_students').select('name, roles').eq('id', studentId).single(),
-                 supabase.from('sybaf_lectures').select('NO, LECTURE, DATE, TIME, attendees'),
-                 supabase.from('sybaf_events').select('NO, EVENTS, DATE, TIME, attendees')
+                 supabase.from('sybaf_lectures').select('attendees'),
+                 supabase.from('sybaf_events').select('attendees')
             ]);
             
-            const professorMap = profMapRes;
             const { data: student, error: studentError } = studentRes;
             if (studentError || !student) { 
                 console.error("Student not found:", studentError); 
@@ -319,14 +221,9 @@
             
             document.getElementById('studentName').textContent = student.name;
             
-            // --- DYNAMICALLY SET URLs FOR BUTTONS ---
+            // Set URL for the QR code icon in the header
             const qrDataUrl = `QR.html?id=${encodeURIComponent(studentId)}&name=${encodeURIComponent(student.name)}`;
             document.getElementById('qrLink').href = qrDataUrl;
-            document.getElementById('viewQrButton').href = qrDataUrl;
-            
-            // NEW: Set URL for the appeal button
-            const appealUrl = `appeal.html?id=${encodeURIComponent(studentId)}&name=${encodeURIComponent(student.name)}&theme=${theme}`;
-            document.getElementById('appealButton').href = appealUrl;
             
             const allLectures = lecturesRes.data || [];
             const attendedLectures = allLectures.filter(lec => lec.attendees?.includes(studentId));
@@ -334,7 +231,6 @@
 
             const totalLectures = allLectures.length;
             const attendedCount = attendedLectures.length;
-            const attendedLectureIds = new Set(attendedLectures.map(lec => lec.NO));
             const attendancePercent = totalLectures > 0 ? Math.round((attendedCount / totalLectures) * 100) : 0;
 
             document.getElementById('attendancePercent').textContent = `${attendancePercent}%`;
@@ -342,7 +238,6 @@
             const progressCircle = document.getElementById('progress-circle');
             const missedClassesElement = document.getElementById('missedClasses');
 
-            // MODIFIED: Simplified and clearer final status messages
             if (attendancePercent >= 75) {
                 statusTextElement.textContent = "Term Granted";
                 statusTextElement.className = 'text-2xl font-bold text-green-600';
@@ -352,15 +247,12 @@
                 statusTextElement.textContent = 'Defaulter';
                 statusTextElement.className = 'text-2xl font-bold text-red-500';
                 progressCircle.setAttribute('class', 'progress-ring__circle text-red-500');
-                missedClassesElement.innerHTML = `<strong class="font-semibold">May not sit for final exams.</strong><br>${totalLectures - attendedCount} classes missed.`;
+                missedClassesElement.innerHTML = `<strong class="font-semibold">May not sit for final exams.</strong><br>${totalLectures - attendedCount} classes missed..`;
             }
             setTimeout(() => setProgress(attendancePercent, 'progress-circle'), 100);
 
             displayRolesAndTags(student.roles);
             displayAcademicScoreAndStatus(attendancePercent, student.roles, attendedActivities.length);
-            displayAttendedLectures(attendedLectures, professorMap);
-            displayDynamicSubjectBreakdown(allLectures, attendedLectureIds, professorMap);
-            displayActivities(attendedActivities);
 
         } catch (error) {
             console.error("An error occurred in the main function:", error);
