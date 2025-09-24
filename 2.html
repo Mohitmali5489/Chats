@@ -15,15 +15,17 @@
         /* --- THEME AND COLOR DEFINITIONS --- */
         :root {
             /* Light Theme (Default) */
-            --bg-main: #eef2f7;
+            --bg-main: #f0f4f8;
             --bg-card-rgb: 255, 255, 255; /* For RGBA transparency */
             --text-primary: #1d2b48;
             --text-secondary: #7589a2;
             --color-primary: #0056b3;
             --color-accent-green: #28a745;
-            --color-accent-gold: #ff9800;
+            --color-accent-gold: #ffc107;
+            --color-accent-silver: #adb5bd;
+            --color-accent-bronze: #cd7f32;
             --color-border: rgba(0, 86, 179, 0.1);
-            --shadow-color: rgba(44, 62, 80, 0.15);
+            --shadow-color: rgba(44, 62, 80, 0.1);
         }
 
         html.dark-theme {
@@ -34,9 +36,11 @@
             --text-secondary: #8892b0;
             --color-primary: #61dafb;
             --color-accent-green: #30c871;
-            --color-accent-gold: #ffc107;
+            --color-accent-gold: #ffd700;
+            --color-accent-silver: #c0c0c0;
+            --color-accent-bronze: #d99f6c;
             --color-border: rgba(97, 218, 251, 0.2);
-            --shadow-color: rgba(0, 0, 0, 0.4);
+            --shadow-color: rgba(0, 0, 0, 0.3);
         }
 
         /* --- KEYFRAMES FOR ANIMATION --- */
@@ -49,6 +53,8 @@
         body {
             font-family: 'Poppins', sans-serif;
             background-color: var(--bg-main);
+            /* Subtle background pattern for a professional feel */
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
             color: var(--text-primary);
             margin: 0;
             transition: background-color 0.3s ease;
@@ -73,30 +79,13 @@
             animation: fadeIn 0.5s ease-out forwards;
         }
         .user-avatar {
-            width: 72px;
-            height: 72px;
-            border-radius: 50%;
+            width: 72px; height: 72px; border-radius: 50%;
             background: linear-gradient(135deg, var(--color-primary), var(--color-accent-green));
-            color: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2em;
-            font-weight: 700;
-            font-family: 'Montserrat', sans-serif;
-            flex-shrink: 0;
+            color: #fff; display: flex; align-items: center; justify-content: center;
+            font-size: 2em; font-weight: 700; font-family: 'Montserrat', sans-serif; flex-shrink: 0;
         }
-        .header-text h1 {
-            margin: 0;
-            font-size: 2.5em;
-            font-weight: 700;
-        }
-        .header-text p {
-            margin: 4px 0 0;
-            color: var(--text-secondary);
-            font-size: 1.1em;
-            font-weight: 500;
-        }
+        .header-text h1 { margin: 0; font-size: 2.5em; font-weight: 700; }
+        .header-text p { margin: 4px 0 0; color: var(--text-secondary); font-size: 1.1em; font-weight: 500; }
         
         /* --- DASHBOARD GRID LAYOUT --- */
         .dashboard-grid {
@@ -107,83 +96,78 @@
 
         /* --- FROSTED GLASS CARD STYLING --- */
         .card {
-            background-color: rgba(var(--bg-card-rgb), 0.75);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px); /* For Safari */
+            background-color: rgba(var(--bg-card-rgb), 0.7);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
             border-radius: 20px;
             box-shadow: 0 8px 32px 0 var(--shadow-color);
             padding: 30px;
             border: 1px solid var(--color-border);
+            border-top: 4px solid var(--color-primary); /* Accent border */
             opacity: 0;
             animation: fadeIn 0.6s ease-out forwards;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
-        .card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 16px 48px 0 var(--shadow-color);
-        }
+        .card.accent-green { border-top-color: var(--color-accent-green); }
+        .card.accent-gold { border-top-color: var(--color-accent-gold); }
+
+        .card:hover { transform: translateY(-10px); box-shadow: 0 16px 48px 0 var(--shadow-color); }
         
-        /* Staggered animation delay */
         .card:nth-child(1) { animation-delay: 0.2s; }
         .card:nth-child(2) { animation-delay: 0.3s; }
         .card:nth-child(3) { animation-delay: 0.4s; }
         .card:nth-child(4) { animation-delay: 0.5s; }
         .card:nth-child(5) { animation-delay: 0.6s; }
-        .card:nth-child(6) { animation-delay: 0.7s; }
 
-        .card-header {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 25px;
-        }
+        .card-header { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; }
         .card-header .icon-wrapper {
-            background-color: rgba(var(--bg-card-rgb), 0.8);
-            border-radius: 12px;
-            width: 48px;
-            height: 48px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5em;
-            color: var(--color-primary);
-            transition: transform 0.3s ease, color 0.3s ease;
+            background-color: rgba(var(--bg-card-rgb), 0.8); border-radius: 12px;
+            width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;
+            font-size: 1.5em; color: var(--text-primary); transition: transform 0.3s ease;
         }
-        .card:hover .icon-wrapper {
-            transform: scale(1.1) rotate(-5deg);
-        }
-        .card-header h2 {
-            margin: 0;
-            font-size: 1.3em;
-            color: var(--text-primary);
-        }
+        .card:hover .icon-wrapper { transform: scale(1.1) rotate(-5deg); }
+        .card-header h2 { margin: 0; font-size: 1.3em; }
 
-        /* --- SPECIFIC CARD MODULES --- */
-        /* Stats Cards */
-        .stats-card { text-align: center; }
-        .stats-card .value { font-size: 3.8em; font-weight: 700; margin: 15px 0; }
-        .stats-card .points-value { color: var(--color-accent-green); }
-        .stats-card .status.active { font-size: 1.2em; font-weight: 600; color: var(--color-accent-green); }
-        .stats-card p { margin: 0; color: var(--text-secondary); font-size: 0.9em; }
-        
-        /* Impact Tracker */
-        .impact-item { display: flex; align-items: center; gap: 20px; }
-        .impact-item:not(:last-child) { margin-bottom: 20px; }
-        .impact-item .icon-wrapper { color: var(--color-accent-green) !important; }
-        .impact-item .details span { display: block; }
-        .impact-item .details .figure { font-weight: 700; font-size: 1.4em; }
-        .impact-item .details .label { font-size: 0.9em; color: var(--text-secondary); }
-
-        /* Generic List Styling */
+        /* --- GENERAL LIST STYLING --- */
         .item-list { list-style: none; padding: 0; margin: 0; }
-        .item-list li { display: flex; align-items: center; padding: 18px 5px; border-bottom: 1px solid var(--color-border); transition: background-color 0.3s; }
+        .item-list li { display: flex; align-items: center; padding: 18px 10px; border-bottom: 1px solid var(--color-border); transition: background-color 0.2s; }
         .item-list li:last-child { border-bottom: none; }
-        .item-list li:hover { background-color: rgba(var(--bg-card-rgb), 0.5); border-radius: 10px; }
         .item-list .item-info .name { font-weight: 600; }
         .item-list .item-info .date { font-size: 0.9em; color: var(--text-secondary); }
-        .points-earned { margin-left: auto; font-weight: 700; font-size: 1.1em; color: var(--color-accent-green); padding-left: 15px;}
+        .points-earned { margin-left: auto; font-weight: 700; color: var(--color-accent-green); padding-left: 15px; }
 
-        /* Upcoming Events Button */
+        /* --- ENHANCED LEADERBOARD --- */
+        .leaderboard-list li { border-radius: 12px; margin-bottom: 8px; font-weight: 500; }
+        .leaderboard-list li.is-user { background-color: rgba(var(--color-primary), 0.1); border: 1px solid var(--color-primary); }
+        .leaderboard-list .rank-badge {
+            width: 40px; height: 40px; border-radius: 50%;
+            display: inline-flex; align-items: center; justify-content: center;
+            font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 1.2em;
+            color: #fff; flex-shrink: 0; margin-right: 15px;
+            box-shadow: inset 0 -2px 4px rgba(0,0,0,0.2), 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .leaderboard-list .rank-1 .rank-badge {
+            background: linear-gradient(135deg, #fceabb, var(--color-accent-gold));
+            color: #533e00;
+        }
+        .leaderboard-list .rank-2 .rank-badge {
+            background: linear-gradient(135deg, #eaeaed, var(--color-accent-silver));
+            color: #495057;
+        }
+        .leaderboard-list .rank-3 .rank-badge {
+            background: linear-gradient(135deg, #efcfa1, var(--color-accent-bronze));
+            color: #5c3c10;
+        }
+        .leaderboard-list .rank-badge::before {
+            font-family: 'Font Awesome 6 Free'; font-weight: 900;
+        }
+        .leaderboard-list .rank-1 .rank-badge::before { content: '\f005'; /* star */ }
+        .leaderboard-list .rank-2 .rank-badge::before { content: '2'; }
+        .leaderboard-list .rank-3 .rank-badge::before { content: '3'; }
+        .leaderboard-list .points { margin-left: auto; font-weight: 700; color: var(--text-primary); padding-left: 15px; }
+
+
+        /* --- OTHER MODULES --- */
         .register-btn {
             background: linear-gradient(135deg, var(--color-accent-green), #24c367);
             color: #fff; text-decoration: none; padding: 10px 20px; border-radius: 10px;
@@ -192,24 +176,15 @@
         }
         .register-btn:hover { transform: translateY(-3px); box-shadow: 0 7px 20px rgba(40, 167, 69, 0.4); }
 
-        /* Leaderboard */
-        .leaderboard-list .rank { font-size: 1.2em; font-weight: 700; color: var(--text-secondary); width: 30px; }
-        .leaderboard-list .points { margin-left: auto; font-weight: 600; color: var(--color-primary); padding-left: 15px;}
-        .leaderboard-list .fa-medal { color: var(--color-accent-gold); }
-
-        /* Responsive Adjustments */
         @media (max-width: 768px) {
             .main-container { padding: 20px; }
             .header-text h1 { font-size: 2em; }
-            .header-text p { font-size: 1em; }
             .dashboard-grid { grid-template-columns: 1fr; }
         }
 
-        /* --- FOOTER FOR THEME SWITCHING --- */
         .theme-switcher { text-align: center; margin-top: 40px; padding: 20px; font-size: 0.9em; animation: fadeIn 0.6s 0.8s ease-out forwards; opacity: 0;}
         .theme-switcher a { color: var(--text-secondary); text-decoration: none; font-weight: 600; padding: 5px 10px; transition: color 0.3s; }
         .theme-switcher a:hover { color: var(--color-primary); }
-
     </style>
     
     <script>
@@ -220,8 +195,6 @@
                 const theme = urlParams.get('theme');
                 if (theme === 'dark') {
                     document.documentElement.classList.add('dark-theme');
-                } else {
-                    document.documentElement.classList.remove('dark-theme');
                 }
             } catch (e) {
                 console.error("Error setting theme:", e);
@@ -237,31 +210,43 @@
             <div class="user-avatar">AG</div>
             <div class="header-text">
                 <h1>Welcome, Alex Green</h1>
-                <p>Here's your eco-dashboard for today, Wednesday, September 24.</p>
             </div>
         </header>
 
         <main class="dashboard-grid">
 
-            <div class="card stats-card">
+            <div class="card accent-gold">
                 <div class="card-header">
-                    <div class="icon-wrapper"><i class="fa-solid fa-id-badge"></i></div>
-                    <h2>Membership</h2>
+                    <div class="icon-wrapper"><i class="fa-solid fa-trophy"></i></div>
+                    <h2>Leaderboard</h2>
                 </div>
-                <div class="card-content">
-                    <div class="status active">Active Member</div>
-                    <p>Since: Jan 15, 2024</p>
-                </div>
+                <ol class="item-list leaderboard-list">
+                    <li class="rank-1">
+                        <span class="rank-badge"></span>
+                        <span class="name item-info">Priya Sharma</span>
+                        <span class="points">1,520 pts</span>
+                    </li>
+                    <li class="rank-2 is-user">
+                        <span class="rank-badge"></span>
+                        <span class="name item-info">Alex Green (You)</span>
+                        <span class="points">1,250 pts</span>
+                    </li>
+                    <li class="rank-3">
+                        <span class="rank-badge"></span>
+                        <span class="name item-info">Rohan Mehta</span>
+                        <span class="points">1,180 pts</span>
+                    </li>
+                </ol>
             </div>
 
-            <div class="card stats-card">
+            <div class="card accent-green">
                 <div class="card-header">
                     <div class="icon-wrapper"><i class="fa-solid fa-leaf"></i></div>
                     <h2>Eco-Points Balance</h2>
                 </div>
-                <div class="card-content">
-                    <div class="value points-value">1,250</div>
-                    <p>Keep up the great work!</p>
+                <div class="card-content" style="text-align: center;">
+                    <div class="value points-value" style="font-size: 3.8em; font-weight: 700; margin: 15px 0;">1,250</div>
+                    <p style="color: var(--text-secondary); font-size: 0.9em;">Keep up the great work!</p>
                 </div>
             </div>
             
@@ -270,19 +255,19 @@
                     <div class="icon-wrapper"><i class="fa-solid fa-earth-americas"></i></div>
                     <h2>Your Impact</h2>
                 </div>
-                <div class="card-content">
-                    <div class="impact-item">
-                        <div class="icon-wrapper"><i class="fa-solid fa-bottle-water"></i></div>
+                <div class="card-content" style="display: flex; flex-direction: column; gap: 20px;">
+                    <div class="impact-item" style="display: flex; align-items: center; gap: 20px;">
+                        <div class="icon-wrapper" style="color: var(--color-accent-green) !important;"><i class="fa-solid fa-bottle-water"></i></div>
                         <div class="details">
-                            <span class="figure">12.5 kg</span>
-                            <span class="label">Plastic Recycled</span>
+                            <span style="font-weight: 700; font-size: 1.4em;">12.5 kg</span>
+                            <span style="font-size: 0.9em; color: var(--text-secondary);">Plastic Recycled</span>
                         </div>
                     </div>
-                    <div class="impact-item">
-                        <div class="icon-wrapper"><i class="fa-solid fa-smog"></i></div>
+                    <div class="impact-item" style="display: flex; align-items: center; gap: 20px;">
+                        <div class="icon-wrapper" style="color: var(--color-accent-green) !important;"><i class="fa-solid fa-smog"></i></div>
                         <div class="details">
-                            <span class="figure">75 kg</span>
-                            <span class="label">CO₂ Emissions Saved</span>
+                            <span style="font-weight: 700; font-size: 1.4em;">75 kg</span>
+                            <span style="font-size: 0.9em; color: var(--text-secondary);">CO₂ Emissions Saved</span>
                         </div>
                     </div>
                 </div>
@@ -313,30 +298,6 @@
             
             <div class="card">
                 <div class="card-header">
-                    <div class="icon-wrapper"><i class="fa-solid fa-trophy"></i></div>
-                    <h2>Leaderboard</h2>
-                </div>
-                <ol class="item-list leaderboard-list">
-                    <li>
-                        <span class="rank"><i class="fa-solid fa-medal"></i> 1</span>
-                        <span class="name">Priya Sharma</span>
-                        <span class="points">1,520 pts</span>
-                    </li>
-                    <li>
-                        <span class="rank"><i class="fa-solid fa-medal"></i> 2</span>
-                        <span class="name">Alex Green (You)</span>
-                        <span class="points">1,250 pts</span>
-                    </li>
-                    <li>
-                        <span class="rank"><i class="fa-solid fa-medal"></i> 3</span>
-                        <span class="name">Rohan Mehta</span>
-                        <span class="points">1,180 pts</span>
-                    </li>
-                </ol>
-            </div>
-            
-            <div class="card">
-                <div class="card-header">
                     <div class="icon-wrapper"><i class="fa-solid fa-clock-rotate-left"></i></div>
                     <h2>Recent Activity</h2>
                 </div>
@@ -346,21 +307,21 @@
                             <div class="name">Campus Cleanup Drive</div>
                             <div class="date">September 20, 2025</div>
                         </div>
-                        <div class="points-earned">+50</div>
+                        <div class="points-earned">+50 pts</div>
                     </li>
                     <li>
                         <div class="item-info">
                             <div class="name">Tree Plantation Event</div>
                             <div class="date">August 15, 2025</div>
                         </div>
-                        <div class="points-earned">+75</div>
+                        <div class="points-earned">+75 pts</div>
                     </li>
                     <li>
                         <div class="item-info">
                             <div class="name">Waste Segregation Workshop</div>
                             <div class="date">July 30, 2025</div>
                         </div>
-                        <div class="points-earned">+30</div>
+                        <div class="points-earned">+30 pts</div>
                     </li>
                 </ul>
             </div>
