@@ -145,12 +145,14 @@
         footer { text-align: center; font-size: 0.875rem; color: var(--text-secondary); }
 
         .pdf-template {
-            visibility: hidden;
-            position: absolute;
-            height: 0;
-            overflow: hidden;
-            width: 8.27in; /* A4 paper width */
-        }
+    display: block;       /* must be visible to html2canvas */
+    position: fixed;
+    top: -9999px;         /* move it off screen */
+    left: -9999px;
+    width: 8.27in;        /* A4 width */
+    background: #fff;     /* ensure white background */
+}
+
     </style>
 </head>
 <body>
@@ -401,33 +403,42 @@
         }
 
         function generateDeclarationPDF(studentName, topicTitle) {
-            document.getElementById('declaration-student-name').textContent = studentName;
-            document.getElementById('declaration-student-name-sig').textContent = studentName;
-            document.getElementById('declaration-topic').textContent = topicTitle;
-            const element = document.getElementById('declaration-template');
-            const opt = {
-                margin: 0,
-                filename: `Declaration_${studentName.replace(/\s/g, '_')}.pdf`,
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2 },
-                jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
-            };
-            html2pdf().from(element).set(opt).save();
-        }
+    const el = document.getElementById('declaration-template');
+    document.getElementById('declaration-student-name').textContent = studentName;
+    document.getElementById('declaration-student-name-sig').textContent = studentName;
+    document.getElementById('declaration-topic').textContent = topicTitle;
 
-        function generateCertificatePDF(studentName, topicTitle) {
-            document.getElementById('certificate-student-name').textContent = studentName;
-            document.getElementById('certificate-topic').textContent = topicTitle;
-            const element = document.getElementById('certificate-template');
-            const opt = {
-                margin: 0,
-                filename: `Certificate_${studentName.replace(/\s/g, '_')}.pdf`,
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2 },
-                jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
-            };
-            html2pdf().from(element).set(opt).save();
-        }
+    el.style.display = "block"; // temporarily show
+    const opt = {
+        margin: 0,
+        filename: `Declaration_${studentName.replace(/\s/g, '_')}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+    };
+    html2pdf().from(el).set(opt).save().then(() => {
+        el.style.display = "none"; // hide again
+    });
+}
+
+function generateCertificatePDF(studentName, topicTitle) {
+    const el = document.getElementById('certificate-template');
+    document.getElementById('certificate-student-name').textContent = studentName;
+    document.getElementById('certificate-topic').textContent = topicTitle;
+
+    el.style.display = "block"; // temporarily show
+    const opt = {
+        margin: 0,
+        filename: `Certificate_${studentName.replace(/\s/g, '_')}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+    };
+    html2pdf().from(el).set(opt).save().then(() => {
+        el.style.display = "none"; // hide again
+    });
+}
+
 
 
         window.onload = async () => {
