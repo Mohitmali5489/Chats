@@ -471,3 +471,37 @@
                     }
                     
                     fetchAndDisplayFileUploadStatus(projectData.topic.topicid, studentId, student.name, projectData.topic.topicname);
+                } else {
+                    document.getElementById('project-title').textContent = 'No project has been assigned to this student yet.';
+                    document.getElementById('project-type-container').style.display = 'none';
+                }
+
+                loadingEl.style.display = 'none';
+                projectDetailsEl.classList.remove('hidden');
+                projectDetailsEl.classList.add('loaded');
+
+            } catch (error) {
+                console.error("Initialization failed:", error);
+                showError("Error Loading Data", error.message);
+            }
+        };
+
+        function displayTeamMembers(currentStudentId, teamMembers) {
+            const teamMembersList = document.getElementById('team-members-list');
+            const section = document.getElementById('team-members-section');
+            teamMembersList.innerHTML = '';
+            
+            const otherMembers = teamMembers.filter(m => m.studentid !== currentStudentId);
+
+            if (otherMembers.length > 0) {
+                 otherMembers.forEach(member => {
+                     const li = document.createElement('li');
+                     li.innerHTML = `<span>${member.name}</span><span style="font-size: 0.75rem; color: var(--text-secondary);">ID: ${member.studentid}</span>`;
+                     teamMembersList.appendChild(li);
+                 });
+                 section.classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>
