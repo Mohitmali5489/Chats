@@ -143,6 +143,14 @@
         .upload-btn:disabled { background: var(--text-secondary); cursor: not-allowed; transform: none; box-shadow: none; }
         
         footer { text-align: center; font-size: 0.875rem; color: var(--text-secondary); }
+
+        .pdf-template {
+            visibility: hidden;
+            position: absolute;
+            height: 0;
+            overflow: hidden;
+            width: 8.27in; /* A4 paper width */
+        }
     </style>
 </head>
 <body>
@@ -177,7 +185,7 @@
         <footer><p>&copy; 2025 BAF Project Management. All Rights Reserved.</p></footer>
     </div>
 
-    <div id="declaration-template" style="position: absolute; left: -9999px; width: 8.27in; padding: 1.5in 1in; font-family: 'Times New Roman', serif; color: #000; line-height: 2;">
+    <div id="declaration-template" class="pdf-template" style="padding: 1.5in 1in; font-family: 'Times New Roman', serif; color: #000; line-height: 2;">
         <h3 style="text-align: center; font-weight: bold; text-decoration: underline; margin-bottom: 2rem;">DECLARATION</h3>
         <p style="text-align: justify; text-indent: 0.5in;">
             I, <strong id="declaration-student-name"></strong>, Student of B.K. Birla Night College, Institute studying In S.Y. BCom. Hereby declare that I have completed the field project entitled <strong id="declaration-topic"></strong>. In the area of commerce during the academic year 2025-26. The report work is original and the information / data included in the report is true emerging from the primary and / secondary data gathered and analyzed as part of this project. Due credit is extended on the work of Literature/secondary survey by endorsing it in the bibliography as per prescribed format.
@@ -188,7 +196,7 @@
         </div>
     </div>
 
-    <div id="certificate-template" style="position: absolute; left: -9999px; width: 8.27in; padding: 1in; font-family: 'Times New Roman', serif; color: #000; text-align: center;">
+    <div id="certificate-template" class="pdf-template" style="padding: 1in; font-family: 'Times New Roman', serif; color: #000; text-align: center;">
         <img src="https://i.ibb.co/jvfmpTh3/image.png" alt="College Logo" style="width: 100px; height: auto; margin: 0 auto 1rem auto; display: block;">
         <p style="font-size: 1.1rem;">Kalyan Citizens’ Education Society’s</p>
         <h2 style="font-weight: bold; font-size: 1.5rem;">B. K. Birla Night Arts, Science and Commerce College, Kalyan</h2>
