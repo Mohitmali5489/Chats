@@ -145,14 +145,14 @@
         footer { text-align: center; font-size: 0.875rem; color: var(--text-secondary); }
 
         .pdf-template {
-    display: block;       /* must be visible to html2canvas */
-    position: fixed;
-    top: -9999px;         /* move it off screen */
-    left: -9999px;
-    width: 8.27in;        /* A4 width */
-    background: #fff;     /* ensure white background */
-}
-
+            visibility: hidden;
+            position: absolute;
+            height: 0;
+            overflow: hidden;
+            width: 8.27in; /* A4 paper width */
+            font-family: 'Times New Roman', serif; 
+            color: #000; 
+        }
     </style>
 </head>
 <body>
@@ -187,7 +187,7 @@
         <footer><p>&copy; 2025 BAF Project Management. All Rights Reserved.</p></footer>
     </div>
 
-    <div id="declaration-template" class="pdf-template" style="padding: 1.5in 1in; font-family: 'Times New Roman', serif; color: #000; line-height: 2;">
+    <div id="declaration-template" class="pdf-template" style="line-height: 2;">
         <h3 style="text-align: center; font-weight: bold; text-decoration: underline; margin-bottom: 2rem;">DECLARATION</h3>
         <p style="text-align: justify; text-indent: 0.5in;">
             I, <strong id="declaration-student-name"></strong>, Student of B.K. Birla Night College, Institute studying In S.Y. BCom. Hereby declare that I have completed the field project entitled <strong id="declaration-topic"></strong>. In the area of commerce during the academic year 2025-26. The report work is original and the information / data included in the report is true emerging from the primary and / secondary data gathered and analyzed as part of this project. Due credit is extended on the work of Literature/secondary survey by endorsing it in the bibliography as per prescribed format.
@@ -198,13 +198,13 @@
         </div>
     </div>
 
-    <div id="certificate-template" class="pdf-template" style="padding: 1in; font-family: 'Times New Roman', serif; color: #000; text-align: center;">
+    <div id="certificate-template" class="pdf-template" style="text-align: center;">
         <img src="https://i.ibb.co/jvfmpTh3/image.png" alt="College Logo" style="width: 100px; height: auto; margin: 0 auto 1rem auto; display: block;">
         <p style="font-size: 1.1rem;">Kalyan Citizens’ Education Society’s</p>
         <h2 style="font-weight: bold; font-size: 1.5rem;">B. K. Birla Night Arts, Science and Commerce College, Kalyan</h2>
         <p style="font-size: 0.9rem; margin-bottom: 0.5rem;">(Affiliated to University of Mumbai)</p>
         <p style="font-size: 0.9rem; font-weight: bold;">B.K. BIRLA COLLEGE CAMPUS ROAD, GAURIPADA, KALYAN (WEST) – 421301</p>
-        <hr style="margin: 2rem 0; border: 1px solid #000;">
+        <hr style="margin: 2rem 0; border: 0; border-top: 1px solid #000;">
         <h3 style="text-align: center; font-weight: bold; text-decoration: underline; margin-bottom: 2rem;">CERTIFICATE</h3>
         <p style="text-align: justify; line-height: 2; margin-bottom: 4rem;">
             I hereby certify that, <strong id="certificate-student-name"></strong>, student of B.K. Birla Night College, studying in S.Y. BCom (A&F). Has completed a project title <strong id="certificate-topic"></strong> in the area commerce specialization for academic year 2025-26. To the best of my knowledge the work of the student is original and the information included in the project is correct.
@@ -402,43 +402,36 @@
             };
         }
 
+        // ✅ PDF GENERATION FUNCTION UPDATED
         function generateDeclarationPDF(studentName, topicTitle) {
-    const el = document.getElementById('declaration-template');
-    document.getElementById('declaration-student-name').textContent = studentName;
-    document.getElementById('declaration-student-name-sig').textContent = studentName;
-    document.getElementById('declaration-topic').textContent = topicTitle;
+            document.getElementById('declaration-student-name').textContent = studentName;
+            document.getElementById('declaration-student-name-sig').textContent = studentName;
+            document.getElementById('declaration-topic').textContent = topicTitle;
+            const element = document.getElementById('declaration-template');
+            const opt = {
+                margin: [1.5, 1, 1.5, 1], // [top, right, bottom, left] in inches
+                filename: `Declaration_${studentName.replace(/\s/g, '_')}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true },
+                jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+            };
+            html2pdf().from(element).set(opt).save();
+        }
 
-    el.style.display = "block"; // temporarily show
-    const opt = {
-        margin: 0,
-        filename: `Declaration_${studentName.replace(/\s/g, '_')}.pdf`,
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true },
-        jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
-    };
-    html2pdf().from(el).set(opt).save().then(() => {
-        el.style.display = "none"; // hide again
-    });
-}
-
-function generateCertificatePDF(studentName, topicTitle) {
-    const el = document.getElementById('certificate-template');
-    document.getElementById('certificate-student-name').textContent = studentName;
-    document.getElementById('certificate-topic').textContent = topicTitle;
-
-    el.style.display = "block"; // temporarily show
-    const opt = {
-        margin: 0,
-        filename: `Certificate_${studentName.replace(/\s/g, '_')}.pdf`,
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true },
-        jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
-    };
-    html2pdf().from(el).set(opt).save().then(() => {
-        el.style.display = "none"; // hide again
-    });
-}
-
+        // ✅ PDF GENERATION FUNCTION UPDATED
+        function generateCertificatePDF(studentName, topicTitle) {
+            document.getElementById('certificate-student-name').textContent = studentName;
+            document.getElementById('certificate-topic').textContent = topicTitle;
+            const element = document.getElementById('certificate-template');
+            const opt = {
+                margin: 1, // 1 inch margin on all sides
+                filename: `Certificate_${studentName.replace(/\s/g, '_')}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true },
+                jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+            };
+            html2pdf().from(element).set(opt).save();
+        }
 
 
         window.onload = async () => {
@@ -478,37 +471,3 @@ function generateCertificatePDF(studentName, topicTitle) {
                     }
                     
                     fetchAndDisplayFileUploadStatus(projectData.topic.topicid, studentId, student.name, projectData.topic.topicname);
-                } else {
-                    document.getElementById('project-title').textContent = 'No project has been assigned to this student yet.';
-                    document.getElementById('project-type-container').style.display = 'none';
-                }
-
-                loadingEl.style.display = 'none';
-                projectDetailsEl.classList.remove('hidden');
-                projectDetailsEl.classList.add('loaded');
-
-            } catch (error) {
-                console.error("Initialization failed:", error);
-                showError("Error Loading Data", error.message);
-            }
-        };
-
-        function displayTeamMembers(currentStudentId, teamMembers) {
-            const teamMembersList = document.getElementById('team-members-list');
-            const section = document.getElementById('team-members-section');
-            teamMembersList.innerHTML = '';
-            
-            const otherMembers = teamMembers.filter(m => m.studentid !== currentStudentId);
-
-            if (otherMembers.length > 0) {
-                 otherMembers.forEach(member => {
-                     const li = document.createElement('li');
-                     li.innerHTML = `<span>${member.name}</span><span style="font-size: 0.75rem; color: var(--text-secondary);">ID: ${member.studentid}</span>`;
-                     teamMembersList.appendChild(li);
-                 });
-                 section.classList.remove('hidden');
-            }
-        }
-    </script>
-</body>
-</html>
