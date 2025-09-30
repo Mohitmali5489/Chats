@@ -219,7 +219,7 @@
             if (teamError) throw new Error('Could not retrieve team members.');
             
             const teamMemberIds = teamAssignments.map(a => a.studentid);
-            const { data: teamMembers, error: membersError } = await supabaseClient.from('students').select('studentid, name').in('studentid', teamMemberIds);
+            const { data: teamMembers, error: membersError } = await supabaseClient.from('students').select('studentid, fullname').in('studentid', teamMemberIds);
             if (membersError) throw new Error('Could not retrieve team member details.');
 
             return { topic, team: teamMembers };
@@ -245,7 +245,7 @@
             document.getElementById('file-upload-section').classList.remove('hidden');
 
             const { data: file, error } = await supabaseClient.from('project_files')
-                .select('*, students(name)')
+                .select('*, students(fullname)')
                 .eq('topic_id', topicId)
                 .single();
 
@@ -257,7 +257,7 @@
 
             const status = file.status || 'Pending';
             const comments = file.mentor_comments;
-            const uploader = file.students ? file.students.name : 'a team member';
+            const uploader = file.students ? file.students.fullname : 'a team member';
             const uploadDate = new Date(file.uploaded_at).toLocaleDateString();
 
             let statusHTML = '';
@@ -376,7 +376,7 @@
             const student = currentStudentData;
             const topic = currentProjectData.topic;
             const salutation = getSalutation(student.gender);
-            const studentName = `${salutation} ${student.name}`;
+            const studentFullName = `${salutation} ${student.fullname}`;
 
             const contentHTML = `
                 <div style="font-family: 'Times New Roman', serif; color: black; font-size: 12pt; display: flex; flex-direction: column; height: 100%;">
@@ -384,7 +384,7 @@
                         <h1 style="text-align: center; font-weight: bold; text-decoration: underline; font-size: 16pt; margin-bottom: 0.5in;">DECLARATION</h1>
                         <div style="line-height: 1.8; text-align: justify;">
                             <p style="margin-bottom: 0.3in;">
-                                I <strong>${studentName}</strong>, Student of B.K. Birla Night College, Institute studying In <strong>S.Y. BAF</strong>. Hereby declare that I have completed the field project entitled <strong>"${topic.topicname}"</strong>. In the area of commerce during the academic year 2025-26.
+                                I <strong>${studentFullName}</strong>, Student of B.K. Birla Night College, Institute studying In <strong>S.Y. BAF</strong>. Hereby declare that I have completed the field project entitled <strong>"${topic.topicname}"</strong>. In the area of commerce during the academic year 2025-26.
                             </p>
                             <p style="margin-bottom: 0.3in;">
                                 The report work is original and the information / data included in the report is true emerging from the primary and / secondary data gathered and analyzed as part of this project.
@@ -396,7 +396,7 @@
                     </div>
                     <div style="text-align: center; margin-top: 0.5in;">
                          <p>Signature of the student with date</p>
-                         <p style="margin-top: 0.25in;"><strong>(${studentName})</strong></p>
+                         <p style="margin-top: 0.25in;"><strong>(${studentFullName})</strong></p>
                     </div>
                 </div>`;
 
@@ -409,7 +409,7 @@
             
             const options = {
                 margin: [0, 0, 0, 0],
-                filename: `Declaration_${student.name}.pdf`,
+                filename: `Declaration_${student.fullname}.pdf`,
                 image: { type: 'jpeg', quality: 1.0 },
                 html2canvas: { scale: 3, useCORS: true },
                 jsPDF: { unit: 'cm', format: 'a4', orientation: 'portrait' }
@@ -422,7 +422,7 @@
             const student = currentStudentData;
             const topic = currentProjectData.topic;
             const salutation = getSalutation(student.gender);
-            const studentName = `${salutation} ${student.name}`;
+            const studentFullName = `${salutation} ${student.fullname}`;
 
             const contentHTML = `
                 <div style="font-family: 'Times New Roman', serif; color: black; font-size: 12pt; text-align: center; display: flex; flex-direction: column; justify-content: space-between; height: 100%;">
@@ -436,7 +436,7 @@
                         <h1 style="font-weight: bold; text-decoration: underline; font-size: 16pt; margin: 0.5in 0;">CERTIFICATE</h1>
                         
                         <p style="text-align: justify; line-height: 1.8;">
-                            I hereby certify that, <strong>${studentName}</strong>, student of B.K. Birla Night College, studying in <strong>S.Y. BAF</strong>. Has completed a project title <strong>"${topic.topicname}"</strong> in the area commerce specialization for academic year 2025-26. To the best of my knowledge the work of the student is original and the information included in the project is correct.
+                            I hereby certify that, <strong>${studentFullName}</strong>, student of B.K. Birla Night College, studying in <strong>S.Y. BAF</strong>. Has completed a project title <strong>"${topic.topicname}"</strong> in the area commerce specialization for academic year 2025-26. To the best of my knowledge the work of the student is original and the information included in the project is correct.
                         </p>
                     </div>
                     
@@ -458,7 +458,7 @@
             
             const options = {
                 margin: [0,0,0,0],
-                filename: `Certificate_${student.name}.pdf`,
+                filename: `Certificate_${student.fullname}.pdf`,
                 image: { type: 'jpeg', quality: 1.0 },
                 html2canvas: { scale: 3, useCORS: true },
                 jsPDF: { unit: 'cm', format: 'a4', orientation: 'portrait' }
@@ -486,9 +486,9 @@
                 currentStudentData = student;
                 currentProjectData = projectData;
 
-                document.getElementById('student-name').textContent = student.name;
+                document.getElementById('student-name').textContent = student.fullname;
                 document.getElementById('student-id').textContent = `Student ID: ${student.studentid}`;
-                const nameParts = student.name.trim().split(' ');
+                const nameParts = student.fullname.trim().split(' ');
                 const initials = nameParts.length > 1
                     ? `${nameParts[0][0]}${nameParts[nameParts.length - 1][0]}`
                     : nameParts[0].substring(0, 2);
@@ -532,7 +532,7 @@
             if (otherMembers.length > 0) {
                  otherMembers.forEach(member => {
                       const li = document.createElement('li');
-                      li.innerHTML = `<span>${member.name}</span><span style="font-size: 0.75rem; color: var(--text-secondary);">ID: ${member.studentid}</span>`;
+                      li.innerHTML = `<span>${member.fullname}</span><span style="font-size: 0.75rem; color: var(--text-secondary);">ID: ${member.studentid}</span>`;
                       teamMembersList.appendChild(li);
                  });
                  section.classList.remove('hidden');
