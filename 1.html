@@ -6,6 +6,8 @@
     <title>Field Project Dashboard - BAFs App</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
     <script>
@@ -18,19 +20,17 @@
     </script>
 
     <style>
-        /* 🎨 --- Color & Theme Variables --- 🎨 */
+        /* CSS styles remain the same... */
         :root {
             --primary-accent: #b84fff;
             --primary-gradient: linear-gradient(135deg, #b84fff, #8f00ff);
             --font-family: 'Inter', sans-serif;
-            
             --bg-gradient-light: linear-gradient(180deg, #f5f5f7, #e9e9ed);
             --card-bg-light: rgba(255, 255, 255, 0.8);
             --text-primary-light: #121212;
             --text-secondary-light: #5f5f5f;
             --border-color-light: #e0e0e0;
             --shadow-light: 0 4px 25px rgba(0, 0, 0, 0.07);
-
             --bg-gradient-dark: linear-gradient(180deg, #2a2a3d, #1e1e2e);
             --card-bg-dark: rgba(42, 42, 61, 0.8);
             --text-primary-dark: #f0f0f0;
@@ -38,7 +38,6 @@
             --border-color-dark: #4a4a6a;
             --shadow-dark: 0 4px 25px rgba(0, 0, 0, 0.2);
         }
-        
         [data-theme="light"] {
             --bg-gradient: var(--bg-gradient-light);
             --card-bg: var(--card-bg-light);
@@ -47,7 +46,6 @@
             --border-color: var(--border-color-light);
             --shadow: var(--shadow-light);
         }
-
         [data-theme="dark"] {
             --bg-gradient: var(--bg-gradient-dark);
             --card-bg: var(--card-bg-dark);
@@ -56,10 +54,7 @@
             --border-color: var(--border-color-dark);
             --shadow: var(--shadow-dark);
         }
-        
-        /* 🧱 --- Base & Layout Styles --- 🧱 */
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        
         body {
             font-family: var(--font-family);
             background: var(--bg-gradient);
@@ -70,9 +65,7 @@
             align-items: center;
             padding: 2rem 1rem;
         }
-
         .hidden { display: none !important; }
-
         #app-container {
             width: 100%;
             max-width: 42rem;
@@ -80,21 +73,14 @@
             flex-direction: column;
             gap: 1.5rem;
         }
-
-        /* 🔝 --- Header --- 🔝 */
         header { text-align: center; }
-        header h1 {
-            font-size: 2.25rem; /* 36px */
-            font-weight: 700;
-        }
+        header h1 { font-size: 2.25rem; font-weight: 700; }
         .gradient-text {
             background: var(--primary-gradient);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
         }
-        
-        /* 🔄 --- Loading & Animation --- 🔄 */
         #loading { text-align: center; padding: 2rem; }
         .loader { display: flex; justify-content: center; align-items: center; gap: 0.5rem; margin-bottom: 1rem; }
         .loader-dot { width: 0.75rem; height: 0.75rem; background-color: var(--primary-accent); border-radius: 50%; animation: pulse 1.4s infinite ease-in-out both; }
@@ -102,56 +88,40 @@
         .loader-dot:nth-child(2) { animation-delay: -0.16s; }
         @keyframes pulse { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1.0); } }
         #loading p { font-size: 1.125rem; color: var(--text-secondary); }
-
         @keyframes card-enter {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        #project-details.loaded {
-            animation: card-enter 0.6s ease-out forwards;
-        }
-        
-        /* 📄 --- Card & Content Styles --- 📄 */
+        #project-details.loaded { animation: card-enter 0.6s ease-out forwards; }
         #error { background: var(--card-bg); border: 1px solid var(--border-color); backdrop-filter: blur(10px); box-shadow: var(--shadow); padding: 2rem; border-radius: 1rem; text-align: center; }
         #error-title { font-size: 1.5rem; font-weight: 700; color: #ef4444; }
         #error-message { margin-top: 0.5rem; color: var(--text-secondary); }
-
         .main-card { background: var(--card-bg); backdrop-filter: blur(12px); border: 1px solid var(--border-color); border-radius: 1rem; box-shadow: var(--shadow); overflow: hidden; }
         .card-content { padding: 1.5rem; }
         @media (min-width: 640px) { .card-content { padding: 2rem; } }
-
         .student-info { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
         .student-initials { width: 4rem; height: 4rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 700; color: white; background: var(--primary-gradient); flex-shrink: 0; }
         #student-name { font-size: 1.5rem; font-weight: 700; color: var(--text-primary); }
         #student-id { font-size: 0.875rem; color: var(--text-secondary); }
-        
         .project-details-grid { display: grid; gap: 1.5rem; }
         .project-detail-item h3 { font-size: 0.875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--primary-accent); margin-bottom: 0.25rem; }
         #project-title { font-size: 1.25rem; line-height: 1.6; color: var(--text-primary); }
         #project-type { display: inline-block; padding: 0.25rem 0.75rem; font-size: 0.875rem; font-weight: 500; border-radius: 9999px; }
-
         .card-footer-section { padding: 1.5rem; border-top: 1px solid var(--border-color); background: rgba(0,0,0,0.02); }
         @media (min-width: 640px) { .card-footer-section { padding: 1.5rem 2rem; } }
         [data-theme="dark"] .card-footer-section { background: rgba(0,0,0,0.1); }
         .card-footer-section h3 { font-size: 1.125rem; font-weight: 600; margin-bottom: 1rem; color: var(--text-primary); }
-        
         #team-members-list { list-style: none; display: grid; gap: 0.5rem; }
         #team-members-list li { display: flex; align-items: center; justify-content: space-between; padding: 0.5rem; border-radius: 6px; }
-
         .upload-btn { display: inline-flex; align-items: center; gap: 0.5rem; background: var(--primary-gradient); color: white; padding: 0.625rem 1.25rem; border-radius: 8px; font-weight: 600; text-decoration: none; border: none; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
         .upload-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(143,0,255,0.3); }
         .upload-btn:disabled { background: var(--text-secondary); cursor: not-allowed; transform: none; box-shadow: none; }
-        
         footer { text-align: center; font-size: 0.875rem; color: var(--text-secondary); }
     </style>
 </head>
 <body>
 
     <div id="app-container">
-        <header>
-          
-        </header>
-
         <main id="main-content">
             <div id="loading"><div class="loader"><div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div></div><p>Fetching project details...</p></div>
             <div id="error" class="hidden"><h2 id="error-title"></h2><p id="error-message"></p></div>
@@ -173,23 +143,21 @@
                 </div>
             </div>
         </main>
-        
         <footer><p>&copy; 2025 BAF Project Management. All Rights Reserved.</p></footer>
     </div>
 
     <script type="module">
         import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 
+        // Supabase and data fetching logic remains the same...
         const SUPABASE_URL = 'https://fuovcuzaxfkyqrridrgy.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ1b3ZjdXpheGZreXFycmlkcmd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU0NzIyMjAsImV4cCI6MjA2MTA0ODIyMH0._PkkfWXcn4j6cjBh-yLJjDevrmhuxKxVbcdQUSgCsSk';
         const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
-
         const loadingEl = document.getElementById('loading');
         const errorEl = document.getElementById('error');
         const projectDetailsEl = document.getElementById('project-details');
         const errorTitleEl = document.getElementById('error-title');
         const errorMessageEl = document.getElementById('error-message');
-        
         function showError(title, message) {
             loadingEl.style.display = 'none';
             projectDetailsEl.classList.add('hidden');
@@ -197,31 +165,24 @@
             errorMessageEl.textContent = message;
             errorEl.classList.remove('hidden');
         }
-
         async function fetchStudentData(studentId) {
             const { data: student, error } = await supabaseClient.from('students').select('*').eq('studentid', studentId).single();
             if (error || !student) throw new Error('Student not found. Please check the ID in the URL.');
             return student;
         }
-
         async function fetchProjectData(studentId) {
             const { data: assignment, error } = await supabaseClient.from('projectassignments').select('topicid').eq('studentid', studentId).single();
             if (error || !assignment) return { topic: null, team: [] };
-            
             const topicId = assignment.topicid;
             const { data: topic, error: topicError } = await supabaseClient.from('topics').select('*').eq('topicid', topicId).single();
             if (topicError) throw new Error('Could not retrieve project details.');
-
             const { data: teamAssignments, error: teamError } = await supabaseClient.from('projectassignments').select('studentid').eq('topicid', topicId);
             if (teamError) throw new Error('Could not retrieve team members.');
-            
             const teamMemberIds = teamAssignments.map(a => a.studentid);
             const { data: teamMembers, error: membersError } = await supabaseClient.from('students').select('studentid, name').in('studentid', teamMemberIds);
             if (membersError) throw new Error('Could not retrieve team member details.');
-
             return { topic, team: teamMembers };
         }
-
         function getUploadFormHTML(isResubmission = false) {
             const title = isResubmission ? 'Your previous submission was rejected. Please upload a new file.' : 'Your group has not submitted the project file yet.';
             const buttonText = isResubmission ? 'Upload New File' : 'Upload and Submit';
@@ -236,29 +197,23 @@
                 </div>
             `;
         }
-
         async function fetchAndDisplayFileUploadStatus(topicId, currentStudentId, studentName, projectTitle) {
             const uploadUI = document.getElementById('upload-ui');
             document.getElementById('file-upload-section').classList.remove('hidden');
-
             const { data: file, error } = await supabaseClient.from('project_files')
                 .select('*, students(name)')
                 .eq('topic_id', topicId)
                 .single();
-
             if (!file) {
                 uploadUI.innerHTML = getUploadFormHTML(false);
                 setupUploadListeners(topicId, currentStudentId, false);
                 return;
             }
-
             const status = file.status || 'Pending';
             const comments = file.mentor_comments;
             const uploader = file.students ? file.students.name : 'a team member';
             const uploadDate = new Date(file.uploaded_at).toLocaleDateString();
-
             let statusHTML = '';
-
             switch (status) {
                 case 'Approved':
                     statusHTML = `
@@ -281,7 +236,7 @@
                             <button id="resubmit-btn" class="upload-btn" style="margin-top: 1rem;">Resubmit File</button>
                         </div>`;
                     break;
-                default: // Pending
+                default:
                     statusHTML = `
                         <div style="background-color: rgba(59, 130, 246, 0.1); border-left: 4px solid #3b82f6; padding: 1rem; border-radius: 0 0.5rem 0.5rem 0;">
                             <h4 style="color: #1e40af; font-weight: 700;">⏳ Pending Review</h4>
@@ -290,9 +245,7 @@
                     break;
             }
             uploadUI.innerHTML = statusHTML;
-            
             if (status === 'Approved') {
-                // ✅ UPDATE EVENT LISTENERS TO CALL IMAGE FUNCTIONS
                 document.getElementById('download-declaration-btn').addEventListener('click', () => generateDeclarationImage(studentName, projectTitle));
                 document.getElementById('download-certificate-btn').addEventListener('click', () => generateCertificateImage(studentName, projectTitle));
             } else if (status === 'Rejected') {
@@ -302,17 +255,14 @@
                 });
             }
         }
-
         function setupUploadListeners(topicId, currentStudentId, isResubmission) {
             const fileInput = document.getElementById('file-input');
             const selectBtn = document.getElementById('select-file-btn');
             const uploadBtn = document.getElementById('upload-btn');
             const fileChosenEl = document.getElementById('file-chosen');
             const uploadStatusEl = document.getElementById('upload-status');
-
             if (!selectBtn) return;
             selectBtn.onclick = () => fileInput.click();
-            
             fileInput.onchange = () => {
                 if (fileInput.files.length > 0) {
                     fileChosenEl.textContent = fileInput.files[0].name;
@@ -322,34 +272,18 @@
                     uploadBtn.disabled = true;
                 }
             };
-
             uploadBtn.onclick = async () => {
                 const file = fileInput.files[0];
                 if (!file) return;
-
                 uploadBtn.disabled = true;
                 uploadBtn.textContent = 'Uploading...';
                 const filePath = `${topicId}_${Date.now()}_${file.name.replace(/\s/g, '_')}`;
-
                 try {
                     const { error: uploadError } = await supabaseClient.storage.from('FP').upload(filePath, file);
                     if (uploadError) throw uploadError;
-                    
-                    const fileData = {
-                        topic_id: topicId,
-                        file_path: filePath,
-                        uploader_student_id: currentStudentId,
-                        uploaded_at: new Date(),
-                        status: 'Pending',
-                        mentor_comments: null
-                    };
-
-                    const { error: dbError } = isResubmission
-                        ? await supabaseClient.from('project_files').update(fileData).eq('topic_id', topicId)
-                        : await supabaseClient.from('project_files').insert(fileData);
-
+                    const fileData = { topic_id: topicId, file_path: filePath, uploader_student_id: currentStudentId, uploaded_at: new Date(), status: 'Pending', mentor_comments: null };
+                    const { error: dbError } = isResubmission ? await supabaseClient.from('project_files').update(fileData).eq('topic_id', topicId) : await supabaseClient.from('project_files').insert(fileData);
                     if (dbError) throw dbError;
-                    
                     uploadStatusEl.textContent = '✅ Success! File submitted for review.';
                     uploadStatusEl.style.color = '#22c55e';
                     setTimeout(() => window.location.reload(), 1500);
@@ -363,26 +297,14 @@
             };
         }
 
-        // ✅ NEW FUNCTION TO GENERATE IMAGE INSTEAD OF PDF
+        // Image generation logic is the same, but now it should work with html2canvas loaded
         function generateDeclarationImage(studentName, topicTitle) {
-            const htmlContent = `
-                <div style="width: 8.27in; height: 11.69in; background: white; padding: 1.5in 1in; font-family: 'Times New Roman', serif; color: #000; line-height: 2;">
-                    <h3 style="text-align: center; font-weight: bold; text-decoration: underline; margin-bottom: 2rem;">DECLARATION</h3>
-                    <p style="text-align: justify; text-indent: 0.5in;">
-                        I, <strong>${studentName}</strong>, Student of B.K. Birla Night College, Institute studying In S.Y. BCom. Hereby declare that I have completed the field project entitled <strong>${topicTitle}</strong>. In the area of commerce during the academic year 2025-26. The report work is original and the information / data included in the report is true emerging from the primary and / secondary data gathered and analyzed as part of this project. Due credit is extended on the work of Literature/secondary survey by endorsing it in the bibliography as per prescribed format.
-                    </p>
-                    <div style="margin-top: 5rem; text-align: left;">
-                        <p style="text-indent: 0;"><strong>Signature of the student with date</strong></p>
-                        <p style="text-indent: 0;"><strong>${studentName}</strong></p>
-                    </div>
-                </div>`;
-            
+            const htmlContent = `<div style="width: 8.27in; height: 11.69in; background: white; padding: 1.5in 1in; font-family: 'Times New Roman', serif; color: #000; line-height: 2;"><h3 style="text-align: center; font-weight: bold; text-decoration: underline; margin-bottom: 2rem;">DECLARATION</h3><p style="text-align: justify; text-indent: 0.5in;">I, <strong>${studentName}</strong>, Student of B.K. Birla Night College, Institute studying In S.Y. BCom. Hereby declare that I have completed the field project entitled <strong>${topicTitle}</strong>. In the area of commerce during the academic year 2025-26. The report work is original and the information / data included in the report is true emerging from the primary and / secondary data gathered and analyzed as part of this project. Due credit is extended on the work of Literature/secondary survey by endorsing it in the bibliography as per prescribed format.</p><div style="margin-top: 5rem; text-align: left;"><p style="text-indent: 0;"><strong>Signature of the student with date</strong></p><p style="text-indent: 0;"><strong>${studentName}</strong></p></div></div>`;
             const tempContainer = document.createElement('div');
             tempContainer.style.position = 'fixed';
             tempContainer.style.top = '-9999px';
             tempContainer.innerHTML = htmlContent;
             document.body.appendChild(tempContainer);
-
             html2canvas(tempContainer.firstElementChild, { scale: 2 }).then(canvas => {
                 const link = document.createElement('a');
                 link.download = `Declaration_${studentName.replace(/\s/g, '_')}.png`;
@@ -391,35 +313,14 @@
                 document.body.removeChild(tempContainer);
             });
         }
-
-        // ✅ NEW FUNCTION TO GENERATE IMAGE INSTEAD OF PDF
         function generateCertificateImage(studentName, topicTitle) {
             const logoBase64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAfASURFVHhe7Z1/aBxlHMe/8zY32STpP8k2a0vWSlBtqYKC4KCIVZwKinrQHxXpT3VRQcEfFRR7qCAu6qB2L4WgVBT80YJiF7sVRGytYCtWpBZrjbSpTdImbdokabJJms3u+Xn8bHKT3cnO7s3uzn3f5/HB7s7O/M7vfO/zeGaTCSGEEEIIIYQQQgghhBBCCHFLKkG/T6YfTD6WfCj5XfKZ5C/J72T+MvkvHj48mHxA5oPJZ5I3kEw+J/M3yc/k70k+kvwm+dXf4mH/jv/Xy3+s9s/S4WPyvS8PZJ8k35H552T+qR9x+13kZ/LPyX+V/P5f8hZ1D9u/S+ZLyac19q/vTj4h8xV5eFLez5L/IvnuJ5O/SP5P8pPz+u9F/lTyR/92/y3+Q/KHMv/5b+wD58ZcP/Tf+B8n/8mv5N5LvyLy/r3P/h/l1eVi+p+qKqn63rH8uD8uH5Hdk/s03wH6yLAn6PZK/ynxW8mH5M/6N/6vkv0j+wz+Q/w756z+P/3vyXyTf1R/X+i35N5LPSz6R/IHMvyR/k/+g/rBw4t8g35eH5f1/L/8uD8szVX2xLH9cHpaH5V3qb6i+9W/k9/2b/9+UeT/5fHnYF5K/IvMvkl/L/FXym/l5v3L575PPJT9+fX7/2cMhP5S5W/n48vAHyQ/K3Kn8oMwv/l2+k/nLkz88+W7yncl3yNzJ8kckP5e5zORjkrckckDyC5k/JHOH5MvS9+8l35O5T/6D5IflbyR/93P5K8nv/R1+P5c//P8u+Un521+k35b5m/Wf3/tP8l1V/0hV/8j8JfnVf9m/S/66+j0tD1V1e1UfV3WJqleqelTVM1VdqqpfVfWBqq5R1SOqPkvVY6peVPVZVT+s6klVH6zquVWdqeqzVT2s6qNVfVTVY6r+p/b/+iGEEEIIIYQQQgghhBBC3If4D101d2H1XvKFAAAAAElFTkSuQmCC";
-            const htmlContent = `
-                <div style="width: 8.27in; height: 11.69in; background: white; padding: 1in; font-family: 'Times New Roman', serif; color: #000; text-align: center;">
-                    <img src="${logoBase64}" alt="College Logo" style="width: 100px; height: auto; margin: 0 auto 1rem auto; display: block;">
-                    <p style="font-size: 1.1rem; margin:0;">Kalyan Citizens’ Education Society’s</p>
-                    <h2 style="font-weight: bold; font-size: 1.5rem; margin: 0;">B. K. Birla Night Arts, Science and Commerce College, Kalyan</h2>
-                    <p style="font-size: 0.9rem; margin-bottom: 0.5rem;">(Affiliated to University of Mumbai)</p>
-                    <p style="font-size: 0.9rem; font-weight: bold;">B.K. BIRLA COLLEGE CAMPUS ROAD, GAURIPADA, KALYAN (WEST) – 421301</p>
-                    <hr style="margin: 2rem 0; border: 0; border-top: 1px solid #000;">
-                    <h3 style="text-align: center; font-weight: bold; text-decoration: underline; margin-bottom: 2rem;">CERTIFICATE</h3>
-                    <p style="text-align: justify; line-height: 2; margin-bottom: 4rem;">
-                        I hereby certify that, <strong>${studentName}</strong>, student of B.K. Birla Night College, studying in S.Y. BCom (A&F). Has completed a project title <strong>${topicTitle}</strong> in the area commerce specialization for academic year 2025-26. To the best of my knowledge the work of the student is original and the information included in the project is correct.
-                    </p>
-                    <div style="display: flex; justify-content: space-between; text-align: center; margin-top: 5rem; font-weight: bold;">
-                        <p>Internal Guide</p>
-                        <p>Head of the Department</p>
-                        <p>Principal</p>
-                    </div>
-                </div>`;
-
+            const htmlContent = `<div style="width: 8.27in; height: 11.69in; background: white; padding: 1in; font-family: 'Times New Roman', serif; color: #000; text-align: center;"><img src="${logoBase64}" alt="College Logo" style="width: 100px; height: auto; margin: 0 auto 1rem auto; display: block;"><p style="font-size: 1.1rem; margin:0;">Kalyan Citizens’ Education Society’s</p><h2 style="font-weight: bold; font-size: 1.5rem; margin: 0;">B. K. Birla Night Arts, Science and Commerce College, Kalyan</h2><p style="font-size: 0.9rem; margin-bottom: 0.5rem;">(Affiliated to University of Mumbai)</p><p style="font-size: 0.9rem; font-weight: bold;">B.K. BIRLA COLLEGE CAMPUS ROAD, GAURIPADA, KALYAN (WEST) – 421301</p><hr style="margin: 2rem 0; border: 0; border-top: 1px solid #000;"><h3 style="text-align: center; font-weight: bold; text-decoration: underline; margin-bottom: 2rem;">CERTIFICATE</h3><p style="text-align: justify; line-height: 2; margin-bottom: 4rem;">I hereby certify that, <strong>${studentName}</strong>, student of B.K. Birla Night College, studying in S.Y. BCom (A&F). Has completed a project title <strong>${topicTitle}</strong> in the area commerce specialization for academic year 2025-26. To the best of my knowledge the work of the student is original and the information included in the project is correct.</p><div style="display: flex; justify-content: space-between; text-align: center; margin-top: 5rem; font-weight: bold;"><p>Internal Guide</p><p>Head of the Department</p><p>Principal</p></div></div>`;
             const tempContainer = document.createElement('div');
             tempContainer.style.position = 'fixed';
             tempContainer.style.top = '-9999px';
             tempContainer.innerHTML = htmlContent;
             document.body.appendChild(tempContainer);
-
             html2canvas(tempContainer.firstElementChild, { scale: 2 }).then(canvas => {
                 const link = document.createElement('a');
                 link.download = `Certificate_${studentName.replace(/\s/g, '_')}.png`;
@@ -428,73 +329,59 @@
                 document.body.removeChild(tempContainer);
             });
         }
-
+        
         window.onload = async () => {
             const urlParams = new URLSearchParams(window.location.search);
             const studentIdParam = urlParams.get('id');
-
             if (!studentIdParam) {
                 return showError("No Student ID Provided", "Please provide a student ID in the URL. Example: ?id=5241836");
             }
-
             try {
                 const studentId = parseInt(studentIdParam, 10);
                 if (isNaN(studentId)) {
                     return showError("Invalid Student ID", "The ID in the URL is not a valid number.");
                 }
-                
                 const [student, projectData] = await Promise.all([fetchStudentData(studentId), fetchProjectData(studentId)]);
-
                 document.getElementById('student-name').textContent = student.name;
                 document.getElementById('student-id').textContent = `Student ID: ${student.studentid}`;
                 const nameParts = student.name.trim().split(' ');
-                const initials = nameParts.length > 1
-                    ? `${nameParts[0][0]}${nameParts[nameParts.length - 1][0]}`
-                    : nameParts[0].substring(0, 2);
+                const initials = nameParts.length > 1 ? `${nameParts[0][0]}${nameParts[nameParts.length - 1][0]}` : nameParts[0].substring(0, 2);
                 document.getElementById('student-initials').textContent = initials.toUpperCase();
-                
                 if (projectData.topic) {
                     document.getElementById('project-title').textContent = projectData.topic.topicname;
                     const projectTypeEl = document.getElementById('project-type');
                     projectTypeEl.textContent = student.type;
-
                     if (student.type && student.type.toLowerCase() === 'group') {
                         projectTypeEl.style.cssText = 'background-color: rgba(34, 197, 94, 0.2); color: #22c55e;';
                         displayTeamMembers(studentId, projectData.team);
                     } else {
                         projectTypeEl.style.cssText = 'background-color: rgba(59, 130, 246, 0.2); color: #3b82f6;';
                     }
-                    
                     fetchAndDisplayFileUploadStatus(projectData.topic.topicid, studentId, student.name, projectData.topic.topicname);
                 } else {
                     document.getElementById('project-title').textContent = 'No project has been assigned to this student yet.';
                     document.getElementById('project-type-container').style.display = 'none';
                 }
-
                 loadingEl.style.display = 'none';
                 projectDetailsEl.classList.remove('hidden');
                 projectDetailsEl.classList.add('loaded');
-
             } catch (error) {
                 console.error("Initialization failed:", error);
                 showError("Error Loading Data", error.message);
             }
         };
-
         function displayTeamMembers(currentStudentId, teamMembers) {
             const teamMembersList = document.getElementById('team-members-list');
             const section = document.getElementById('team-members-section');
             teamMembersList.innerHTML = '';
-            
             const otherMembers = teamMembers.filter(m => m.studentid !== currentStudentId);
-
             if (otherMembers.length > 0) {
-                 otherMembers.forEach(member => {
-                     const li = document.createElement('li');
-                     li.innerHTML = `<span>${member.name}</span><span style="font-size: 0.75rem; color: var(--text-secondary);">ID: ${member.studentid}</span>`;
-                     teamMembersList.appendChild(li);
-                 });
-                 section.classList.remove('hidden');
+                otherMembers.forEach(member => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `<span>${member.name}</span><span style="font-size: 0.75rem; color: var(--text-secondary);">ID: ${member.studentid}</span>`;
+                    teamMembersList.appendChild(li);
+                });
+                section.classList.remove('hidden');
             }
         }
     </script>
