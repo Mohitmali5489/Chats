@@ -269,8 +269,9 @@
                             <h4 style="color: #166534; font-weight: 700;">✅ Approved</h4>
                             <p style="color: var(--text-secondary); font-size: 0.9em; margin-top: 0.25rem;">Submitted by <strong>${uploader}</strong> on ${uploadDate}</p>
                             ${comments ? `<p style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid rgba(34, 197, 94, 0.2); color: var(--text-secondary);"><strong>Mentor Feedback:</strong> ${comments}</p>` : ''}
-                            <div style="margin-top: 1rem;">
-                                <button id="download-document-btn" class="upload-btn">Download Certificate & Declaration</button>
+                            <div style="margin-top: 1rem; display: flex; flex-wrap: wrap; gap: 0.75rem;">
+                                <button id="download-declaration-btn" class="upload-btn">Download Declaration</button>
+                                <button id="download-certificate-btn" class="upload-btn">Download Certificate</button>
                             </div>
                         </div>`;
                     break;
@@ -294,7 +295,8 @@
             uploadUI.innerHTML = statusHTML;
             
             if (status === 'Approved') {
-                document.getElementById('download-document-btn').addEventListener('click', generateAndDownloadDocument);
+                document.getElementById('download-declaration-btn').addEventListener('click', generateAndDownloadDeclaration);
+                document.getElementById('download-certificate-btn').addEventListener('click', generateAndDownloadCertificate);
             }
             
             if (status === 'Rejected') {
@@ -370,69 +372,97 @@
             return 'Mr.';
         }
 
-        function generateAndDownloadDocument() {
+        function generateAndDownloadDeclaration() {
             const student = currentStudentData;
             const topic = currentProjectData.topic;
             const salutation = getSalutation(student.gender);
             const studentName = `${salutation} ${student.name}`;
 
             const contentHTML = `
-                <div style="box-sizing: border-box; border: 2px solid #000; padding: 0.5in; font-family: 'Times New Roman', serif; color: black; font-size: 12pt; height: 100%; display: flex; flex-direction: column; justify-content: space-between;">
-                    
-                    <div>
-                        <h1 style="text-align: center; font-weight: bold; text-decoration: underline; font-size: 16pt; margin-bottom: 0.25in;">DECLARATION</h1>
-                        <div style="line-height: 1.5; text-align: justify;">
-                            <p style="margin-bottom: 0.2in;">
-                                I <strong>${studentName}</strong>, Student of B.K. Birla Night College, Institute studying In S.Y. BCom. Hereby declare that I have completed the field project entitled <strong>"${topic.topicname}"</strong>. In the area of commerce during the academic year 2025-26.
-                            </p>
-                            <p style="margin-bottom: 0.2in;">
-                                The report work is original and the information / data included in the report is true emerging from the primary and / secondary data gathered and analyzed as part of this project.
-                            </p>
-                            <p>
-                                Due credit is extended on the work of Literature/secondary survey by endorsing it in the bibliography as per prescribed format.
-                            </p>
-                        </div>
-                        <div style="text-align: center; margin-top: 0.5in;">
-                             <p>Signature of the student with date</p>
-                             <p style="margin-top: 0.25in;"><strong>(${studentName})</strong></p>
-                        </div>
-                    </div>
-
-                    <hr style="border: none; border-top: 1px solid #ccc; margin: 0.4in 0;" />
-
-                    <div style="text-align: center;">
-                        <img src="https://i.ibb.co/jvfmpTh3/image.png" alt="Logo" style="width: 100px; height: auto;">
-                        <p style="font-size: 14pt; font-weight: bold; margin: 0.1in 0 0 0;">Kalyan Citizens’ Education Society’s</p>
-                        <p style="font-size: 16pt; font-weight: bold; margin: 0;">B. K. Birla Night Arts, Science and Commerce College, Kalyan</p>
-                        <p style="margin: 0;">(Affiliated to University of Mumbai)</p>
-                        <p style="font-size: 10pt; margin-top: 0.1in;">B.K. BIRLA COLLEGE CAMPUS ROAD, GAURIPADA, KALYAN (WEST) – 421301</p>
-                        
-                        <h1 style="font-weight: bold; text-decoration: underline; font-size: 16pt; margin: 0.4in 0;">CERTIFICATE</h1>
-                        
-                        <p style="text-align: justify; line-height: 1.5;">
-                            I hereby certify that, <strong>${studentName}</strong>, student of B.K. Birla Night College, studying in S.Y. BCom (A&F). Has completed a project title <strong>"${topic.topicname}"</strong> in the area commerce specialization for academic year 2025-26. To the best of my knowledge the work of the student is original and the information included in the project is correct.
+                <div style="font-family: 'Times New Roman', serif; color: black; font-size: 12pt;">
+                    <h1 style="text-align: center; font-weight: bold; text-decoration: underline; font-size: 16pt; margin-bottom: 0.5in;">DECLARATION</h1>
+                    <div style="line-height: 1.8; text-align: justify;">
+                        <p style="margin-bottom: 0.3in;">
+                            I <strong>${studentName}</strong>, Student of B.K. Birla Night College, Institute studying In S.Y. BCom. Hereby declare that I have completed the field project entitled <strong>"${topic.topicname}"</strong>. In the area of commerce during the academic year 2025-26.
                         </p>
-                        
-                        <table style="width: 100%; border: 0; font-weight: bold; margin-top: 0.6in; font-size: 12pt;">
-                          <tr>
-                            <td style="text-align: left;">Internal Guide</td>
-                            <td style="text-align: center;">Head of the Department</td>
-                            <td style="text-align: right;">Principal</td>
-                          </tr>
-                        </table>
+                        <p style="margin-bottom: 0.3in;">
+                            The report work is original and the information / data included in the report is true emerging from the primary and / secondary data gathered and analyzed as part of this project.
+                        </p>
+                        <p>
+                            Due credit is extended on the work of Literature/secondary survey by endorsing it in the bibliography as per prescribed format.
+                        </p>
                     </div>
-                </div>
-            `;
+                    <div style="text-align: center; margin-top: 1in;">
+                         <p>Signature of the student with date</p>
+                         <p style="margin-top: 0.25in;"><strong>(${studentName})</strong></p>
+                    </div>
+                </div>`;
 
+            const fullPageHTML = `
+                <div style="width: 8.27in; height: 11.69in; padding: 1in 1in 1in 1.5in; box-sizing: border-box;">
+                    <div style="border: 2px solid black; padding: 0.5in; height: 100%; box-sizing: border-box;">
+                        ${contentHTML}
+                    </div>
+                </div>`;
+            
             const options = {
-                margin: [1, 1, 1, 1.5], // [top, right, bottom, left] in inches
-                filename: `Project_Documents_${student.name}.pdf`,
+                margin: [0, 0, 0, 0],
+                filename: `Declaration_${student.name}.pdf`,
                 image: { type: 'jpeg', quality: 1.0 },
                 html2canvas: { scale: 3, useCORS: true },
                 jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
             };
 
-            html2pdf().from(contentHTML).set(options).save();
+            html2pdf().from(fullPageHTML).set(options).save();
+        }
+
+        function generateAndDownloadCertificate() {
+            const student = currentStudentData;
+            const topic = currentProjectData.topic;
+            const salutation = getSalutation(student.gender);
+            const studentName = `${salutation} ${student.name}`;
+
+            const contentHTML = `
+                <div style="font-family: 'Times New Roman', serif; color: black; font-size: 12pt; text-align: center; display: flex; flex-direction: column; justify-content: space-between; height: 100%;">
+                    <div>
+                        <img src="https://i.ibb.co/jvfmpTh3/image.png" alt="Logo" style="width: 100px; height: auto;">
+                        <p style="font-size: 14pt; margin: 0.1in 0 0 0;">Kalyan Citizens’ Education Society’s</p>
+                        <p style="font-size: 16pt; font-weight: bold; margin: 0;">B. K. Birla Night Arts, Science and Commerce College, Kalyan</p>
+                        <p style="margin: 0; font-style: italic;">(Affiliated to University of Mumbai)</p>
+                        <p style="font-size: 10pt; margin-top: 0.1in;">B.K. BIRLA COLLEGE CAMPUS ROAD, GAURIPADA, KALYAN (WEST) – 421301</p>
+                        
+                        <h1 style="font-weight: bold; text-decoration: underline; font-size: 16pt; margin: 0.5in 0;">CERTIFICATE</h1>
+                        
+                        <p style="text-align: justify; line-height: 1.8;">
+                            I hereby certify that, <strong>${studentName}</strong>, student of B.K. Birla Night College, studying in S.Y. BCom (A&F). Has completed a project title <strong>"${topic.topicname}"</strong> in the area commerce specialization for academic year 2025-26. To the best of my knowledge the work of the student is original and the information included in the project is correct.
+                        </p>
+                    </div>
+                    
+                    <table style="width: 100%; border: 0; font-weight: bold; font-size: 12pt;">
+                        <tr>
+                        <td style="text-align: left;">Internal Guide</td>
+                        <td style="text-align: center;">Head of the Department</td>
+                        <td style="text-align: right;">Principal</td>
+                        </tr>
+                    </table>
+                </div>`;
+
+            const fullPageHTML = `
+                <div style="width: 8.27in; height: 11.69in; padding: 1in 1in 1in 1.5in; box-sizing: border-box;">
+                    <div style="border: 2px solid black; padding: 0.5in; height: 100%; box-sizing: border-box;">
+                        ${contentHTML}
+                    </div>
+                </div>`;
+            
+            const options = {
+                margin: [0,0,0,0],
+                filename: `Certificate_${student.name}.pdf`,
+                image: { type: 'jpeg', quality: 1.0 },
+                html2canvas: { scale: 3, useCORS: true },
+                jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+            };
+
+            html2pdf().from(fullPageHTML).set(options).save();
         }
 
         window.onload = async () => {
