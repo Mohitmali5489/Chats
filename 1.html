@@ -143,16 +143,6 @@
         .upload-btn:disabled { background: var(--text-secondary); cursor: not-allowed; transform: none; box-shadow: none; }
         
         footer { text-align: center; font-size: 0.875rem; color: var(--text-secondary); }
-
-        .pdf-template {
-            visibility: hidden;
-            position: absolute;
-            height: 0;
-            overflow: hidden;
-            width: 8.27in; /* A4 paper width */
-            font-family: 'Times New Roman', serif; 
-            color: #000; 
-        }
     </style>
 </head>
 <body>
@@ -186,36 +176,6 @@
         
         <footer><p>&copy; 2025 BAF Project Management. All Rights Reserved.</p></footer>
     </div>
-
-    <div id="declaration-template" class="pdf-template" style="line-height: 2;">
-        <h3 style="text-align: center; font-weight: bold; text-decoration: underline; margin-bottom: 2rem;">DECLARATION</h3>
-        <p style="text-align: justify; text-indent: 0.5in;">
-            I, <strong id="declaration-student-name"></strong>, Student of B.K. Birla Night College, Institute studying In S.Y. BCom. Hereby declare that I have completed the field project entitled <strong id="declaration-topic"></strong>. In the area of commerce during the academic year 2025-26. The report work is original and the information / data included in the report is true emerging from the primary and / secondary data gathered and analyzed as part of this project. Due credit is extended on the work of Literature/secondary survey by endorsing it in the bibliography as per prescribed format.
-        </p>
-        <div style="margin-top: 5rem; text-align: left;">
-            <p><strong>Signature of the student with date</strong></p>
-            <p><strong id="declaration-student-name-sig"></strong></p>
-        </div>
-    </div>
-
-    <div id="certificate-template" class="pdf-template" style="text-align: center;">
-        <img src="https://i.ibb.co/jvfmpTh3/image.png" alt="College Logo" style="width: 100px; height: auto; margin: 0 auto 1rem auto; display: block;">
-        <p style="font-size: 1.1rem;">Kalyan Citizens’ Education Society’s</p>
-        <h2 style="font-weight: bold; font-size: 1.5rem;">B. K. Birla Night Arts, Science and Commerce College, Kalyan</h2>
-        <p style="font-size: 0.9rem; margin-bottom: 0.5rem;">(Affiliated to University of Mumbai)</p>
-        <p style="font-size: 0.9rem; font-weight: bold;">B.K. BIRLA COLLEGE CAMPUS ROAD, GAURIPADA, KALYAN (WEST) – 421301</p>
-        <hr style="margin: 2rem 0; border: 0; border-top: 1px solid #000;">
-        <h3 style="text-align: center; font-weight: bold; text-decoration: underline; margin-bottom: 2rem;">CERTIFICATE</h3>
-        <p style="text-align: justify; line-height: 2; margin-bottom: 4rem;">
-            I hereby certify that, <strong id="certificate-student-name"></strong>, student of B.K. Birla Night College, studying in S.Y. BCom (A&F). Has completed a project title <strong id="certificate-topic"></strong> in the area commerce specialization for academic year 2025-26. To the best of my knowledge the work of the student is original and the information included in the project is correct.
-        </p>
-        <div style="display: flex; justify-content: space-between; text-align: center; margin-top: 5rem; font-weight: bold;">
-            <p>Internal Guide</p>
-            <p>Head of the Department</p>
-            <p>Principal</p>
-        </div>
-    </div>
-
 
     <script type="module">
         import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
@@ -332,8 +292,9 @@
             uploadUI.innerHTML = statusHTML;
             
             if (status === 'Approved') {
-                document.getElementById('download-declaration-btn').addEventListener('click', () => generateDeclarationPDF(studentName, projectTitle));
-                document.getElementById('download-certificate-btn').addEventListener('click', () => generateCertificatePDF(studentName, projectTitle));
+                // ✅ UPDATE EVENT LISTENERS TO CALL IMAGE FUNCTIONS
+                document.getElementById('download-declaration-btn').addEventListener('click', () => generateDeclarationImage(studentName, projectTitle));
+                document.getElementById('download-certificate-btn').addEventListener('click', () => generateCertificateImage(studentName, projectTitle));
             } else if (status === 'Rejected') {
                 document.getElementById('resubmit-btn').addEventListener('click', () => {
                     uploadUI.innerHTML = getUploadFormHTML(true);
@@ -402,37 +363,71 @@
             };
         }
 
-        // ✅ PDF GENERATION FUNCTION UPDATED
-        function generateDeclarationPDF(studentName, topicTitle) {
-            document.getElementById('declaration-student-name').textContent = studentName;
-            document.getElementById('declaration-student-name-sig').textContent = studentName;
-            document.getElementById('declaration-topic').textContent = topicTitle;
-            const element = document.getElementById('declaration-template');
-            const opt = {
-                margin: [1.5, 1, 1.5, 1], // [top, right, bottom, left] in inches
-                filename: `Declaration_${studentName.replace(/\s/g, '_')}.pdf`,
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true },
-                jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
-            };
-            html2pdf().from(element).set(opt).save();
+        // ✅ NEW FUNCTION TO GENERATE IMAGE INSTEAD OF PDF
+        function generateDeclarationImage(studentName, topicTitle) {
+            const htmlContent = `
+                <div style="width: 8.27in; height: 11.69in; background: white; padding: 1.5in 1in; font-family: 'Times New Roman', serif; color: #000; line-height: 2;">
+                    <h3 style="text-align: center; font-weight: bold; text-decoration: underline; margin-bottom: 2rem;">DECLARATION</h3>
+                    <p style="text-align: justify; text-indent: 0.5in;">
+                        I, <strong>${studentName}</strong>, Student of B.K. Birla Night College, Institute studying In S.Y. BCom. Hereby declare that I have completed the field project entitled <strong>${topicTitle}</strong>. In the area of commerce during the academic year 2025-26. The report work is original and the information / data included in the report is true emerging from the primary and / secondary data gathered and analyzed as part of this project. Due credit is extended on the work of Literature/secondary survey by endorsing it in the bibliography as per prescribed format.
+                    </p>
+                    <div style="margin-top: 5rem; text-align: left;">
+                        <p style="text-indent: 0;"><strong>Signature of the student with date</strong></p>
+                        <p style="text-indent: 0;"><strong>${studentName}</strong></p>
+                    </div>
+                </div>`;
+            
+            const tempContainer = document.createElement('div');
+            tempContainer.style.position = 'fixed';
+            tempContainer.style.top = '-9999px';
+            tempContainer.innerHTML = htmlContent;
+            document.body.appendChild(tempContainer);
+
+            html2canvas(tempContainer.firstElementChild, { scale: 2 }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `Declaration_${studentName.replace(/\s/g, '_')}.png`;
+                link.href = canvas.toDataURL("image/png");
+                link.click();
+                document.body.removeChild(tempContainer);
+            });
         }
 
-        // ✅ PDF GENERATION FUNCTION UPDATED
-        function generateCertificatePDF(studentName, topicTitle) {
-            document.getElementById('certificate-student-name').textContent = studentName;
-            document.getElementById('certificate-topic').textContent = topicTitle;
-            const element = document.getElementById('certificate-template');
-            const opt = {
-                margin: 1, // 1 inch margin on all sides
-                filename: `Certificate_${studentName.replace(/\s/g, '_')}.pdf`,
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true },
-                jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
-            };
-            html2pdf().from(element).set(opt).save();
-        }
+        // ✅ NEW FUNCTION TO GENERATE IMAGE INSTEAD OF PDF
+        function generateCertificateImage(studentName, topicTitle) {
+            const logoBase64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAfASURFVHhe7Z1/aBxlHMe/8zY32STpP8k2a0vWSlBtqYKC4KCIVZwKinrQHxXpT3VRQcEfFRR7qCAu6qB2L4WgVBT80YJiF7sVRGytYCtWpBZrjbSpTdImbdokabJJms3u+Xn8bHKT3cnO7s3uzn3f5/HB7s7O/M7vfO/zeGaTCSGEEEIIIYQQQgghhBBCCHFLKkG/T6YfTD6WfCj5XfKZ5C/J72T+MvkvHj48mHxA5oPJZ5I3kEw+J/M3yc/k70k+kvwm+dXf4mH/jv/Xy3+s9s/S4WPyvS8PZJ8k35H552T+qR9x+13kZ/LPyX+V/P5f8hZ1D9u/S+ZLyac19q/vTj4h8xV5eFLez5L/IvnuJ5O/SP5P8pPz+u9F/lTyR/92/y3+Q/KHMv/5b+wD58ZcP/Tf+B8n/8mv5N5LvyLy/r3P/h/l1eVi+p+qKqn63rH8uD8uH5Hdk/s03wH6yLAn6PZK/ynxW8mH5M/6N/6vkv0j+wz+Q/w756z+P/3vyXyTf1R/X+i35N5LPSz6R/IHMvyR/k/+g/rBw4t8g35eH5f1/L/8uD8szVX2xLH9cHpaH5V3qb6i+9W/k9/2b/9+UeT/5fHnYF5K/IvMvkl/L/FXym/l5v3L575PPJT9+fX7/2cMhP5S5W/n48vAHyQ/K3Kn8oMwv/l2+k/nLkz88+W7yncl3yNzJ8kckP5e5zORjkrckckDyC5k/JHOH5MvS9+8l35O5T/6D5IflbyR/93P5K8nv/R1+P5c//P8u+Un521+k35b5m/Wf3/tP8l1V/0hV/8j8JfnVf9m/S/66+j0tD1V1e1UfV3WJqleqelTVM1VdqqpfVfWBqq5R1SOqPkvVY6peVPVZVT+s6klVH6zquVWdqeqzVT2s6qNVfVTVY6r+p/b/+iGEEEIIIYQQQgghhBBC3If4D101d2H1XvKFAAAAAElFTkSuQmCC";
+            const htmlContent = `
+                <div style="width: 8.27in; height: 11.69in; background: white; padding: 1in; font-family: 'Times New Roman', serif; color: #000; text-align: center;">
+                    <img src="${logoBase64}" alt="College Logo" style="width: 100px; height: auto; margin: 0 auto 1rem auto; display: block;">
+                    <p style="font-size: 1.1rem; margin:0;">Kalyan Citizens’ Education Society’s</p>
+                    <h2 style="font-weight: bold; font-size: 1.5rem; margin: 0;">B. K. Birla Night Arts, Science and Commerce College, Kalyan</h2>
+                    <p style="font-size: 0.9rem; margin-bottom: 0.5rem;">(Affiliated to University of Mumbai)</p>
+                    <p style="font-size: 0.9rem; font-weight: bold;">B.K. BIRLA COLLEGE CAMPUS ROAD, GAURIPADA, KALYAN (WEST) – 421301</p>
+                    <hr style="margin: 2rem 0; border: 0; border-top: 1px solid #000;">
+                    <h3 style="text-align: center; font-weight: bold; text-decoration: underline; margin-bottom: 2rem;">CERTIFICATE</h3>
+                    <p style="text-align: justify; line-height: 2; margin-bottom: 4rem;">
+                        I hereby certify that, <strong>${studentName}</strong>, student of B.K. Birla Night College, studying in S.Y. BCom (A&F). Has completed a project title <strong>${topicTitle}</strong> in the area commerce specialization for academic year 2025-26. To the best of my knowledge the work of the student is original and the information included in the project is correct.
+                    </p>
+                    <div style="display: flex; justify-content: space-between; text-align: center; margin-top: 5rem; font-weight: bold;">
+                        <p>Internal Guide</p>
+                        <p>Head of the Department</p>
+                        <p>Principal</p>
+                    </div>
+                </div>`;
 
+            const tempContainer = document.createElement('div');
+            tempContainer.style.position = 'fixed';
+            tempContainer.style.top = '-9999px';
+            tempContainer.innerHTML = htmlContent;
+            document.body.appendChild(tempContainer);
+
+            html2canvas(tempContainer.firstElementChild, { scale: 2 }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `Certificate_${studentName.replace(/\s/g, '_')}.png`;
+                link.href = canvas.toDataURL("image/png");
+                link.click();
+                document.body.removeChild(tempContainer);
+            });
+        }
 
         window.onload = async () => {
             const urlParams = new URLSearchParams(window.location.search);
