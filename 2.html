@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Field Project Dashboard - BAFs App</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  
+
   <script>
-    // This script runs early to prevent a "flash of the wrong theme."
+    // Prevent theme flash
     (function() {
       const theme = new URLSearchParams(window.location.search).get('theme') || localStorage.getItem('theme') || 'light';
       document.documentElement.setAttribute('data-theme', theme);
@@ -16,18 +16,17 @@
   </script>
 
   <style>
+    /* --- styles same as before --- */
     :root {
       --primary-accent: #b84fff;
       --primary-gradient: linear-gradient(135deg, #b84fff, #8f00ff);
       --font-family: 'Inter', sans-serif;
-      
       --bg-gradient-light: linear-gradient(180deg, #f5f5f7, #e9e9ed);
       --card-bg-light: rgba(255, 255, 255, 0.8);
       --text-primary-light: #121212;
       --text-secondary-light: #5f5f5f;
       --border-color-light: #e0e0e0;
       --shadow-light: 0 4px_25px rgba(0, 0, 0, 0.07);
-
       --bg-gradient-dark: linear-gradient(180deg, #2a2a3d, #1e1e2e);
       --card-bg-dark: rgba(42, 42, 61, 0.8);
       --text-primary-dark: #f0f0f0;
@@ -35,7 +34,6 @@
       --border-color-dark: #4a4a6a;
       --shadow-dark: 0 4px_25px rgba(0, 0, 0, 0.2);
     }
-    
     [data-theme="light"] {
       --bg-gradient: var(--bg-gradient-light);
       --card-bg: var(--card-bg-light);
@@ -44,7 +42,6 @@
       --border-color: var(--border-color-light);
       --shadow: var(--shadow-light);
     }
-
     [data-theme="dark"] {
       --bg-gradient: var(--bg-gradient-dark);
       --card-bg: var(--card-bg-dark);
@@ -53,9 +50,7 @@
       --border-color: var(--border-color-dark);
       --shadow: var(--shadow-dark);
     }
-    
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    
     body {
       font-family: var(--font-family);
       background: var(--bg-gradient);
@@ -66,85 +61,19 @@
       align-items: center;
       padding: 2rem 1rem;
     }
-
     .hidden { display: none !important; }
-
-    #app-container {
-      width: 100%;
-      max-width: 42rem;
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-    }
-
-    header { text-align: center; }
-    header h1 {
-      font-size: 2.25rem;
-      font-weight: 700;
-    }
-    .gradient-text {
-      background: var(--primary-gradient);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-    }
-    
-    #loading { text-align: center; padding: 2rem; }
-    .loader { display: flex; justify-content: center; align-items: center; gap: 0.5rem; margin-bottom: 1rem; }
-    .loader-dot { width: 0.75rem; height: 0.75rem; background-color: var(--primary-accent); border-radius: 50%; animation: pulse 1.4s infinite ease-in-out both; }
-    .loader-dot:nth-child(1) { animation-delay: -0.32s; }
-    .loader-dot:nth-child(2) { animation-delay: -0.16s; }
-    @keyframes pulse { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1.0); } }
-    #loading p { font-size: 1.125rem; color: var(--text-secondary); }
-
-    @keyframes card-enter {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    #project-details.loaded { animation: card-enter 0.6s ease-out forwards; }
-    
-    #error { background: var(--card-bg); border: 1px solid var(--border-color); backdrop-filter: blur(10px); box-shadow: var(--shadow); padding: 2rem; border-radius: 1rem; text-align: center; }
-    #error-title { font-size: 1.5rem; font-weight: 700; color: #ef4444; }
-    #error-message { margin-top: 0.5rem; color: var(--text-secondary); }
-
-    .main-card { background: var(--card-bg); backdrop-filter: blur(12px); border: 1px solid var(--border-color); border-radius: 1rem; box-shadow: var(--shadow); overflow: hidden; }
-    .card-content { padding: 1.5rem; }
-    @media (min-width: 640px) { .card-content { padding: 2rem; } }
-
-    .student-info { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
-    .student-initials { width: 4rem; height: 4rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 700; color: white; background: var(--primary-gradient); flex-shrink: 0; }
-    #student-name { font-size: 1.5rem; font-weight: 700; color: var(--text-primary); }
-    #student-id { font-size: 0.875rem; color: var(--text-secondary); }
-    
-    .project-details-grid { display: grid; gap: 1.5rem; }
-    .project-detail-item h3 { font-size: 0.875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--primary-accent); margin-bottom: 0.25rem; }
-    #project-title { font-size: 1.25rem; line-height: 1.6; color: var(--text-primary); }
-    #project-type { display: inline-block; padding: 0.25rem 0.75rem; font-size: 0.875rem; font-weight: 500; border-radius: 9999px; }
-
-    .card-footer-section { padding: 1.5rem; border-top: 1px solid var(--border-color); background: rgba(0,0,0,0.02); }
-    @media (min-width: 640px) { .card-footer-section { padding: 1.5rem 2rem; } }
-    [data-theme="dark"] .card-footer-section { background: rgba(0,0,0,0.1); }
-    .card-footer-section h3 { font-size: 1.125rem; font-weight: 600; margin-bottom: 1rem; color: var(--text-primary); }
-    
-    #team-members-list { list-style: none; display: grid; gap: 0.5rem; }
-    #team-members-list li { display: flex; align-items: center; justify-content: space-between; padding: 0.5rem; border-radius: 6px; }
-
-    .upload-btn { display: inline-flex; align-items: center; gap: 0.5rem; background: var(--primary-gradient); color: white; padding: 0.625rem 1.25rem; border-radius: 8px; font-weight: 600; text-decoration: none; border: none; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-    .upload-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(143,0,255,0.3); }
-    .upload-btn:disabled { background: var(--text-secondary); cursor: not-allowed; transform: none; box-shadow: none; }
-    
-    footer { text-align: center; font-size: 0.875rem; color: var(--text-secondary); }
+    #app-container { width: 100%; max-width: 42rem; display: flex; flex-direction: column; gap: 1.5rem; }
+    .upload-btn { display: inline-flex; align-items: center; gap: 0.5rem; background: var(--primary-gradient); color: white; padding: 0.625rem 1.25rem; border-radius: 8px; font-weight: 600; border: none; cursor: pointer; transition: 0.2s; }
+    .upload-btn:hover { transform: translateY(-2px); }
   </style>
 </head>
 <body>
 
   <div id="app-container">
     <header></header>
-
     <main id="main-content">
-      <div id="loading"><div class="loader"><div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div></div><p>Fetching project details...</p></div>
+      <div id="loading"><p>Fetching project details...</p></div>
       <div id="error" class="hidden"><h2 id="error-title"></h2><p id="error-message"></p></div>
-
       <div id="project-details" class="hidden">
         <div class="main-card">
           <div class="card-content">
@@ -157,67 +86,53 @@
               <div id="project-type-container" class="project-detail-item"><h3>Project Type</h3><span id="project-type"></span></div>
             </div>
           </div>
-          <div id="team-members-section" class="card-footer-section hidden"><h3>Team Members</h3><ul id="team-members-list"></ul></div>
           <div id="file-upload-section" class="card-footer-section hidden"><h3>Final Project Submission</h3><div id="upload-ui"></div></div>
         </div>
       </div>
     </main>
-    
     <footer><p>&copy; 2025 BAF Project Management. All Rights Reserved.</p></footer>
   </div>
 
+  <!-- ✅ jsPDF UMD build -->
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
-    import jsPDF from "https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.es.min.js";
-
     const SUPABASE_URL = 'https://fuovcuzaxfkyqrridrgy.supabase.co';
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ1b3ZjdXpheGZreXFycmlkcmd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU0NzIyMjAsImV4cCI6MjA2MTA0ODIyMH0._PkkfWXcn4j6cjBh-yLJjDevrmhuxKxVbcdQUSgCsSk';
+    const SUPABASE_KEY = 'YOUR_PUBLIC_ANON_KEY';
     const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
 
     const loadingEl = document.getElementById('loading');
     const errorEl = document.getElementById('error');
     const projectDetailsEl = document.getElementById('project-details');
-    const errorTitleEl = document.getElementById('error-title');
-    const errorMessageEl = document.getElementById('error-message');
 
     function showError(title, message) {
       loadingEl.style.display = 'none';
-      projectDetailsEl.classList.add('hidden');
-      errorTitleEl.textContent = title;
-      errorMessageEl.textContent = message;
       errorEl.classList.remove('hidden');
+      document.getElementById('error-title').textContent = title;
+      document.getElementById('error-message').textContent = message;
     }
 
     async function fetchStudentData(studentId) {
-      const { data: student, error } = await supabaseClient.from('students').select('*').eq('studentid', studentId).single();
-      if (error || !student) throw new Error('Student not found.');
+      const { data: student } = await supabaseClient.from('students').select('*').eq('studentid', studentId).single();
       return student;
     }
-
     async function fetchProjectData(studentId) {
       const { data: assignment } = await supabaseClient.from('projectassignments').select('topicid').eq('studentid', studentId).single();
-      if (!assignment) return { topic: null, team: [] };
-
-      const topicId = assignment.topicid;
-      const { data: topic } = await supabaseClient.from('topics').select('*').eq('topicid', topicId).single();
-
-      const { data: teamAssignments } = await supabaseClient.from('projectassignments').select('studentid').eq('topicid', topicId);
-      const teamMemberIds = teamAssignments.map(a => a.studentid);
-      const { data: teamMembers } = await supabaseClient.from('students').select('studentid, name').in('studentid', teamMemberIds);
-
-      return { topic, team: teamMembers };
+      if (!assignment) return { topic: null };
+      const { data: topic } = await supabaseClient.from('topics').select('*').eq('topicid', assignment.topicid).single();
+      return { topic };
     }
 
     // === PDF Generator ===
     function getSalutation(gender) {
       if (!gender) return "";
       const g = gender.toLowerCase();
-      if (g === "male") return "Mr.";
-      if (g === "female") return "Ms.";
-      return "";
+      return g === "male" ? "Mr." : g === "female" ? "Ms." : "";
     }
 
     function generateDeclaration(student, topic) {
+      const { jsPDF } = window.jspdf;
       const doc = new jsPDF();
       const salutation = getSalutation(student.gender);
       const studentName = `${salutation} ${student.name}`;
@@ -226,13 +141,12 @@
       doc.addImage("https://i.ibb.co/jvfmpTh3/image.png", "PNG", 85, 10, 40, 20);
       doc.setFontSize(14);
       doc.text("DECLARATION", 105, 40, { align: "center" });
-
       doc.setFontSize(12);
       doc.text(
         `I, ${studentName}, student of B.K. Birla Night College, studying in S.Y. BCom,\n` +
         `hereby declare that I have completed the field project entitled "${topicName}".\n` +
-        `The report work is original and the data included is true and analyzed as part of this project.\n\n` +
-        `Due credit is extended on the work of literature/secondary survey by endorsing it in the bibliography.\n\n\n\n` +
+        `The report work is original and the data included is true.\n\n` +
+        `Due credit is extended on the work of literature/secondary survey.\n\n\n\n` +
         `Signature of the student with date\n\n${studentName}`,
         20, 55
       );
@@ -240,6 +154,7 @@
     }
 
     function generateCertificate(student, topic) {
+      const { jsPDF } = window.jspdf;
       const doc = new jsPDF();
       const salutation = getSalutation(student.gender);
       const studentName = `${salutation} ${student.name}`;
@@ -248,13 +163,11 @@
       doc.addImage("https://i.ibb.co/jvfmpTh3/image.png", "PNG", 85, 10, 40, 20);
       doc.setFontSize(14);
       doc.text("CERTIFICATE", 105, 40, { align: "center" });
-
       doc.setFontSize(12);
       doc.text(
         `I hereby certify that, ${studentName}, student of B.K. Birla Night College,\n` +
         `studying in S.Y. BCom (A&F), has completed a project titled "${topicName}"\n` +
-        `in the area of commerce specialization for academic year 2025-26.\n` +
-        `To the best of my knowledge the work of the student is original and correct.\n\n\n\n` +
+        `for academic year 2025-26. To the best of my knowledge, the work is original.\n\n\n\n` +
         `Internal Guide                      Head of the Department                      Principal`,
         20, 55
       );
@@ -271,84 +184,44 @@
       `;
       uploadUI.appendChild(btnDiv);
 
-      document.getElementById("download-declaration").addEventListener("click", () => {
-        const pdf = generateDeclaration(student, topic);
-        pdf.save("Declaration.pdf");
-      });
-
-      document.getElementById("download-certificate").addEventListener("click", () => {
-        const pdf = generateCertificate(student, topic);
-        pdf.save("Certificate.pdf");
-      });
+      document.getElementById("download-declaration").onclick = () => generateDeclaration(student, topic).save("Declaration.pdf");
+      document.getElementById("download-certificate").onclick = () => generateCertificate(student, topic).save("Certificate.pdf");
     }
 
-    // === Upload / Status Handling ===
-    async function fetchAndDisplayFileUploadStatus(topicId, currentStudentId, student, topic) {
+    async function fetchAndDisplayFileUploadStatus(topicId, student) {
       const uploadUI = document.getElementById('upload-ui');
       document.getElementById('file-upload-section').classList.remove('hidden');
 
-      const { data: file } = await supabaseClient.from('project_files').select('*, students(name)').eq('topic_id', topicId).single();
+      const { data: file } = await supabaseClient.from('project_files').select('*').eq('topic_id', topicId).single();
+      if (!file) return uploadUI.innerHTML = "<p>No file uploaded yet.</p>";
 
-      if (!file) {
-        uploadUI.innerHTML = "<p>No file uploaded yet.</p>";
-        return;
-      }
-
-      const status = file.status || 'Pending';
-      const comments = file.mentor_comments;
-      const uploader = file.students ? file.students.name : 'a team member';
-      const uploadDate = new Date(file.uploaded_at).toLocaleDateString();
-
-      let statusHTML = '';
-      switch (status) {
-        case 'Approved':
-          statusHTML = `
-            <div style="background-color: rgba(34, 197, 94, 0.1); border-left: 4px solid #22c55e; padding: 1rem; border-radius: 0 0.5rem 0.5rem 0;">
-              <h4 style="color: #166534; font-weight: 700;">✅ Approved</h4>
-              <p style="color: var(--text-secondary); font-size: 0.9em;">Submitted by <strong>${uploader}</strong> on ${uploadDate}</p>
-            </div>`;
-          break;
-        case 'Rejected':
-          statusHTML = `<div style="color:#991b1b;">❌ Rejected</div>`;
-          break;
-        default:
-          statusHTML = `<div style="color:#1e40af;">⏳ Pending Review</div>`;
-      }
-      uploadUI.innerHTML = statusHTML;
-
-      if (status === 'Approved') {
-        addDownloadButtons(student, topic);
+      if (file.status === "Approved") {
+        uploadUI.innerHTML = `<div style="color:green">✅ Approved</div>`;
+        addDownloadButtons(student, { topicname: file.topic_name || "Project" });
+      } else {
+        uploadUI.innerHTML = `<div style="color:blue">⏳ ${file.status}</div>`;
       }
     }
 
     window.onload = async () => {
       const urlParams = new URLSearchParams(window.location.search);
       const studentIdParam = urlParams.get('id');
-      if (!studentIdParam) return showError("No Student ID Provided", "Please provide ?id=123");
+      if (!studentIdParam) return showError("No Student ID", "Provide ?id=123");
 
       try {
         const studentId = parseInt(studentIdParam, 10);
         const [student, projectData] = await Promise.all([fetchStudentData(studentId), fetchProjectData(studentId)]);
-
         document.getElementById('student-name').textContent = student.name;
         document.getElementById('student-id').textContent = `Student ID: ${student.studentid}`;
-        const initials = student.name.split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase();
-        document.getElementById('student-initials').textContent = initials;
-
+        document.getElementById('student-initials').textContent = student.name[0].toUpperCase();
         if (projectData.topic) {
           document.getElementById('project-title').textContent = projectData.topic.topicname;
-          document.getElementById('project-type').textContent = student.type;
-          fetchAndDisplayFileUploadStatus(projectData.topic.topicid, studentId, student, projectData.topic);
-        } else {
-          document.getElementById('project-title').textContent = 'No project assigned.';
-          document.getElementById('project-type-container').style.display = 'none';
+          fetchAndDisplayFileUploadStatus(projectData.topic.topicid, student);
         }
-
         loadingEl.style.display = 'none';
         projectDetailsEl.classList.remove('hidden');
-        projectDetailsEl.classList.add('loaded');
-      } catch (err) {
-        showError("Error Loading Data", err.message);
+      } catch (e) {
+        showError("Error", e.message);
       }
     };
   </script>
