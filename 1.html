@@ -379,18 +379,20 @@
             const studentName = `${salutation} ${student.name}`;
 
             const contentHTML = `
-                <div style="font-family: 'Times New Roman', serif; color: black; font-size: 12pt;">
-                    <h1 style="text-align: center; font-weight: bold; text-decoration: underline; font-size: 16pt; margin-bottom: 0.5in;">DECLARATION</h1>
-                    <div style="line-height: 1.8; text-align: justify;">
-                        <p style="margin-bottom: 0.3in;">
-                            I <strong>${studentName}</strong>, Student of B.K. Birla Night College, Institute studying In S.Y. BCom. Hereby declare that I have completed the field project entitled <strong>"${topic.topicname}"</strong>. In the area of commerce during the academic year 2025-26.
-                        </p>
-                        <p style="margin-bottom: 0.3in;">
-                            The report work is original and the information / data included in the report is true emerging from the primary and / secondary data gathered and analyzed as part of this project.
-                        </p>
-                        <p>
-                            Due credit is extended on the work of Literature/secondary survey by endorsing it in the bibliography as per prescribed format.
-                        </p>
+                <div style="font-family: 'Times New Roman', serif; color: black; font-size: 12pt; display: flex; flex-direction: column; height: 100%;">
+                    <div style="flex-grow: 1;">
+                        <h1 style="text-align: center; font-weight: bold; text-decoration: underline; font-size: 16pt; margin-bottom: 0.5in;">DECLARATION</h1>
+                        <div style="line-height: 1.8; text-align: justify;">
+                            <p style="margin-bottom: 0.3in;">
+                                I <strong>${studentName}</strong>, Student of B.K. Birla Night College, Institute studying In <strong>S.Y. BAF</strong>. Hereby declare that I have completed the field project entitled <strong>"${topic.topicname}"</strong>. In the area of commerce during the academic year 2025-26.
+                            </p>
+                            <p style="margin-bottom: 0.3in;">
+                                The report work is original and the information / data included in the report is true emerging from the primary and / secondary data gathered and analyzed as part of this project.
+                            </p>
+                            <p>
+                                Due credit is extended on the work of Literature/secondary survey by endorsing it in the bibliography as per prescribed format.
+                            </p>
+                        </div>
                     </div>
                     <div style="text-align: center; margin-top: 1in;">
                          <p>Signature of the student with date</p>
@@ -399,8 +401,8 @@
                 </div>`;
 
             const fullPageHTML = `
-                <div style="width: 8.27in; height: 11.69in; padding: 1in 1in 1in 1.5in; box-sizing: border-box; background-color: white;">
-                    <div style="border: 2px solid black; padding: 0.5in; height: 100%; box-sizing: border-box;">
+                <div style="width: 21cm; height: 29.7cm; padding: 1cm; box-sizing: border-box; background-color: white;">
+                    <div style="border: 2px solid black; padding: 1.5cm; height: 100%; box-sizing: border-box;">
                         ${contentHTML}
                     </div>
                 </div>`;
@@ -410,7 +412,7 @@
                 filename: `Declaration_${student.name}.pdf`,
                 image: { type: 'jpeg', quality: 1.0 },
                 html2canvas: { scale: 3, useCORS: true },
-                jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+                jsPDF: { unit: 'cm', format: 'a4', orientation: 'portrait' }
             };
 
             html2pdf().from(fullPageHTML).set(options).save();
@@ -448,8 +450,8 @@
                 </div>`;
 
             const fullPageHTML = `
-                <div style="width: 8.27in; height: 11.69in; padding: 1in 1in 1in 1.5in; box-sizing: border-box; background-color: white;">
-                    <div style="border: 2px solid black; padding: 0.5in; height: 100%; box-sizing: border-box;">
+                <div style="width: 21cm; height: 29.7cm; padding: 1cm; box-sizing: border-box; background-color: white;">
+                    <div style="border: 2px solid black; padding: 1.5cm; height: 100%; box-sizing: border-box;">
                         ${contentHTML}
                     </div>
                 </div>`;
@@ -459,7 +461,7 @@
                 filename: `Certificate_${student.name}.pdf`,
                 image: { type: 'jpeg', quality: 1.0 },
                 html2canvas: { scale: 3, useCORS: true },
-                jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+                jsPDF: { unit: 'cm', format: 'a4', orientation: 'portrait' }
             };
 
             html2pdf().from(fullPageHTML).set(options).save();
