@@ -245,7 +245,7 @@
             document.getElementById('file-upload-section').classList.remove('hidden');
 
             const { data: file, error } = await supabaseClient.from('project_files')
-                .select('*, students(name)')
+                .select('*, students(fullname)')
                 .eq('topic_id', topicId)
                 .single();
 
