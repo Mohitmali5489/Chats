@@ -29,7 +29,7 @@
         --text-secondary-light: #5f5f5f;
         --border-color-light: #e0e0e0;
         --shadow-light: 0 4px 20px rgba(0, 0, 0, 0.06);
-        --header-bg-light: rgba(255, 255, 255, 0.7);
+        --header-bg-light: #ffffff;
 
         --bg-gradient-dark: linear-gradient(180deg, #1e1e2e, #14141e);
         --card-bg-dark: #2a2a3d;
@@ -37,7 +37,7 @@
         --text-secondary-dark: #a0a0b0;
         --border-color-dark: #4a4a6a;
         --shadow-dark: 0 4px 20px rgba(0, 0, 0, 0.2);
-        --header-bg-dark: rgba(30, 30, 46, 0.7);
+        --header-bg-dark: #1e1e2e;
       }
       
       [data-theme="light"] {
@@ -73,26 +73,28 @@
         color: var(--text-primary);
         line-height: 1.6;
       }
-      .page-container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+      .page-container { max-width: 1200px; margin: 0 auto; padding: 0 15px 15px 15px; }
 
       /* 🔝 --- Header --- 🔝 */
       .top-bar {
         display: flex; justify-content: space-between; align-items: center;
         padding: 12px 16px; background: var(--header-bg);
-        backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
         border-bottom: 1px solid var(--border-color);
         position: sticky; top: 0; z-index: 1000;
+        height: 60px;
       }
-      .header-left { display: flex; align-items: center; gap: 12px; }
       .header-button {
         background: none; border: none; cursor: pointer; color: var(--text-primary);
         display: flex; align-items: center; justify-content: center;
         width: 40px; height: 40px; flex-shrink: 0;
       }
       .header-button svg, .header-button i { font-size: 22px; }
-      .header-title { font-weight: 600; font-size: 18px; }
+      .header-title { 
+        font-weight: 600; font-size: 18px; 
+        flex-grow: 1; text-align: center;
+      }
       
-      /* ⏳ --- Countdown & Timetable --- ⏳ */
+      /* ⏳ --- Countdown & Collapsible Timetable --- ⏳ */
       .main-card {
         background-color: var(--card-bg);
         border: 1px solid var(--border-color);
@@ -101,11 +103,11 @@
       }
       .section-header {
         display: flex; align-items: center; font-size: 1.4rem; font-weight: 600;
-        margin-bottom: 20px; color: var(--text-primary);
+        color: var(--text-primary);
       }
       .section-header i { margin-right: 12px; color: var(--primary-accent); }
       
-      #countdown-container { text-align: center; margin-bottom: 25px; padding-bottom: 25px; border-bottom: 1px solid var(--border-color); }
+      #countdown-container { text-align: center; padding-bottom: 25px; }
       #next-exam-title { font-size: 1rem; font-weight: 400; color: var(--text-secondary); margin-bottom: 5px; }
       #next-exam-subject { font-size: 1.2rem; font-weight: 600; color: var(--primary-accent); margin-bottom: 15px; }
       #countdown-timer { display: flex; justify-content: center; gap: 15px; }
@@ -113,7 +115,27 @@
       .countdown-block span { display: block; font-size: 2.5rem; font-weight: 700; color: var(--text-primary); }
       .countdown-block .label { font-size: 0.8rem; text-transform: uppercase; color: var(--text-secondary); }
       
-      .timetable-list { display: flex; flex-direction: column; gap: 12px; }
+      .collapsible-header {
+        display: flex; justify-content: space-between; align-items: center;
+        cursor: pointer; padding-top: 15px; border-top: 1px solid var(--border-color);
+      }
+      .collapsible-header .section-header { margin-bottom: 0; }
+      .collapsible-header .toggle-icon {
+        font-size: 1.2rem; color: var(--text-secondary);
+        transition: transform 0.3s ease;
+      }
+      .collapsible-header.active .toggle-icon { transform: rotate(180deg); }
+      
+      .timetable-list {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.4s ease-out, padding-top 0.4s ease-out;
+        display: flex; flex-direction: column; gap: 12px;
+      }
+      .timetable-list.active {
+        padding-top: 20px;
+        max-height: 1000px; /* Large enough to show all content */
+      }
       .timetable-row {
         display: flex; flex-direction: column; gap: 5px; padding: 15px;
         border-radius: 12px; background-color: var(--timetable-row-bg);
@@ -131,39 +153,24 @@
       .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-secondary); }
 
       .subjects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
-      .subject-card {
-        background-color: var(--card-bg); border: 1px solid var(--border-color);
-        border-radius: 16px; box-shadow: var(--shadow);
-        padding: 20px; display: flex; flex-direction: column;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-      }
+      .subject-card { background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; box-shadow: var(--shadow); padding: 20px; display: flex; flex-direction: column; transition: transform 0.3s ease, box-shadow 0.3s ease; }
       [data-theme="dark"] .subject-card:hover { box-shadow: 0 8px 25px rgba(0,0,0,0.3); }
       [data-theme="light"] .subject-card:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
-      
       .card-header { display: flex; align-items: flex-start; margin-bottom: 12px; gap: 15px; }
       .subject-icon { width: 45px; height: 45px; border-radius: 12px; display: flex; justify-content: center; align-items: center; flex-shrink: 0; }
       .subject-icon i { font-size: 1.4rem; }
       .title-block { display: flex; flex-direction: column; }
       .subject-title { font-size: 1.15rem; font-weight: 600; color: var(--text-primary); line-height: 1.3; }
       .tag { display: inline-block; width: fit-content; margin-top: 6px; font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 12px; background-color: rgba(128, 128, 128, 0.1); color: var(--text-secondary); border: 1px solid var(--border-color); }
-      
       .subject-description { font-size: 0.9rem; color: var(--text-secondary); flex-grow: 1; margin-bottom: 20px; }
-      
-      /* ENHANCED: Two-button styles */
       .card-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-      .action-button {
-        text-align: center; padding: 10px; border-radius: 8px; text-decoration: none;
-        font-weight: 600; font-size: 0.9rem; transition: all 0.2s ease;
-        display: flex; align-items: center; justify-content: center; gap: 8px; border: 1px solid transparent;
-      }
+      .action-button { text-align: center; padding: 10px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.9rem; transition: all 0.2s ease; display: flex; align-items: center; justify-content: center; gap: 8px; border: 1px solid transparent; }
       .action-button.primary { background: var(--primary-gradient); color: white; }
       .action-button.primary:hover { opacity: 0.9; transform: scale(1.03); }
       .action-button.secondary { background-color: transparent; color: var(--primary-accent); border: 1px solid var(--border-color); }
       .action-button.secondary:hover { background-color: var(--secondary-button-bg-hover); border-color: var(--primary-accent); }
-      
       #no-results-message { text-align: center; font-size: 1.1rem; color: var(--text-secondary); padding: 40px; }
 
-      /* Responsive */
       @media (max-width: 768px) {
         .resources-header { flex-direction: column; align-items: flex-start; gap: 15px; }
         .search-container { max-width: 100%; }
@@ -172,20 +179,17 @@
     </style>
 </head>
 <body>
-
-  <div class="page-container">
     <header class="top-bar">
-      <div class="header-left">
-        <a href="#" class="header-button">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-        </a>
-        <h1 class="header-title">Exam Central</h1>
-      </div>
-      <button class="header-button" id="theme-toggle" title="Toggle theme">
-        <i class="fas fa-sun" id="theme-icon"></i>
+      <a href="#" class="header-button">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+      </a>
+      <h1 class="header-title">Exam Central</h1>
+      <button class="header-button" id="settings-button" title="Settings">
+        <i class="fas fa-cog"></i>
       </button>
     </header>
 
+  <div class="page-container">
     <main style="padding-top: 20px;">
         <section class="main-card">
             <div id="countdown-container">
@@ -199,7 +203,10 @@
                  </div>
             </div>
 
-            <h2 class="section-header"><i class="fas fa-calendar-alt"></i> Exam Timetable</h2>
+            <div class="collapsible-header" id="timetable-toggle">
+                <h2 class="section-header"><i class="fas fa-calendar-alt"></i> Exam Timetable</h2>
+                <i class="fas fa-chevron-down toggle-icon"></i>
+            </div>
             <div class="timetable-list" id="timetable-list">
                 </div>
         </section>
@@ -221,67 +228,69 @@
 <script>
 document.addEventListener('DOMContentLoaded', function () {
 
-    // --- 🎨 THEME SWITCHER LOGIC 🎨 ---
-    const themeToggle = document.getElementById('theme-toggle');
-    const themeIcon = document.getElementById('theme-icon');
-    const docElement = document.documentElement;
-
-    function setTheme(theme) {
-        docElement.setAttribute('data-theme', theme);
+    // --- 🎨 THEME LOGIC (from URL Param) 🎨 ---
+    function applyThemeFromURL() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const theme = urlParams.get('theme');
+      if (theme === 'light' || theme === 'dark') {
+        document.documentElement.setAttribute('data-theme', theme);
         localStorage.setItem('theme', theme);
-        themeIcon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+      }
     }
-    setTheme(localStorage.getItem('theme') || 'dark');
-    themeToggle.addEventListener('click', () => {
-        const newTheme = docElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-        setTheme(newTheme);
-    });
-    
+    applyThemeFromURL();
 
-    // --- 📚 DATA FOR TIMETABLE & RESOURCES 📚 ---
+    // --- 📚 UPDATED & ENRICHED DATA 📚 ---
     const examsData = [
-        { date: '2025-10-06T18:00:00', subject: 'लेखन कौशल्ये २ (AEC)', displayDate: 'Monday 6 Oct 2025' },
-        { date: '2025-10-07T18:00:00', subject: 'Sports', displayDate: 'Tuesday 7 Oct 2025', type: 'Minor' },
-        { date: '2025-10-08T18:00:00', subject: 'Big Data Analysis', displayDate: 'Wednesday 8 Oct 2025', type: 'Minor' },
-        { date: '2025-10-09T18:00:00', subject: 'Basics of Service Sector', displayDate: 'Thursday 9 Oct 2025', type: 'Major' },
-        { date: '2025-10-10T18:00:00', subject: 'Mutual Fund Distributor – I', displayDate: 'Friday 10 Oct 2025', type: 'Minor' },
-        { date: '2025-10-11T18:00:00', subject: 'Financial Accounting – III', displayDate: 'Saturday 11 Oct 2025', type: 'Major' },
-        { date: '2025-10-13T18:00:00', subject: 'Cost Accounting – I', displayDate: 'Monday 13 Oct 2025', type: 'Major' }
+        { date: '2025-10-06T18:00:00', subject: 'लेखन कौशल्ये २ (AEC)' },
+        { date: '2025-10-07T18:00:00', subject: 'Sports (CC)' },
+        { date: '2025-10-08T18:00:00', subject: 'Big Data Analytics (OE)' },
+        { date: '2025-10-09T18:00:00', subject: 'Basics of Service Sector (Minor)' },
+        { date: '2025-10-10T18:00:00', subject: 'Mutual Fund Distributor – I (VSEC)' },
+        { date: '2025-10-11T18:00:00', subject: 'Financial Accounting – III (Major)' },
+        { date: '2025-10-13T18:00:00', subject: 'Cost Accounting – I (Major)' }
     ];
 
     const resourcesData = [
-        { title: 'Financial Accounting – III', type: 'Major', icon: 'fa-calculator', color: '#f57c00', bgColor: '#fff3e0', desc: 'Core accounting principles, statements, and advanced problems.' },
-        { title: 'Cost Accounting – I', type: 'Major', icon: 'fa-file-invoice-dollar', color: '#303f9f', bgColor: '#e8eaf6', desc: 'Learn the fundamentals of cost analysis, budgeting, and control.' },
-        { title: 'Basics of Service Sector', type: 'Major', icon: 'fa-briefcase', color: '#00796b', bgColor: '#e0f7fa', desc: 'Explore the industries and management of the service economy.' },
-        { title: 'Mutual Fund Distributor – I', type: 'Minor', icon: 'fa-chart-line', color: '#d81b60', bgColor: '#fce4ec', desc: 'Understand mutual funds, regulations, and advisory practices.' },
-        { title: 'Big Data Analysis', type: 'Minor', icon: 'fa-database', color: '#6d4c41', bgColor: '#efebe9', desc: 'Introduction to big data tools and analytical techniques.' },
-        { title: 'Field Project', type: 'Minor', icon: 'fa-map-signs', color: '#455a64', bgColor: '#eceff1', desc: 'Guidelines, report formats, and presentation resources.' },
-        { title: 'Marathi', type: 'Minor', icon: 'fa-feather-alt', color: '#c2185b', bgColor: '#fce4ec', desc: 'Resources for language skills and literature.' },
-        { title: 'Sports', type: 'Minor', icon: 'fa-futbol', color: '#2e7d32', bgColor: '#e8f5e9', desc: 'Materials related to sports training and tests measurement.' }
+        { title: 'Financial Accounting – III', type: 'Major', icon: 'fa-calculator', color: '#f57c00', bgColor: '#fff3e0', desc: 'Core accounting principles, financial statements, and advanced problems.' },
+        { title: 'Cost Accounting – I', type: 'Major', icon: 'fa-file-invoice-dollar', color: '#303f9f', bgColor: '#e8eaf6', desc: 'Learn the fundamentals of cost analysis, budgeting, and variance control.' },
+        { title: 'Basics of Service Sector', type: 'Major', icon: 'fa-briefcase', color: '#00796b', bgColor: '#e0f7fa', desc: 'Explore the industries, management, and economic impact of the service sector.' },
+        { title: 'Mutual Fund Distributor – I', type: 'Minor', icon: 'fa-chart-line', color: '#d81b60', bgColor: '#fce4ec', desc: 'Understand mutual funds, SEBI regulations, and advisory practices.' },
+        { title: 'Big Data Analysis', type: 'Minor', icon: 'fa-database', color: '#6d4c41', bgColor: '#efebe9', desc: 'An introduction to big data concepts, tools like Hadoop, and analytical techniques.' },
+        { title: 'लेखन कौशल्ये २ (AEC)', type: 'Minor', icon: 'fa-feather-alt', color: '#c2185b', bgColor: '#fce4ec', desc: 'Resources for improving Marathi writing skills, grammar, and literature.' },
+        { title: 'Sports (CC)', type: 'Minor', icon: 'fa-futbol', color: '#2e7d32', bgColor: '#e8f5e9', desc: 'Materials for sports training, tests, and measurement techniques.' },
+        { title: 'Field Project', type: 'Minor', icon: 'fa-map-signs', color: '#455a64', bgColor: '#eceff1', desc: 'Guidelines, report formats, and presentation resources for your field project.' }
     ];
 
-
-    // --- ⏳ FUNCTIONALITY: TIMETABLE & COUNTDOWN ⏳ ---
+    // --- ⏳ TIMETABLE & COUNTDOWN LOGIC ⏳ ---
     const timetableList = document.getElementById('timetable-list');
+    
+    // Helper function to format date and time
+    function formatExamDate(dateString) {
+        const date = new Date(dateString);
+        const timeOptions = { hour: 'numeric', minute: 'numeric', hour12: true };
+        const dateOptions = { weekday: 'long', day: 'numeric', month: 'short', year: 'numeric' };
+        return `${date.toLocaleDateString('en-US', dateOptions)} at ${date.toLocaleTimeString('en-US', timeOptions)}`;
+    }
+
     examsData.forEach(exam => {
         const row = document.createElement('div');
         row.className = 'timetable-row';
-        row.innerHTML = `<div class="timetable-date">${exam.displayDate}</div><div class="timetable-subject">${exam.subject}</div>`;
+        row.innerHTML = `<div class="timetable-date">${formatExamDate(exam.date)}</div><div class="timetable-subject">${exam.subject}</div>`;
         timetableList.appendChild(row);
+    });
+
+    const timetableToggle = document.getElementById('timetable-toggle');
+    timetableToggle.addEventListener('click', () => {
+        timetableToggle.classList.toggle('active');
+        timetableList.classList.toggle('active');
     });
 
     const daysEl = document.getElementById('days'), hoursEl = document.getElementById('hours'), minutesEl = document.getElementById('minutes'), secondsEl = document.getElementById('seconds'), nextExamSubjectEl = document.getElementById('next-exam-subject'), countdownContainer = document.getElementById('countdown-container');
     let countdownInterval;
-
     function startCountdown() {
         if (countdownInterval) clearInterval(countdownInterval);
         const nextExam = examsData.find(exam => new Date(exam.date).getTime() > new Date().getTime());
-
-        if (!nextExam) {
-            countdownContainer.innerHTML = '<h3>All exams are over! Well done.</h3>';
-            return;
-        }
-
+        if (!nextExam) { countdownContainer.innerHTML = '<h3>All exams are over! Well done.</h3>'; return; }
         nextExamSubjectEl.textContent = nextExam.subject;
         const nextExamDate = new Date(nextExam.date).getTime();
         countdownInterval = setInterval(() => {
@@ -295,32 +304,12 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     startCountdown();
 
-
-    // --- 📚 FUNCTIONALITY: RESOURCES & SEARCH 📚 ---
+    // --- 📚 RESOURCES & SEARCH LOGIC 📚 ---
     const subjectsGrid = document.querySelector('.subjects-grid');
     resourcesData.forEach(resource => {
         const card = document.createElement('div');
         card.className = 'subject-card';
-        card.innerHTML = `
-            <div class="card-header">
-                <div class="subject-icon" style="background-color: ${resource.bgColor};">
-                    <i class="fas ${resource.icon}" style="color: ${resource.color};"></i>
-                </div>
-                <div class="title-block">
-                    <h2 class="subject-title">${resource.title}</h2>
-                    <span class="tag">${resource.type}</span>
-                </div>
-            </div>
-            <p class="subject-description">${resource.desc}</p>
-            <div class="card-actions">
-                <a href="#" class="action-button primary">
-                    <i class="fas fa-book-open"></i> Question Bank
-                </a>
-                <a href="#" class="action-button secondary">
-                    <i class="fas fa-file-alt"></i> Paper Pattern
-                </a>
-            </div>
-        `;
+        card.innerHTML = ` <div class="card-header"> <div class="subject-icon" style="background-color: ${resource.bgColor};"> <i class="fas ${resource.icon}" style="color: ${resource.color};"></i> </div><div class="title-block"> <h2 class="subject-title">${resource.title}</h2> <span class="tag">${resource.type}</span> </div></div><p class="subject-description">${resource.desc}</p><div class="card-actions"> <a href="#" class="action-button primary"> <i class="fas fa-book-open"></i> Question Bank </a> <a href="#" class="action-button secondary"> <i class="fas fa-file-alt"></i> Paper Pattern </a> </div> `;
         subjectsGrid.appendChild(card);
     });
 
