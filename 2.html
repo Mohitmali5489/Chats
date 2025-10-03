@@ -400,15 +400,13 @@
                     </div>
                 </div>`;
 
-            // This is the element to be printed. It has a defined size to fit within the A4 page margins.
-            // A4 is 21cm x 29.7cm. With 1cm margins, the content area is 19cm x 27.7cm.
             const elementToPrint = `
-                <div style="width: 19cm; height: 27.7cm; border: 2px solid black; padding: 1.5cm; box-sizing: border-box; background-color: white; display: flex; flex-direction: column;">
+                <div style="width: 19cm; height: 27.7cm; border: 2px solid black; padding-top: 1.5cm; padding-right: 1.5cm; padding-bottom: 1.5cm; padding-left: 3.81cm; box-sizing: border-box; background-color: white; display: flex; flex-direction: column;">
                     ${contentHTML}
                 </div>`;
             
             const options = {
-                margin: 1, // This applies a 1cm margin on all sides of the A4 page.
+                margin: 1,
                 filename: `Declaration_${student.fullname}.pdf`,
                 image: { type: 'jpeg', quality: 1.0 },
                 html2canvas: { scale: 3, useCORS: true },
@@ -449,15 +447,13 @@
                     </table>
                 </div>`;
 
-            // This is the element to be printed. It has a defined size to fit within the A4 page margins.
-            // A4 is 21cm x 29.7cm. With 1cm margins, the content area is 19cm x 27.7cm.
             const elementToPrint = `
-                <div style="width: 19cm; height: 27.7cm; border: 2px solid black; padding: 1.5cm; box-sizing: border-box; background-color: white; display: flex; flex-direction: column;">
+                <div style="width: 19cm; height: 27.7cm; border: 2px solid black; padding-top: 1.5cm; padding-right: 1.5cm; padding-bottom: 1.5cm; padding-left: 3.81cm; box-sizing: border-box; background-color: white; display: flex; flex-direction: column;">
                     ${contentHTML}
                 </div>`;
             
             const options = {
-                margin: 1, // This applies a 1cm margin on all sides of the A4 page.
+                margin: 1,
                 filename: `Certificate_${student.fullname}.pdf`,
                 image: { type: 'jpeg', quality: 1.0 },
                 html2canvas: { scale: 3, useCORS: true },
