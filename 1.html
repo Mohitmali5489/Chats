@@ -134,21 +134,9 @@
       .action-button.secondary:hover { background-color: var(--secondary-button-bg-hover); border-color: var(--primary-accent); }
       #no-results-message { text-align: center; font-size: 1.1rem; color: var(--text-secondary); padding: 40px; }
 
-      /* 🍞 --- NEW: Toast Notification --- 🍞 */
-      .toast {
-        visibility: hidden; opacity: 0;
-        position: fixed;
-        left: 50%; transform: translateX(-50%); bottom: 30px;
-        background-color: var(--toast-bg); color: var(--toast-text);
-        padding: 12px 20px; border-radius: 8px;
-        z-index: 2000; font-size: 0.95rem; font-weight: 500;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        transition: opacity 0.3s, transform 0.3s, visibility 0.3s;
-      }
-      .toast.show {
-        visibility: visible; opacity: 1;
-        transform: translate(-50%, -10px);
-      }
+      /* 🍞 --- Toast Notification --- 🍞 */
+      .toast { visibility: hidden; opacity: 0; position: fixed; left: 50%; transform: translateX(-50%); bottom: 30px; background-color: var(--toast-bg); color: var(--toast-text); padding: 12px 20px; border-radius: 8px; z-index: 2000; font-size: 0.95rem; font-weight: 500; box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: opacity 0.3s, transform 0.3s, visibility 0.3s; }
+      .toast.show { visibility: visible; opacity: 1; transform: translate(-50%, -10px); }
 
       @media (max-width: 768px) {
         .resources-header { flex-direction: column; align-items: flex-start; gap: 15px; }
@@ -220,31 +208,36 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     applyThemeFromURL();
 
-    // --- 📚 UPDATED DATA with href links 📚 ---
-    const examsData = [ { date: '2025-10-06T18:00:00', subject: 'लेखन कौशल्ये २ (AEC)' }, { date: '2025-10-07T18:00:00', subject: 'Sports (CC)' }, { date: '2025-10-08T18:00:00', subject: 'Big Data Analytics (OE)' }, { date: '2025-10-09T18:00:00', subject: 'Basics of Service Sector (Minor)' }, { date: '2025-10-10T18:00:00', subject: 'Mutual Fund Distributor – I (VSEC)' }, { date: '2025-10-11T18:00:00', subject: 'Financial Accounting – III (Major)' }, { date: '2025-10-13T18:00:00', subject: 'Cost Accounting – I (Major)' } ];
-
-    const resourcesData = [
-        { title: 'Financial Accounting – III', type: 'Major', icon: 'fa-calculator', color: '#f57c00', bgColor: '#fff3e0', desc: 'Core accounting principles, statements, and advanced problems.', qbLink: '#', ppLink: '#' },
-        { title: 'Cost Accounting – I', type: 'Major', icon: 'fa-file-invoice-dollar', color: '#303f9f', bgColor: '#e8eaf6', desc: 'Learn the fundamentals of cost analysis, budgeting, and control.', qbLink: 'https://example.com/ca1-qb.pdf', ppLink: '' },
-        { title: 'Basics of Service Sector', type: 'Major', icon: 'fa-briefcase', color: '#00796b', bgColor: '#e0f7fa', desc: 'Explore the industries, management, and economic impact of the service sector.', qbLink: '', ppLink: '' },
-        { title: 'Mutual Fund Distributor – I', type: 'Minor', icon: 'fa-chart-line', color: '#d81b60', bgColor: '#fce4ec', desc: 'Understand mutual funds, SEBI regulations, and advisory practices.', qbLink: 'https://example.com/mfd1-qb.pdf', ppLink: 'https://example.com/mfd1-pp.pdf' },
-        { title: 'Big Data Analysis', type: 'Minor', icon: 'fa-database', color: '#6d4c41', bgColor: '#efebe9', desc: 'An introduction to big data concepts, tools, and analytical techniques.', qbLink: '', ppLink: '' },
-        { title: 'लेखन कौशल्ये २ (AEC)', type: 'Minor', icon: 'fa-feather-alt', color: '#c2185b', bgColor: '#fce4ec', desc: 'Resources for improving Marathi writing skills, grammar, and literature.', qbLink: '', ppLink: 'https://example.com/aec-pp.pdf' },
-        { title: 'Sports (CC)', type: 'Minor', icon: 'fa-futbol', color: '#2e7d32', bgColor: '#e8f5e9', desc: 'Materials for sports training, tests, and measurement techniques.', qbLink: '', ppLink: '' },
-        { title: 'Field Project', type: 'Minor', icon: 'fa-map-signs', color: '#455a64', bgColor: '#eceff1', desc: 'Guidelines, report formats, and presentation resources for your field project.', qbLink: 'https://example.com/field-project-guide.pdf', ppLink: '' }
+    // --- 📚 UPDATED DATA 📚 ---
+    const examsData = [
+        { date: '2025-10-06T18:00:00', subject: 'लेखन कौशल्ये २ (AEC)' },
+        { date: '2025-10-07T18:00:00', subject: 'Sports (CC)' },
+        { date: '2025-10-08T18:00:00', subject: 'Big Data Analytics (OE)' },
+        { date: '2025-10-09T18:00:00', subject: 'Basics of Service Sector (Minor)' },
+        { date: '2025-10-10T18:00:00', subject: 'Mutual Fund Distributor – I (VSEC)' },
+        { date: '2025-10-11T18:00:00', subject: 'Financial Accounting – III (Major)' },
+        { date: '2025-10-13T18:00:00', subject: 'Cost Accounting – I (Major)' }
     ];
 
-    // --- 🍞 NEW: TOAST NOTIFICATION LOGIC 🍞 ---
+    // MODIFIED: Reordered to match exams, removed Field Project, removed hrefs
+    const resourcesData = [
+        { title: 'लेखन कौशल्ये २ (AEC)', type: 'Minor', icon: 'fa-feather-alt', color: '#c2185b', bgColor: '#fce4ec', desc: 'Resources for improving Marathi writing skills, grammar, and literature.' },
+        { title: 'Sports (CC)', type: 'Minor', icon: 'fa-futbol', color: '#2e7d32', bgColor: '#e8f5e9', desc: 'Materials for sports training, tests, and measurement techniques.' },
+        { title: 'Big Data Analysis', type: 'Minor', icon: 'fa-database', color: '#6d4c41', bgColor: '#efebe9', desc: 'An introduction to big data concepts, tools, and analytical techniques.' },
+        { title: 'Basics of Service Sector', type: 'Major', icon: 'fa-briefcase', color: '#00796b', bgColor: '#e0f7fa', desc: 'Explore the industries, management, and economic impact of the service sector.' },
+        { title: 'Mutual Fund Distributor – I', type: 'Minor', icon: 'fa-chart-line', color: '#d81b60', bgColor: '#fce4ec', desc: 'Understand mutual funds, SEBI regulations, and advisory practices.' },
+        { title: 'Financial Accounting – III', type: 'Major', icon: 'fa-calculator', color: '#f57c00', bgColor: '#fff3e0', desc: 'Core accounting principles, financial statements, and advanced problems.' },
+        { title: 'Cost Accounting – I', type: 'Major', icon: 'fa-file-invoice-dollar', color: '#303f9f', bgColor: '#e8eaf6', desc: 'Learn the fundamentals of cost analysis, budgeting, and control.' }
+    ];
+
+    // --- 🍞 TOAST NOTIFICATION LOGIC 🍞 ---
     const toast = document.getElementById('toast-notification');
     let toastTimeout;
-
     function showToast(message) {
         if (toastTimeout) clearTimeout(toastTimeout);
         toast.textContent = message;
         toast.classList.add('show');
-        toastTimeout = setTimeout(() => {
-            toast.classList.remove('show');
-        }, 3000); // Toast disappears after 3 seconds
+        toastTimeout = setTimeout(() => { toast.classList.remove('show'); }, 3000);
     }
 
     // --- ⏳ TIMETABLE & COUNTDOWN LOGIC ⏳ ---
@@ -263,7 +256,6 @@ document.addEventListener('DOMContentLoaded', function () {
     resourcesData.forEach(resource => {
         const card = document.createElement('div');
         card.className = 'subject-card';
-        // UPDATED to include hrefs from data
         card.innerHTML = `
             <div class="card-header">
                 <div class="subject-icon" style="background-color: ${resource.bgColor};"><i class="fas ${resource.icon}" style="color: ${resource.color};"></i></div>
@@ -285,13 +277,12 @@ document.addEventListener('DOMContentLoaded', function () {
         subjectsGrid.appendChild(card);
     });
 
-    // UPDATED: Event delegation for toast messages
     subjectsGrid.addEventListener('click', function(e) {
         const button = e.target.closest('.action-button');
         if (button) {
             const href = button.getAttribute('href');
             if (!href || href === '#') {
-                e.preventDefault(); // Prevent jumping to top of page
+                e.preventDefault();
                 showToast("Will be available soon!");
             }
         }
