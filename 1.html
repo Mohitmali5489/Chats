@@ -2,306 +2,780 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
-    <title>Exam Central - BirlaOne</title>
-    <link rel="icon" type="image/png" href="https://fuovcuzaxfkyqrridrgy.supabase.co/storage/v1/object/public/profile-pics//study-icon-modified.png" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NutriScan - The Smart Product Rating App</title>
     
-    <script>
-      // Prevents a "flash of the wrong theme" on page load.
-      (function() {
-        const savedTheme = localStorage.getItem('theme') || 'dark'; // Default to dark
-        document.documentElement.setAttribute('data-theme', savedTheme);
-      })();
-    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <style>
-      /* 🎨 --- Color & Theme Variables --- 🎨 */
-      :root {
-        --primary-accent: #b84fff;
-        --primary-gradient: linear-gradient(135deg, #b84fff, #8f00ff);
-        --font-family: 'Inter', sans-serif;
+        /* --- Root Variables --- */
+        :root {
+            --font-primary: 'Poppins', sans-serif;
+            --header-height: 70px;
+
+            /* Light Mode Colors */
+            --color-bg-light: #f8f9fa;
+            --color-surface-light: #ffffff;
+            --color-text-light: #212529;
+            --color-text-secondary-light: #6c757d;
+            --color-primary-light: #007bff;
+            --color-primary-darker-light: #0056b3;
+            --color-accent-light: #28a745;
+            --color-border-light: #dee2e6;
+
+            /* Dark Mode Colors */
+            --color-bg-dark: #121212;
+            --color-surface-dark: #1e1e1e;
+            --color-text-dark: #e9ecef;
+            --color-text-secondary-dark: #adb5bd;
+            --color-primary-dark: #3793ff;
+            --color-primary-darker-dark: #1a7cff;
+            --color-accent-dark: #20c997;
+            --color-border-dark: #343a40;
+
+            /* Transitions & Shadows */
+            --transition-smooth: all 0.3s ease-in-out;
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.04);
+            --shadow-md: 0 5px 15px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        /* --- Base & Reset Styles --- */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: var(--header-height);
+        }
+
+        body {
+            font-family: var(--font-primary);
+            background-color: var(--color-bg-light);
+            color: var(--color-text-light);
+            transition: background-color 0.3s, color 0.3s;
+            line-height: 1.7;
+            font-size: 16px;
+        }
+
+        /* --- Dark Mode --- */
+        body.dark-mode {
+            background-color: var(--color-bg-dark);
+            color: var(--color-text-dark);
+        }
         
-        --bg-gradient-light: linear-gradient(180deg, #f5f5f7, #e9e9ed);
-        --card-bg-light: #ffffff;
-        --text-primary-light: #121212;
-        --text-secondary-light: #5f5f5f;
-        --border-color-light: #e0e0e0;
-        --shadow-light: 0 4px 20px rgba(0, 0, 0, 0.06);
-        --header-bg-light: #ffffff;
+        /* General Dark Mode Component Styles */
+        body.dark-mode .card,
+        body.dark-mode .navbar,
+        body.dark-mode .footer,
+        body.dark-mode .faq-item,
+        body.dark-mode .nav-menu {
+            background-color: var(--color-surface-dark);
+            border-color: var(--color-border-dark);
+        }
+        body.dark-mode .nav-links a { color: var(--color-text-dark); }
+        body.dark-mode h1, body.dark-mode h2, body.dark-mode h3 { color: var(--color-text-dark); }
+        body.dark-mode p, body.dark-mode .text-secondary { color: var(--color-text-secondary-dark); }
+        body.dark-mode .btn-primary { background-color: var(--color-primary-dark); }
+        body.dark-mode .btn-primary:hover { background-color: var(--color-primary-darker-dark); }
+        body.dark-mode .section-subtitle { color: var(--color-primary-dark); }
+        body.dark-mode .step-icon { background-color: #2a2a2a; color: var(--color-primary-dark); }
 
-        --bg-gradient-dark: linear-gradient(180deg, #1e1e2e, #14141e);
-        --card-bg-dark: #2a2a3d;
-        --text-primary-dark: #f0f0f0;
-        --text-secondary-dark: #a0a0b0;
-        --border-color-dark: #4a4a6a;
-        --shadow-dark: 0 4px 20px rgba(0, 0, 0, 0.2);
-        --header-bg-dark: #1e1e2e;
-      }
-      
-      [data-theme="light"] {
-        --bg-gradient: var(--bg-gradient-light);
-        --card-bg: var(--card-bg-light);
-        --text-primary: var(--text-primary-light);
-        --text-secondary: var(--text-secondary-light);
-        --border-color: var(--border-color-light);
-        --shadow: var(--shadow-light);
-        --header-bg: var(--header-bg-light);
-        --timetable-row-bg: #f7f7f9;
-        --secondary-button-bg-hover: #f0e6ff;
-        --toast-bg: #323232;
-        --toast-text: #ffffff;
-      }
+        /* --- Utility & Layout Classes --- */
+        .container {
+            max-width: 1140px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+        .section {
+            padding: 5rem 0;
+        }
+        .text-center { text-align: center; }
+        .text-secondary { color: var(--color-text-secondary-light); }
 
-      [data-theme="dark"] {
-        --bg-gradient: var(--bg-gradient-dark);
-        --card-bg: var(--card-bg-dark);
-        --text-primary: var(--text-primary-dark);
-        --text-secondary: var(--text-secondary-dark);
-        --border-color: var(--border-color-dark);
-        --shadow: var(--shadow-dark);
-        --header-bg: var(--header-bg-dark);
-        --timetable-row-bg: #3a3a50;
-        --secondary-button-bg-hover: #3c3c52;
-        --toast-bg: #f0f0f0;
-        --toast-text: #121212;
-      }
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        .section-subtitle {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--color-primary-light);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+        }
+        .section-header {
+            margin-bottom: 4rem;
+        }
+        .grid {
+            display: grid;
+            gap: 2rem;
+        }
 
-      /* 🧱 --- Base & Layout Styles --- 🧱 */
-      * { box-sizing: border-box; margin: 0; padding: 0; }
-      html { scroll-behavior: smooth; }
-      body {
-        font-family: var(--font-family);
-        background: var(--bg-gradient);
-        color: var(--text-primary);
-        line-height: 1.6;
-      }
-      .page-container { max-width: 1200px; margin: 0 auto; padding: 0 15px 15px 15px; }
+        /* --- Buttons --- */
+        .btn {
+            display: inline-block;
+            padding: 0.8rem 2rem;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            text-decoration: none;
+            transition: var(--transition-smooth);
+            text-align: center;
+        }
 
-      /* 🔝 --- Header --- 🔝 */
-      .top-bar { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; background: var(--header-bg); border-bottom: 1px solid var(--border-color); position: sticky; top: 0; z-index: 1000; height: 60px; }
-      .header-button { background: none; border: none; cursor: pointer; color: var(--text-primary); display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; flex-shrink: 0; }
-      .header-button svg, .header-button i { font-size: 22px; }
-      .header-title { font-weight: 600; font-size: 18px; flex-grow: 1; text-align: center; }
-      
-      /* ⏳ --- Countdown & Collapsible Timetable --- ⏳ */
-      .main-card { background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 25px; margin-bottom: 30px; box-shadow: var(--shadow); }
-      .section-header { display: flex; align-items: center; font-size: 1.4rem; font-weight: 600; color: var(--text-primary); }
-      .section-header i { margin-right: 12px; color: var(--primary-accent); }
-      #countdown-container { text-align: center; padding-bottom: 25px; }
-      #next-exam-title { font-size: 1rem; font-weight: 400; color: var(--text-secondary); margin-bottom: 5px; }
-      #next-exam-subject { font-size: 1.2rem; font-weight: 600; color: var(--primary-accent); margin-bottom: 15px; }
-      #countdown-timer { display: flex; justify-content: center; gap: 15px; }
-      .countdown-block { text-align: center; }
-      .countdown-block span { display: block; font-size: 2.5rem; font-weight: 700; color: var(--text-primary); }
-      .countdown-block .label { font-size: 0.8rem; text-transform: uppercase; color: var(--text-secondary); }
-      
-      .collapsible-header { display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding-top: 15px; border-top: 1px solid var(--border-color); }
-      .collapsible-header .section-header { margin-bottom: 0; }
-      .collapsible-header .toggle-icon { font-size: 1.2rem; color: var(--text-secondary); transition: transform 0.3s ease; }
-      .collapsible-header.active .toggle-icon { transform: rotate(180deg); }
-      .timetable-list { max-height: 0; overflow: hidden; transition: max-height 0.4s ease-out, padding-top 0.4s ease-out; display: flex; flex-direction: column; gap: 12px; }
-      .timetable-list.active { padding-top: 20px; max-height: 1000px; }
-      .timetable-row { display: flex; flex-direction: column; gap: 5px; padding: 15px; border-radius: 12px; background-color: var(--timetable-row-bg); border: 1px solid var(--border-color); }
-      .timetable-date { font-weight: 600; color: var(--primary-accent); font-size: 1rem; }
-      .timetable-subject { font-weight: 500; color: var(--text-primary); font-size: 0.95rem; }
+        .btn-primary {
+            background-color: var(--color-primary-light);
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+        }
+        .btn-primary:hover {
+            background-color: var(--color-primary-darker-light);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
+        }
+        
+        /* --- Card --- */
+        .card {
+            background-color: var(--color-surface-light);
+            border: 1px solid var(--color-border-light);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: var(--shadow-md);
+            transition: var(--transition-smooth);
+        }
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-lg);
+        }
 
-      /* 📚 --- Resources Section --- 📚 */
-      .resources-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-      .section-title { font-size: 1.6rem; color: var(--text-primary); }
-      .search-container { position: relative; width: 100%; max-width: 300px; }
-      #search-bar { width: 100%; padding: 10px 15px 10px 40px; border-radius: 10px; border: 1px solid var(--border-color); font-size: 0.95rem; background-color: var(--card-bg); color: var(--text-primary); font-family: var(--font-family); }
-      #search-bar:focus { outline: none; border-color: var(--primary-accent); }
-      .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-secondary); }
+        /* --- Navbar --- */
+        .navbar {
+            display: flex;
+            align-items: center;
+            height: var(--header-height);
+            background-color: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow-sm);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            transition: background-color 0.3s;
+        }
+        body.dark-mode .navbar {
+            background-color: rgba(30, 30, 30, 0.8);
+        }
+        
+        .nav-logo {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: var(--color-primary-light);
+            text-decoration: none;
+            margin-right: auto; /* <-- THIS IS THE FIX */
+        }
+        body.dark-mode .nav-logo { color: var(--color-primary-dark); }
+        
+        .nav-menu {
+            display: flex;
+            align-items: center;
+        }
 
-      .subjects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
-      .subject-card { background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; box-shadow: var(--shadow); padding: 20px; display: flex; flex-direction: column; transition: transform 0.3s ease, box-shadow 0.3s ease; }
-      [data-theme="dark"] .subject-card:hover { box-shadow: 0 8px 25px rgba(0,0,0,0.3); }
-      [data-theme="light"] .subject-card:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
-      .card-header { display: flex; align-items: flex-start; margin-bottom: 12px; gap: 15px; }
-      .subject-icon { width: 45px; height: 45px; border-radius: 12px; display: flex; justify-content: center; align-items: center; flex-shrink: 0; }
-      .subject-icon i { font-size: 1.4rem; }
-      .title-block { display: flex; flex-direction: column; }
-      .subject-title { font-size: 1.15rem; font-weight: 600; color: var(--text-primary); line-height: 1.3; }
-      .tag { display: inline-block; width: fit-content; margin-top: 6px; font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 12px; background-color: rgba(128, 128, 128, 0.1); color: var(--text-secondary); border: 1px solid var(--border-color); }
-      .subject-description { font-size: 0.9rem; color: var(--text-secondary); flex-grow: 1; margin-bottom: 20px; }
-      .card-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-      .action-button { text-align: center; padding: 10px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.9rem; transition: all 0.2s ease; display: flex; align-items: center; justify-content: center; gap: 8px; border: 1px solid transparent; }
-      .action-button.primary { background: var(--primary-gradient); color: white; }
-      .action-button.primary:hover { opacity: 0.9; transform: scale(1.03); }
-      .action-button.secondary { background-color: transparent; color: var(--primary-accent); border: 1px solid var(--border-color); }
-      .action-button.secondary:hover { background-color: var(--secondary-button-bg-hover); border-color: var(--primary-accent); }
-      #no-results-message { text-align: center; font-size: 1.1rem; color: var(--text-secondary); padding: 40px; }
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2.5rem;
+        }
 
-      /* 🍞 --- Toast Notification --- 🍞 */
-      .toast { visibility: hidden; opacity: 0; position: fixed; left: 50%; transform: translateX(-50%); bottom: 30px; background-color: var(--toast-bg); color: var(--toast-text); padding: 12px 20px; border-radius: 8px; z-index: 2000; font-size: 0.95rem; font-weight: 500; box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: opacity 0.3s, transform 0.3s, visibility 0.3s; }
-      .toast.show { visibility: visible; opacity: 1; transform: translate(-50%, -10px); }
+        .nav-links a {
+            text-decoration: none;
+            color: var(--color-text-secondary-light);
+            font-weight: 500;
+            transition: var(--transition-smooth);
+            position: relative;
+        }
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--color-primary-light);
+            transition: width 0.3s;
+        }
+        body.dark-mode .nav-links a::after { background-color: var(--color-primary-dark); }
+        .nav-links a:hover, .nav-links a.active { color: var(--color-text-light); }
+        body.dark-mode .nav-links a:hover, body.dark-mode .nav-links a.active { color: var(--color-text-dark); }
+        .nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
+        
+        .theme-toggle {
+            background: none;
+            border: none;
+            font-size: 1.4rem;
+            cursor: pointer;
+            color: var(--color-text-secondary-light);
+            transition: var(--transition-smooth);
+        }
+        .theme-toggle:hover { color: var(--color-primary-light); }
+        body.dark-mode .theme-toggle:hover { color: var(--color-primary-dark); }
 
-      @media (max-width: 768px) {
-        .resources-header { flex-direction: column; align-items: flex-start; gap: 15px; }
-        .search-container { max-width: 100%; }
-        .countdown-block span { font-size: 2rem; }
-      }
+        .nav-toggle {
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: none; /* Hidden on desktop */
+        }
+        
+        /* --- Hero Section --- */
+        .hero {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            align-items: center;
+            gap: 3rem;
+            padding-top: calc(var(--header-height) + 4rem);
+            min-height: 100vh;
+        }
+        .hero-content h1 {
+            font-size: 3.8rem;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+        }
+        .hero-content .tagline {
+            font-size: 1.2rem;
+            margin-bottom: 2.5rem;
+            max-width: 500px;
+        }
+        .hero-image img {
+            max-width: 100%;
+            animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+
+        /* --- How It Works Section --- */
+        .how-it-works-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+        .step-card {
+            text-align: center;
+        }
+        .step-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: #e9ecef;
+            color: var(--color-primary-light);
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            transition: var(--transition-smooth);
+        }
+        .step-card:hover .step-icon {
+            transform: scale(1.1) rotate(10deg);
+        }
+        .step-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* --- Features Section --- */
+        .features-grid {
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        }
+        .feature-card .icon {
+            font-size: 2.5rem;
+            color: var(--color-accent-light);
+            margin-bottom: 1rem;
+        }
+        body.dark-mode .feature-card .icon { color: var(--color-accent-dark); }
+        .feature-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        /* --- Testimonials Section --- */
+        #testimonials { background-color: var(--color-surface-light); }
+        body.dark-mode #testimonials { background-color: var(--color-surface-dark); }
+        .testimonial-grid {
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        }
+        .testimonial-card {
+            display: flex;
+            flex-direction: column;
+        }
+        .testimonial-text {
+            font-style: italic;
+            margin-bottom: 1.5rem;
+            flex-grow: 1;
+        }
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .testimonial-author img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+        }
+        .author-info h4 { font-size: 1rem; }
+        .author-info p { font-size: 0.9rem; }
+        
+        /* --- FAQ Section --- */
+        .faq-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .faq-item {
+            border: 1px solid var(--color-border-light);
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+        }
+        .faq-question {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .faq-question i {
+            transition: transform 0.3s;
+        }
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+        }
+        .faq-answer p {
+            padding: 0 1.5rem 1.5rem;
+        }
+        .faq-item.active .faq-answer {
+            max-height: 200px; /* Adjust as needed */
+        }
+        .faq-item.active .faq-question i {
+            transform: rotate(180deg);
+        }
+        
+        /* --- CTA Section --- */
+        .cta-section {
+            background: linear-gradient(45deg, var(--color-primary-light), var(--color-primary-darker-light));
+            border-radius: 20px;
+            padding: 4rem;
+            text-align: center;
+            color: #fff;
+        }
+        body.dark-mode .cta-section {
+             background: linear-gradient(45deg, var(--color-primary-dark), #1a7cff);
+        }
+        .cta-section h2 {
+            font-size: 2.5rem;
+            color: #fff;
+            margin-bottom: 1.5rem;
+        }
+        .cta-section .btn {
+            background-color: #fff;
+            color: var(--color-primary-light);
+            font-weight: 700;
+        }
+        
+        /* --- Footer --- */
+        .footer {
+            background-color: var(--color-surface-light);
+            color: var(--color-text-secondary-light);
+            padding: 4rem 0 2rem;
+            border-top: 1px solid var(--color-border-light);
+        }
+        .footer-grid {
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            margin-bottom: 3rem;
+        }
+        .footer-about .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--color-primary-light);
+            margin-bottom: 1rem;
+            display: block;
+            margin-right: 0; /* Override nav logo margin */
+        }
+        body.dark-mode .footer-about .logo { color: var(--color-primary-dark); }
+        
+        .footer-links h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--color-text-light);
+            margin-bottom: 1rem;
+        }
+        body.dark-mode .footer-links h4 { color: var(--color-text-dark); }
+
+        .footer-links ul {
+            list-style: none;
+        }
+        .footer-links li {
+            margin-bottom: 0.5rem;
+        }
+        .footer-links a {
+            text-decoration: none;
+            color: var(--color-text-secondary-light);
+            transition: var(--transition-smooth);
+        }
+        .footer-links a:hover { color: var(--color-primary-light); }
+        body.dark-mode .footer-links a:hover { color: var(--color-primary-dark); }
+
+        .footer-bottom {
+            text-align: center;
+            border-top: 1px solid var(--color-border-light);
+            padding-top: 2rem;
+        }
+
+        /* --- Responsive Design --- */
+        @media (max-width: 992px) {
+            .hero { grid-template-columns: 1fr; text-align: center; }
+            .hero-content { order: 2; }
+            .hero-image { order: 1; margin-bottom: 2rem; }
+            .hero-content .tagline { margin: 0 auto 2.5rem; }
+            .how-it-works-grid { grid-template-columns: 1fr; }
+            .footer-grid { grid-template-columns: 1fr 1fr; }
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu {
+                position: fixed;
+                top: var(--header-height);
+                right: -100%;
+                width: 100%;
+                height: calc(100vh - var(--header-height));
+                background-color: var(--color-surface-light);
+                flex-direction: column;
+                justify-content: center;
+                gap: 3rem;
+                transition: right 0.4s ease;
+                padding: 2rem;
+            }
+            .nav-menu.active {
+                right: 0;
+            }
+            .nav-links {
+                flex-direction: column;
+                text-align: center;
+                gap: 2rem;
+            }
+            .nav-toggle {
+                display: block; /* Show hamburger icon */
+            }
+            .nav-actions .btn { display: none; } /* Hide desktop button */
+            .nav-menu .btn { display: block; } /* Show button in mobile menu */
+            
+            .section { padding: 4rem 0; }
+            .section-title { font-size: 2rem; }
+            .hero-content h1 { font-size: 2.8rem; }
+            .testimonial-grid { grid-template-columns: 1fr; }
+            .footer-grid { grid-template-columns: 1fr; text-align: center; }
+            .footer-links { margin-top: 2rem; }
+        }
+
     </style>
 </head>
 <body>
-    <header class="top-bar">
-      <a href="#" class="header-button">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-      </a>
-      <h1 class="header-title">Exam Central</h1>
-      <button class="header-button" id="settings-button" title="Settings">
-        <i class="fas fa-cog"></i>
-      </button>
-    </header>
 
-    <div class="page-container">
-        <main style="padding-top: 20px;">
-            <section class="main-card">
-                <div id="countdown-container">
-                     <h3 id="next-exam-title">Next Exam In</h3>
-                     <h4 id="next-exam-subject">Loading...</h4>
-                     <div id="countdown-timer">
-                         <div class="countdown-block"><span id="days">00</span><div class="label">Days</div></div>
-                         <div class="countdown-block"><span id="hours">00</span><div class="label">Hours</div></div>
-                         <div class="countdown-block"><span id="minutes">00</span><div class="label">Mins</div></div>
-                         <div class="countdown-block"><span id="seconds">00</span><div class="label">Secs</div></div>
-                     </div>
-                </div>
-
-                <div class="collapsible-header" id="timetable-toggle">
-                    <h2 class="section-header"><i class="fas fa-calendar-alt"></i> Exam Timetable</h2>
-                    <i class="fas fa-chevron-down toggle-icon"></i>
-                </div>
-                <div class="timetable-list" id="timetable-list">
-                    </div>
-            </section>
+    <nav class="navbar">
+        <div class="container" style="display: flex; align-items: center; width: 100%;">
+            <a href="#" class="nav-logo">NutriScan</a>
             
-            <div class="resources-header">
-                <h2 class="section-title">Resources</h2>
-                <div class="search-container">
-                  <i class="fas fa-search search-icon"></i>
-                  <input type="text" id="search-bar" placeholder="Search resources...">
+            <div class="nav-menu" id="nav-menu">
+                <ul class="nav-links">
+                    <li><a href="#home" class="active">Home</a></li>
+                    <li><a href="#how-it-works">How It Works</a></li>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#faq">FAQ</a></li>
+                    <li><a href="scan.html" class="btn btn-primary" style="display: none;">Start Scanning</a></li> </ul>
+            </div>
+
+            <div class="nav-actions" style="display: flex; align-items: center; gap: 1.5rem; margin-left: 2rem;">
+                <a href="scan.html" class="btn btn-primary">Start Scanning</a>
+                <button class="theme-toggle" id="theme-toggle-btn">
+                    <i class="fa-solid fa-moon"></i>
+                </button>
+                <div class="nav-toggle" id="nav-toggle">
+                    <i class="fa-solid fa-bars"></i>
                 </div>
             </div>
-          
-            <section class="subjects-grid">
-                </section>
-            <p id="no-results-message" style="display: none;">No resources found.</p>
-        </main>
-    </div>
+        </div>
+    </nav>
 
-    <div id="toast-notification" class="toast"></div>
+    <main>
+        <section class="hero container" id="home">
+            <div class="hero-content">
+                <h1>Know Exactly What You Consume.</h1>
+                <p class="tagline text-secondary">Make informed food choices with a single scan. NutriScan decodes complex labels, revealing ingredients, nutritional value, and health impacts instantly.</p>
+                <a href="scan.html" class="btn btn-primary">Scan Your First Product</a>
+            </div>
+            <div class="hero-image">
+                <img src="https://assets.nhs.uk/campaigns-cms-prod/images/FS-App-mock-up_fiipzNq.width-320.png" alt="NutriScan App Interface">
+            </div>
+        </section>
 
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-
-    // --- 🎨 THEME LOGIC (from URL Param) 🎨 ---
-    function applyThemeFromURL() {
-      const urlParams = new URLSearchParams(window.location.search);
-      const theme = urlParams.get('theme');
-      if (theme === 'light' || theme === 'dark') {
-        document.documentElement.setAttribute('data-theme', theme);
-        localStorage.setItem('theme', theme);
-      }
-    }
-    applyThemeFromURL();
-
-    // --- 📚 UPDATED DATA 📚 ---
-    const examsData = [
-        { date: '2025-10-06T18:00:00', subject: 'लेखन कौशल्ये २ (AEC)' },
-        { date: '2025-10-07T18:00:00', subject: 'Sports (CC)' },
-        { date: '2025-10-08T18:00:00', subject: 'Big Data Analytics (OE)' },
-        { date: '2025-10-09T18:00:00', subject: 'Basics of Service Sector (Minor)' },
-        { date: '2025-10-10T18:00:00', subject: 'Mutual Fund Distributor – I (VSEC)' },
-        { date: '2025-10-11T18:00:00', subject: 'Financial Accounting – III (Major)' },
-        { date: '2025-10-13T18:00:00', subject: 'Cost Accounting – I (Major)' }
-    ];
-
-    // MODIFIED: Reordered to match exams, removed Field Project, removed hrefs
-    const resourcesData = [
-        { title: 'लेखन कौशल्ये २ (AEC)', type: 'Minor', icon: 'fa-feather-alt', color: '#c2185b', bgColor: '#fce4ec', desc: 'Resources for improving Marathi writing skills, grammar, and literature.' },
-        { title: 'Sports (CC)', type: 'Minor', icon: 'fa-futbol', color: '#2e7d32', bgColor: '#e8f5e9', desc: 'Materials for sports training, tests, and measurement techniques.' },
-        { title: 'Big Data Analysis', type: 'Minor', icon: 'fa-database', color: '#6d4c41', bgColor: '#efebe9', desc: 'An introduction to big data concepts, tools, and analytical techniques.' },
-        { title: 'Basics of Service Sector', type: 'Major', icon: 'fa-briefcase', color: '#00796b', bgColor: '#e0f7fa', desc: 'Explore the industries, management, and economic impact of the service sector.' },
-        { title: 'Mutual Fund Distributor – I', type: 'Minor', icon: 'fa-chart-line', color: '#d81b60', bgColor: '#fce4ec', desc: 'Understand mutual funds, SEBI regulations, and advisory practices.' },
-        { title: 'Financial Accounting – III', type: 'Major', icon: 'fa-calculator', color: '#f57c00', bgColor: '#fff3e0', desc: 'Core accounting principles, financial statements, and advanced problems.' },
-        { title: 'Cost Accounting – I', type: 'Major', icon: 'fa-file-invoice-dollar', color: '#303f9f', bgColor: '#e8eaf6', desc: 'Learn the fundamentals of cost analysis, budgeting, and control.' }
-    ];
-
-    // --- 🍞 TOAST NOTIFICATION LOGIC 🍞 ---
-    const toast = document.getElementById('toast-notification');
-    let toastTimeout;
-    function showToast(message) {
-        if (toastTimeout) clearTimeout(toastTimeout);
-        toast.textContent = message;
-        toast.classList.add('show');
-        toastTimeout = setTimeout(() => { toast.classList.remove('show'); }, 3000);
-    }
-
-    // --- ⏳ TIMETABLE & COUNTDOWN LOGIC ⏳ ---
-    const timetableList = document.getElementById('timetable-list');
-    function formatExamDate(dateString) { const date = new Date(dateString); return `${date.toLocaleDateString('en-US', { weekday: 'long', day: 'numeric', month: 'short', year: 'numeric' })} at ${date.toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })}`; }
-    examsData.forEach(exam => { const row = document.createElement('div'); row.className = 'timetable-row'; row.innerHTML = `<div class="timetable-date">${formatExamDate(exam.date)}</div><div class="timetable-subject">${exam.subject}</div>`; timetableList.appendChild(row); });
-    const timetableToggle = document.getElementById('timetable-toggle');
-    timetableToggle.addEventListener('click', () => { timetableToggle.classList.toggle('active'); timetableList.classList.toggle('active'); });
-    const daysEl = document.getElementById('days'), hoursEl = document.getElementById('hours'), minutesEl = document.getElementById('minutes'), secondsEl = document.getElementById('seconds'), nextExamSubjectEl = document.getElementById('next-exam-subject'), countdownContainer = document.getElementById('countdown-container');
-    let countdownInterval;
-    function startCountdown() { if (countdownInterval) clearInterval(countdownInterval); const nextExam = examsData.find(exam => new Date(exam.date).getTime() > new Date().getTime()); if (!nextExam) { countdownContainer.innerHTML = '<h3>All exams are over! Well done.</h3>'; return; } nextExamSubjectEl.textContent = nextExam.subject; const nextExamDate = new Date(nextExam.date).getTime(); countdownInterval = setInterval(() => { const distance = nextExamDate - new Date().getTime(); if (distance < 0) { clearInterval(countdownInterval); startCountdown(); return; } daysEl.innerText = String(Math.floor(distance / 86400000)).padStart(2, '0'); hoursEl.innerText = String(Math.floor((distance % 86400000) / 3600000)).padStart(2, '0'); minutesEl.innerText = String(Math.floor((distance % 3600000) / 60000)).padStart(2, '0'); secondsEl.innerText = String(Math.floor((distance % 60000) / 1000)).padStart(2, '0'); }, 1000); }
-    startCountdown();
-
-    // --- 📚 RESOURCES & SEARCH LOGIC 📚 ---
-    const subjectsGrid = document.querySelector('.subjects-grid');
-    resourcesData.forEach(resource => {
-        const card = document.createElement('div');
-        card.className = 'subject-card';
-        card.innerHTML = `
-            <div class="card-header">
-                <div class="subject-icon" style="background-color: ${resource.bgColor};"><i class="fas ${resource.icon}" style="color: ${resource.color};"></i></div>
-                <div class="title-block">
-                    <h2 class="subject-title">${resource.title}</h2>
-                    <span class="tag">${resource.type}</span>
+        <section class="section container text-center" id="how-it-works">
+            <div class="section-header">
+                <p class="section-subtitle">3 Easy Steps</p>
+                <h2 class="section-title">How It Works</h2>
+            </div>
+            <div class="grid how-it-works-grid">
+                <div class="step-card">
+                    <div class="step-icon"><i class="fa-solid fa-barcode"></i></div>
+                    <h3>1. Scan Product</h3>
+                    <p class="text-secondary">Use your phone's camera to scan the barcode of any food product.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-icon"><i class="fa-solid fa-circle-info"></i></div>
+                    <h3>2. Get Instant Insights</h3>
+                    <p class="text-secondary">Receive a clear, easy-to-understand breakdown of ingredients and nutrition.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-icon"><i class="fa-solid fa-lightbulb"></i></div>
+                    <h3>3. Make a Better Choice</h3>
+                    <p class="text-secondary">Discover healthier alternatives tailored to your dietary preferences.</p>
                 </div>
             </div>
-            <p class="subject-description">${resource.desc}</p>
-            <div class="card-actions">
-                <a href="${resource.qbLink || '#'}" target="_blank" class="action-button primary">
-                    <i class="fas fa-book-open"></i> Question Bank
-                </a>
-                <a href="${resource.ppLink || '#'}" target="_blank" class="action-button secondary">
-                    <i class="fas fa-file-alt"></i> Paper Pattern
-                </a>
-            </div>
-        `;
-        subjectsGrid.appendChild(card);
-    });
+        </section>
 
-    subjectsGrid.addEventListener('click', function(e) {
-        const button = e.target.closest('.action-button');
-        if (button) {
-            const href = button.getAttribute('href');
-            if (!href || href === '#') {
-                e.preventDefault();
-                showToast("Will be available soon!");
+        <section class="section container" id="features">
+            <div class="section-header text-center">
+                <p class="section-subtitle">Our Features</p>
+                <h2 class="section-title">Everything You Need</h2>
+            </div>
+            <div class="grid features-grid">
+                <div class="card feature-card">
+                    <div class="icon"><i class="fa-solid fa-magnifying-glass-chart"></i></div>
+                    <h3>Ingredient Analysis</h3>
+                    <p class="text-secondary">We break down complex ingredient lists and flag artificial additives, allergens, and harmful substances.</p>
+                </div>
+                <div class="card feature-card">
+                    <div class="icon"><i class="fa-solid fa-award"></i></div>
+                    <h3>Health Score</h3>
+                    <p class="text-secondary">Get a simple 0-100 score for every product, making it easy to compare and choose the best option quickly.</p>
+                </div>
+                <div class="card feature-card">
+                    <div class="icon"><i class="fa-solid fa-user-shield"></i></div>
+                    <h3>Personalized Alerts</h3>
+                    <p class="text-secondary">Set up your dietary profile (e.g., vegan, gluten-free, allergies) and get personalized warnings.</p>
+                </div>
+                <div class="card feature-card">
+                    <div class="icon"><i class="fa-solid fa-earth-americas"></i></div>
+                    <h3>Eco Score</h3>
+                    <p class="text-secondary">Understand the environmental impact of products based on packaging and sourcing.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="testimonials">
+            <div class="container">
+                <div class="section-header text-center">
+                    <p class="section-subtitle">Testimonials</p>
+                    <h2 class="section-title">What Our Users Say</h2>
+                </div>
+                <div class="grid testimonial-grid">
+                    <div class="card testimonial-card">
+                        <p class="testimonial-text">"NutriScan has completely changed my grocery shopping. I finally feel in control of my family's diet. A must-have app!"</p>
+                        <div class="testimonial-author">
+                            <img src="https://i.pravatar.cc/150?img=1" alt="User Avatar">
+                            <div class="author-info">
+                                <h4>Sarah J.</h4>
+                                <p class="text-secondary">Working Mom</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card testimonial-card">
+                        <p class="testimonial-text">"As a fitness enthusiast, I'm obsessed with nutrition labels. This app saves me so much time and helps me find the best products for my goals."</p>
+                        <div class="testimonial-author">
+                            <img src="https://i.pravatar.cc/150?img=3" alt="User Avatar">
+                            <div class="author-info">
+                                <h4>Mike R.</h4>
+                                <p class="text-secondary">Fitness Coach</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card testimonial-card">
+                        <p class="testimonial-text">"I have multiple food allergies, and this app is a lifesaver. The personalized alerts give me peace of mind."</p>
+                        <div class="testimonial-author">
+                            <img src="https://i.pravatar.cc/150?img=5" alt="User Avatar">
+                            <div class="author-info">
+                                <h4>Chloe T.</h4>
+                                <p class="text-secondary">University Student</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section container" id="faq">
+            <div class="section-header text-center">
+                <p class="section-subtitle">Questions?</p>
+                <h2 class="section-title">We Have Answers</h2>
+            </div>
+            <div class="faq-container">
+                <div class="faq-item">
+                    <div class="faq-question">
+                        Is NutriScan free to use?
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes, the core features of NutriScan, including barcode scanning and nutritional information, are completely free. We may offer a premium subscription in the future for advanced features.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">
+                        Where does the product data come from?
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Our data is sourced from a combination of public databases, direct partnerships with brands, and user-contributed information that is verified by our team of nutritionists.</p>
+                    </div>
+                </div>
+                 <div class="faq-item">
+                    <div class="faq-question">
+                        Can I use the app for my specific diet?
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Absolutely! You can customize your profile to match various dietary needs, including vegan, vegetarian, keto, paleo, gluten-free, and common allergies like nuts, dairy, and soy.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="container">
+            <div class="cta-section">
+                <h2>Ready to Make Smarter Choices?</h2>
+                <a href="scan.html" class="btn">Download the App Now</a>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="grid footer-grid">
+                <div class="footer-about">
+                    <a href="#" class="logo">NutriScan</a>
+                    <p class="text-secondary">Empowering consumers to make healthier and more informed decisions about the food they eat.</p>
+                </div>
+                <div class="footer-links">
+                    <h4>Navigate</h4>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#how-it-works">How it Works</a></li>
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#faq">FAQ</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Connect</h4>
+                    <ul>
+                        <li><a href="#">Instagram</a></li>
+                        <li><a href="#">Twitter</a></li>
+                        <li><a href="#">LinkedIn</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p class="text-secondary">&copy; 2025 NutriScan. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // --- Theme Toggler ---
+            const themeToggleBtn = document.getElementById('theme-toggle-btn');
+            const body = document.body;
+            const icon = themeToggleBtn.querySelector('i');
+
+            const applyTheme = () => {
+                const currentTheme = localStorage.getItem('theme');
+                if (currentTheme === 'dark') {
+                    body.classList.add('dark-mode');
+                    icon.classList.remove('fa-moon');
+                    icon.classList.add('fa-sun');
+                } else {
+                    body.classList.remove('dark-mode');
+                    icon.classList.remove('fa-sun');
+                    icon.classList.add('fa-moon');
+                }
+            };
+
+            themeToggleBtn.addEventListener('click', () => {
+                body.classList.toggle('dark-mode');
+                let theme = body.classList.contains('dark-mode') ? 'dark' : 'light';
+                localStorage.setItem('theme', theme);
+                applyTheme(); // Update icon
+            });
+            
+            applyTheme(); // Apply theme on initial load
+
+            // --- Mobile Navigation ---
+            const navToggle = document.getElementById('nav-toggle');
+            const navMenu = document.getElementById('nav-menu');
+            const navActions = document.querySelector('.nav-actions');
+
+            if(navToggle) {
+                navToggle.addEventListener('click', () => {
+                    navMenu.classList.toggle('active');
+                    // Optional: change hamburger icon to 'X'
+                    const toggleIcon = navToggle.querySelector('i');
+                    if (navMenu.classList.contains('active')) {
+                        toggleIcon.classList.remove('fa-bars');
+                        toggleIcon.classList.add('fa-times');
+                    } else {
+                        toggleIcon.classList.remove('fa-times');
+                        toggleIcon.classList.add('fa-bars');
+                    }
+                });
             }
-        }
-    });
 
-    const searchBar = document.getElementById('search-bar');
-    const noResultsMessage = document.getElementById('no-results-message');
-    searchBar.addEventListener('input', (e) => {
-        const searchTerm = e.target.value.toLowerCase();
-        let visibleCards = 0;
-        document.querySelectorAll('.subject-card').forEach(card => {
-            const title = card.querySelector('.subject-title').textContent.toLowerCase();
-            const shouldShow = title.includes(searchTerm);
-            card.style.display = shouldShow ? 'flex' : 'none';
-            if (shouldShow) visibleCards++;
+            // --- FAQ Accordion ---
+            const faqItems = document.querySelectorAll('.faq-item');
+            faqItems.forEach(item => {
+                const question = item.querySelector('.faq-question');
+                question.addEventListener('click', () => {
+                    const currentlyActive = document.querySelector('.faq-item.active');
+                    if(currentlyActive && currentlyActive !== item) {
+                        currentlyActive.classList.remove('active');
+                    }
+                    item.classList.toggle('active');
+                });
+            });
+
         });
-        noResultsMessage.style.display = visibleCards === 0 ? 'block' : 'none';
-    });
-});
-</script>
+    </script>
 </body>
 </html>
