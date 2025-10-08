@@ -3,12 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
-  <title>Anonymous Surveys - BAFs App</title>
+  <title>Anonymous Surveys | BirlaOne</title>
   <link rel="icon" type="image/png" href="https://fuovcuzaxfkyqrridrgy.supabase.co/storage/v1/object/public/profile-pics//study-icon-modified.png" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   
   <script>
-    // This script runs early to prevent a "flash of the wrong theme."
     (function() {
       const savedTheme = localStorage.getItem('theme') || 'light';
       document.documentElement.setAttribute('data-theme', savedTheme);
@@ -67,10 +66,10 @@
       background: var(--bg-gradient);
       color: var(--text-primary);
     }
-    .chat-wrapper {
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
+    .container {
+        padding: 20px 16px;
+        max-width: 800px;
+        margin: 0 auto;
     }
 
     /* 🔝 --- Header --- 🔝 */
@@ -100,46 +99,63 @@
       font-size: 13px; color: var(--text-secondary); text-align: left;
     }
     
-    /* 💬 --- Chat Interface Styles --- 💬 */
-    .chat-container {
-      flex: 1; padding: 20px;
-      display: flex; flex-direction: column;
-      overflow-y: auto; gap: 16px;
+    /* 📊 --- Results & Form Cards --- 📊 */
+    .results-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: var(--shadow);
+        animation: fadeIn 0.5s ease-out;
     }
-    .message {
-      max-width: 85%; padding: 12px 16px;
-      border-radius: 18px; line-height: 1.6;
-      word-wrap: break-word; animation: fadeIn 0.4s ease forwards;
-      box-shadow: var(--shadow);
-    }
-    .from-user {
-      align-self: flex-end; background: var(--primary-gradient);
-      color: white; border-bottom-right-radius: 4px;
-    }
-    .from-bot {
-      align-self: flex-start; background: var(--card-bg);
-      color: var(--text-primary); border: 1px solid var(--border-color);
-      border-bottom-left-radius: 4px;
-    }
-    .message p { margin-bottom: 8px; }
-    .message p:last-child { margin-bottom: 0; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
     
-    /* Custom list for survey results */
+    .card-title {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 16px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .card-description {
+        color: var(--text-secondary);
+        line-height: 1.6;
+    }
+
+    .card-button {
+        display: inline-block;
+        text-decoration: none;
+        background: var(--primary-gradient);
+        color: white;
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-weight: 600;
+        margin-top: 16px;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        box-shadow: 0 4px 15px rgba(143, 0, 255, 0.2);
+    }
+    .card-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(143, 0, 255, 0.3);
+    }
+    
     .results-list {
         list-style: none;
         padding-left: 0;
-        margin-top: 12px;
     }
     .results-list li {
-        padding: 10px 0;
-        border-bottom: 1px solid var(--border-color);
+        padding: 10px 4px;
         display: flex;
         justify-content: space-between;
         align-items: center;
         gap: 10px;
+        transition: background-color 0.2s ease;
+        border-radius: 6px;
     }
-    .results-list li:last-child {
-        border-bottom: none;
+    .results-list li:hover {
+        background-color: rgba(128, 128, 128, 0.05);
     }
     .results-list .name {
         font-weight: 500;
@@ -147,61 +163,46 @@
     .results-list .detail {
         font-size: 14px;
         font-weight: 600;
-        padding: 3px 8px;
+        padding: 4px 10px;
         border-radius: 12px;
         background-color: rgba(128, 128, 128, 0.1);
         color: var(--text-secondary);
         white-space: nowrap;
+        flex-shrink: 0;
     }
-
-    .scroll-to-bottom {
-      position: fixed; bottom: 25px; right: 25px;
-      width: 50px; height: 50px;
-      border-radius: 50%; border: none;
-      background: var(--primary-gradient); color: white;
-      cursor: pointer; display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-      z-index: 1000; opacity: 0; pointer-events: none;
-      transition: opacity 0.3s ease, transform 0.3s ease;
-    }
-    .scroll-to-bottom:hover { transform: scale(1.1); }
-    .scroll-to-bottom.visible { opacity: 1; pointer-events: all; }
-
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-    
-    /* Custom Scrollbar */
-    .chat-container::-webkit-scrollbar { width: 6px; }
-    .chat-container::-webkit-scrollbar-thumb { background: var(--text-secondary); border-radius: 3px; }
   </style>
 </head>
 <body>
-  <div class="chat-wrapper">
 
-    <header class="top-bar">
-      <a href="https://bafbkbnc.github.io/BAFs/Home.html" class="header-button">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="19" y1="12" x2="5" y2="12"></line>
-          <polyline points="12 19 5 12 12 5"></polyline>
-        </svg>
-      </a>
-      <div class="channel-info-header">
-        <img src="https://img.freepik.com/free-vector/clip-board-paper-pencil-cartoon-icon-illustration-education-object-icon-concept-isolated-flat-cartoon-style_138676-2152.jpg?semt=ais_hybrid&w=740" alt="Channel Icon" class="channel-icon">
-        <div>
-          <div class="channel-title-main">
-            Anonymous Surveys
-            <img src="https://i.ibb.co/SXGL4Nq0/green.png" alt="Verified" class="verified-tick">
-          </div>
-          <div class="channel-subtitle">Real Voices. Real Feedback. 100% Anonymous</div>
+  <header class="top-bar">
+    <a href="index.html" class="header-button">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+      </svg>
+    </a>
+    <div class="channel-info-header">
+      <img src="https://img.freepik.com/free-vector/clip-board-paper-pencil-cartoon-icon-illustration-education-object-icon-concept-isolated-flat-cartoon-style_138676-2152.jpg?semt=ais_hybrid&w=740" alt="Channel Icon" class="channel-icon">
+      <div>
+        <div class="channel-title-main">
+          Anonymous Surveys
+          <img src="https://i.ibb.co/SXGL4Nq0/green.png" alt="Verified" class="verified-tick">
         </div>
+        <div class="channel-subtitle">Real Voices. Real Feedback. 100% Anonymous</div>
       </div>
-    </header>
+    </div>
+  </header>
 
-    <div class="chat-container" id="chat-container">
-      <div class="message from-user">
-        Top professors for Semester I?
-      </div>
-      <div class="message from-bot">
-        <p><strong>Here are the Top 5 professors for Semester I, based on student feedback:</strong></p>
+  <main class="container">
+
+    <div class="results-card">
+        <h2 class="card-title">Live Survey: Professor Feedback (SEM III)</h2>
+        <p class="card-description">Your feedback is valuable. Please take a moment to rate your professors for the current semester. All responses are completely anonymous.</p>
+        <a href="feedback.html" class="card-button">Fill The Form</a>
+    </div>
+
+    <div class="results-card">
+        <h2 class="card-title">🏆 Top 5 Professors - Semester I</h2>
         <ul class="results-list">
             <li><span class="name">Pooja Shinde</span><span class="detail">Business Communication</span></li>
             <li><span class="name">Anita Chavan</span><span class="detail">Financial Accounting</span></li>
@@ -209,27 +210,10 @@
             <li><span class="name">Kaustubh Sir</span><span class="detail">Law of Torts</span></li>
             <li><span class="name">Greesh Lassi</span><span class="detail">Environmental Education</span></li>
         </ul>
-      </div>
-
-      <div class="message from-user">
-        Top 5 Rank Holder Students for SEM I?
-      </div>
-      <div class="message from-bot">
-        <p><strong>Here are the Top 5 Rank Holders for SEM I:</strong></p>
-        <ul class="results-list">
-            <li><span class="name">Abhishek Gupta</span><span class="detail">81.82%</span></li>
-            <li><span class="name">Leysha Sardar</span><span class="detail">81.64%</span></li>
-            <li><span class="name">Harshita Kashyap</span><span class="detail">80.91%</span></li>
-            <li><span class="name">Sneha Reddy</span><span class="detail">80.36%</span></li>
-            <li><span class="name">Muskan Prasad</span><span class="detail">80.18%</span></li>
-        </ul>
-      </div>
-
-      <div class="message from-user">
-        Top professors for Semester II?
-      </div>
-      <div class="message from-bot">
-        <p><strong>Here are the Top 5 professors for Semester II, based on student feedback:</strong></p>
+    </div>
+    
+    <div class="results-card">
+        <h2 class="card-title">🏆 Top 5 Professors - Semester II</h2>
         <ul class="results-list">
             <li><span class="name">Akshay Sir</span><span class="detail">Sports</span></li>
             <li><span class="name">Sanjivani Mam</span><span class="detail">Auditing</span></li>
@@ -237,13 +221,21 @@
             <li><span class="name">Atul Pandey</span><span class="detail">Environmental Studies</span></li>
             <li><span class="name">Anita Mam</span><span class="detail">Financial Accounting</span></li>
         </ul>
-      </div>
-      
-      <div class="message from-user">
-        Top 5 colleges our classmates are from?
-      </div>
-      <div class="message from-bot">
-        <p><strong>Here are the Top 5 colleges our classmates joined from:</strong></p>
+    </div>
+
+    <div class="results-card">
+        <h2 class="card-title">🏅 Top 5 Rank Holders - SEM I</h2>
+        <ul class="results-list">
+            <li><span class="name">Abhishek Gupta</span><span class="detail">81.82%</span></li>
+            <li><span class="name">Leysha Sardar</span><span class="detail">81.64%</span></li>
+            <li><span class="name">Harshita Kashyap</span><span class="detail">80.91%</span></li>
+            <li><span class="name">Sneha Reddy</span><span class="detail">80.36%</span></li>
+            <li><span class="name">Muskan Prasad</span><span class="detail">80.18%</span></li>
+        </ul>
+    </div>
+    
+    <div class="results-card">
+        <h2 class="card-title">🎓 Top 5 Feeder Colleges</h2>
         <ul class="results-list">
             <li><span class="name">B. K. Birla College</span><span class="detail">23 Students</span></li>
             <li><span class="name">R.K.T. COLLEGE</span><span class="detail">16 Students</span></li>
@@ -251,13 +243,10 @@
             <li><span class="name">K. M. Agrawal College</span><span class="detail">7 Students</span></li>
             <li><span class="name">B.N.N. College</span><span class="detail">6 Students</span></li>
         </ul>
-      </div>
-      
-      <div class="message from-user">
-        Class main Most followed instagram id kiski hai?
-      </div>
-      <div class="message from-bot">
-        <p><strong>Most Followed Students on Instagram (as of 13/06/2025):</strong></p>
+    </div>
+    
+    <div class="results-card">
+        <h2 class="card-title">📸 Most Followed on Instagram</h2>
         <ul class="results-list">
             <li><span class="name">Ravina Rana</span><span class="detail">5,667</span></li>
             <li><span class="name">ShivaKumar Gupta</span><span class="detail">2,103</span></li>
@@ -265,15 +254,12 @@
             <li><span class="name">Sakshi Jadhav</span><span class="detail">978</span></li>
             <li><span class="name">Muskan Prasad</span><span class="detail">855</span></li>
         </ul>
-      </div>
     </div>
 
-    <button class="scroll-to-bottom" id="scroll-btn">
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>
-    </button>
-  </div>
+  </main>
 
   <script>
+    // Simple script to apply theme from URL parameters if present
     (function applyThemeFromURL() {
       const urlParams = new URLSearchParams(window.location.search);
       const theme = urlParams.get('theme');
@@ -282,28 +268,7 @@
         localStorage.setItem('theme', theme);
       }
     })();
-
-    const chatContainer = document.getElementById('chat-container');
-    const scrollBtn = document.getElementById('scroll-btn');
-
-    function scrollToBottom() {
-      chatContainer.scrollTop = chatContainer.scrollHeight;
-    }
-
-    window.addEventListener('load', () => {
-        setTimeout(scrollToBottom, 50);
-    });
-    
-    scrollBtn.addEventListener('click', scrollToBottom);
-
-    chatContainer.addEventListener('scroll', function () {
-      const nearBottom = chatContainer.scrollHeight - chatContainer.scrollTop <= chatContainer.clientHeight + 200;
-      if (nearBottom) {
-        scrollBtn.classList.remove('visible');
-      } else {
-        scrollBtn.classList.add('visible');
-      }
-    });
   </script>
+
 </body>
 </html>
