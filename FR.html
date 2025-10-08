@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
+  <title>Feedback Results | BirlaOne</title>
+  <link rel="icon" type="image/png" href="https://i.ibb.co/N6QNPW56/logo-1-modified.png" />
+  
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+  
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    })();
+  </script>
+
+  <style>
+    /* --- Copied directly from your app for consistency --- */
+    :root {
+      --primary-accent: #56ab2f;
+      --primary-gradient: linear-gradient(90deg, #a8e063, #56ab2f);
+      --danger-color: #e53935;
+      --font-family: 'Inter', sans-serif;
+      --bg-gradient-light: linear-gradient(180deg, #f5f5f7, #e9e9ed);
+      --card-bg-light: #ffffff;
+      --text-primary-light: #121212;
+      --text-secondary-light: #5f5f5f;
+      --border-color-light: #e0e0e0;
+      --shadow-light: 0 4px 15px rgba(0, 0, 0, 0.05);
+      --header-bg-light: rgba(255, 255, 255, 0.7);
+      --bg-gradient-dark: linear-gradient(180deg, #2a2a3d, #1e1e2e);
+      --card-bg-dark: #2a2a3d;
+      --text-primary-dark: #f0f0f0;
+      --text-secondary-dark: #a0a0b0;
+      --border-color-dark: #4a4a6a;
+      --shadow-dark: 0 4px 20px rgba(0, 0, 0, 0.2);
+      --header-bg-dark: rgba(30, 30, 46, 0.7);
+    }
+    [data-theme="light"] {
+      --bg-gradient: var(--bg-gradient-light);
+      --card-bg: var(--card-bg-light);
+      --text-primary: var(--text-primary-light);
+      --text-secondary: var(--text-secondary-light);
+      --border-color: var(--border-color-light);
+      --shadow: var(--shadow-light);
+      --header-bg: var(--header-bg-light);
+    }
+    [data-theme="dark"] {
+      --bg-gradient: var(--bg-gradient-dark);
+      --card-bg: var(--card-bg-dark);
+      --text-primary: var(--text-primary-dark);
+      --text-secondary: var(--text-secondary-dark);
+      --border-color: var(--border-color-dark);
+      --shadow: var(--shadow-dark);
+      --header-bg: var(--header-bg-dark);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { min-height: 100%; }
+    body { font-family: var(--font-family); background: var(--bg-gradient); color: var(--text-primary); }
+    header.top-bar { padding: 12px 16px; background: var(--header-bg); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+    .top-bar h1 { font-family: 'Pacifico', cursive; font-size: 26px; font-weight: 400; color: var(--text-primary); }
+    .container { padding: 16px; max-width: 1200px; margin: 0 auto; }
+    
+    /* --- NEW STYLES FOR RESULTS PAGE --- */
+    .page-header { text-align: center; margin: 20px 0 30px; }
+    .page-header h2 { font-size: 24px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
+    .page-header p { font-size: 16px; color: var(--text-secondary); }
+    
+    #results-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+    }
+    .result-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: var(--shadow);
+        display: flex;
+        flex-direction: column;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .result-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    }
+    .prof-info .name {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+    .prof-info .subject {
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+        margin-bottom: 16px;
+    }
+    .rating-summary {
+        margin-top: auto; /* Pushes this to the bottom */
+        padding-top: 16px;
+        border-top: 1px solid var(--border-color);
+    }
+    .avg-rating {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 8px;
+    }
+    .avg-rating-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--primary-accent);
+    }
+    .stars-outer {
+        position: relative;
+        display: inline-block;
+        font-size: 24px;
+        color: #ccc; /* Empty star color */
+    }
+    .stars-inner {
+        position: absolute;
+        top: 0;
+        left: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        width: 0; /* This will be set by JS */
+        font-size: 24px;
+        color: #FFD700; /* Filled star color */
+    }
+    .total-ratings {
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+        font-weight: 500;
+    }
+    .loading-text, .no-data-text {
+        text-align: center;
+        color: var(--text-secondary);
+        font-size: 1.1rem;
+        padding: 40px;
+    }
+  </style>
+</head>
+<body>
+  <header class="top-bar">
+    <a href="index.html" style="text-decoration: none; color: inherit;"><h1>BirlaOne</h1></a>
+    </header>
+
+  <main class="container">
+    <div class="page-header">
+        <h2>Feedback Results & Analytics</h2>
+        <p>Live results based on all student submissions.</p>
+    </div>
+
+    <div id="results-container">
+        <p class="loading-text">📊 Loading analytics...</p>
+    </div>
+  </main>
+  
+<script>
+    const SUPABASE_URL = 'https://eikriuddsuguybvvyzjl.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVpa3JpdWRkc3VndXlidnZ5empsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgxMjIxNTAsImV4cCI6MjA3MzY5ODE1MH0.HNh2gGO8nWzAjxh5Oa3cs_8WKaq9mq9TyLCvPOkcr2c';
+    const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    /**
+     * Fetches all feedback data from the Supabase table.
+     */
+    async function fetchFeedbackData() {
+        const { data, error } = await client
+            .from('professor_feedback')
+            .select('professor_name, subject_name, rating');
+        
+        if (error) {
+            console.error("Error fetching feedback:", error);
+            return null;
+        }
+        return data;
+    }
+
+    /**
+     * Processes the raw feedback data to calculate averages and counts.
+     * @param {Array} rawData - The array of feedback objects from Supabase.
+     */
+    function processFeedbackData(rawData) {
+        if (!rawData || rawData.length === 0) {
+            return {};
+        }
+
+        const professorStats = {};
+
+        rawData.forEach(item => {
+            const profKey = `${item.professor_name}-${item.subject_name}`;
+            if (!professorStats[profKey]) {
+                professorStats[profKey] = {
+                    name: item.professor_name,
+                    subject: item.subject_name,
+                    totalRating: 0,
+                    count: 0
+                };
+            }
+            professorStats[profKey].totalRating += item.rating;
+            professorStats[profKey].count++;
+        });
+
+        // Calculate the average for each professor
+        for (const key in professorStats) {
+            const stats = professorStats[key];
+            stats.average = (stats.totalRating / stats.count);
+        }
+
+        return professorStats;
+    }
+
+    /**
+     * Renders the processed professor stats into HTML cards.
+     * @param {Object} processedData - The aggregated data object with professor stats.
+     */
+    function renderResults(processedData) {
+        const container = document.getElementById('results-container');
+        
+        if (Object.keys(processedData).length === 0) {
+            container.innerHTML = `<p class="no-data-text">No feedback has been submitted yet.</p>`;
+            return;
+        }
+
+        let html = '';
+        // Sort professors by average rating, descending
+        const sortedProfessors = Object.values(processedData).sort((a, b) => b.average - a.average);
+
+        sortedProfessors.forEach(prof => {
+            const averagePercentage = (prof.average / 5) * 100;
+            html += `
+                <div class="result-card">
+                    <div class="prof-info">
+                        <div class="name">${prof.name}</div>
+                        <div class="subject">${prof.subject}</div>
+                    </div>
+                    <div class="rating-summary">
+                        <div class="avg-rating">
+                            <span class="avg-rating-value">${prof.average.toFixed(2)}</span>
+                            <div class="stars-outer">
+                                <div class="stars-inner" style="width: ${averagePercentage}%;">★★★★★</div>
+                                ★★★★★
+                            </div>
+                        </div>
+                        <div class="total-ratings">
+                            Based on <strong>${prof.count}</strong> ${prof.count === 1 ? 'rating' : 'ratings'}
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        container.innerHTML = html;
+    }
+
+    /**
+     * Main function to initialize the page.
+     */
+    async function initializePage() {
+        const rawData = await fetchFeedbackData();
+        if (rawData) {
+            const processedData = processFeedbackData(rawData);
+            renderResults(processedData);
+        } else {
+            document.getElementById('results-container').innerHTML = `<p class="no-data-text">Could not load feedback results. Please try again later.</p>`;
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        // Simple auth check. Redirects if not logged in.
+        client.auth.onAuthStateChange((event, session) => {
+            if (event === 'INITIAL_SESSION' && !session) {
+                // To make this page public, remove this redirect.
+                // window.location.href = "login.html";
+            }
+        });
+        initializePage();
+    });
+</script>
+</body>
+</html>
