@@ -3,544 +3,393 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Field Project Dashboard - BAFs App</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>BirlaOne Dashboard</title>
     
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Feather Icons Script -->
+    <script src="https://unpkg.com/feather-icons"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Pacifico font for the logo -->
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind Config with NEW GREEN THEME -->
     <script>
-      // This script runs early to prevent a "flash of the wrong theme."
-      (function() {
-        const theme = new URLSearchParams(window.location.search).get('theme') || localStorage.getItem('theme') || 'light';
-        document.documentElement.setAttribute('data-theme', theme);
-        if (theme) localStorage.setItem('theme', theme);
-      })();
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        logo: ['Pacifico', 'cursive'],
+                    },
+                    colors: {
+                        'primary': {
+                            '50': '#f7fbf4',
+                            '100': '#eef8e9',
+                            '200': '#dcf1d3',
+                            '300': '#c3e7b3',
+                            '400': '#a6d98e',
+                            '500': '#87c964',
+                            '600': '#56ab2f', /* Base Green */
+                            '700': '#458a26',
+                            '800': '#396f21',
+                            '900': '#305b1c',
+                            '950': '#1a320f',
+                        },
+                    }
+                },
+            },
+        };
     </script>
-
+    
+    <!-- Custom Styles -->
     <style>
-        /* 🎨 --- Color & Theme Variables --- 🎨 */
-        :root {
-            --primary-accent: #b84fff;
-            --primary-gradient: linear-gradient(135deg, #b84fff, #8f00ff);
-            --font-family: 'Inter', sans-serif;
-            
-            --bg-gradient-light: linear-gradient(180deg, #f5f5f7, #e9e9ed);
-            --card-bg-light: rgba(255, 255, 255, 0.8);
-            --text-primary-light: #121212;
-            --text-secondary-light: #5f5f5f;
-            --border-color-light: #e0e0e0;
-            --shadow-light: 0 4px 25px rgba(0, 0, 0, 0.07);
-
-            --bg-gradient-dark: linear-gradient(180deg, #2a2a3d, #1e1e2e);
-            --card-bg-dark: rgba(42, 42, 61, 0.8);
-            --text-primary-dark: #f0f0f0;
-            --text-secondary-dark: #a0a0b0;
-            --border-color-dark: #4a4a6a;
-            --shadow-dark: 0 4px 25px rgba(0, 0, 0, 0.2);
-        }
-        
-        [data-theme="light"] {
-            --bg-gradient: var(--bg-gradient-light);
-            --card-bg: var(--card-bg-light);
-            --text-primary: var(--text-primary-light);
-            --text-secondary: var(--text-secondary-light);
-            --border-color: var(--border-color-light);
-            --shadow: var(--shadow-light);
-        }
-
-        [data-theme="dark"] {
-            --bg-gradient: var(--bg-gradient-dark);
-            --card-bg: var(--card-bg-dark);
-            --text-primary: var(--text-primary-dark);
-            --text-secondary: var(--text-secondary-dark);
-            --border-color: var(--border-color-dark);
-            --shadow: var(--shadow-dark);
-        }
-        
-        /* 🧱 --- Base & Layout Styles --- 🧱 */
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        
         body {
-            font-family: var(--font-family);
-            background: var(--bg-gradient);
-            color: var(--text-primary);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 2rem 1rem;
-        }
-
-        .hidden { display: none !important; }
-
-        #app-container {
-            width: 100%;
-            max-width: 42rem;
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-
-        /* 🔝 --- Header --- 🔝 */
-        header { text-align: center; }
-        header h1 {
-            font-size: 2.25rem; /* 36px */
-            font-weight: 700;
-        }
-        .gradient-text {
-            background: var(--primary-gradient);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc; /* bg-slate-50 */
         }
         
-        /* 🔄 --- Loading & Animation --- 🔄 */
-        #loading { text-align: center; padding: 2rem; }
-        .loader { display: flex; justify-content: center; align-items: center; gap: 0.5rem; margin-bottom: 1rem; }
-        .loader-dot { width: 0.75rem; height: 0.75rem; background-color: var(--primary-accent); border-radius: 50%; animation: pulse 1.4s infinite ease-in-out both; }
-        .loader-dot:nth-child(1) { animation-delay: -0.32s; }
-        .loader-dot:nth-child(2) { animation-delay: -0.16s; }
-        @keyframes pulse { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1.0); } }
-        #loading p { font-size: 1.125rem; color: var(--text-secondary); }
-
-        @keyframes card-enter {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        /* Page load fade-in animation */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
-        #project-details.loaded {
-            animation: card-enter 0.6s ease-out forwards;
+        .fade-in {
+            animation: fadeIn 0.4s ease-in-out;
         }
         
-        /* 📄 --- Card & Content Styles --- 📄 */
-        #error { background: var(--card-bg); border: 1px solid var(--border-color); backdrop-filter: blur(10px); box-shadow: var(--shadow); padding: 2rem; border-radius: 1rem; text-align: center; }
-        #error-title { font-size: 1.5rem; font-weight: 700; color: #ef4444; }
-        #error-message { margin-top: 0.5rem; color: var(--text-secondary); }
+        /* Custom shadows for nav bars */
+        .top-nav-shadow {
+            box-shadow: 0 4px 10px -1px rgba(0, 0, 0, 0.03);
+        }
+        .bottom-nav-shadow {
+            box-shadow: 0 -4px 10px -1px rgba(0, 0, 0, 0.03);
+        }
 
-        .main-card { background: var(--card-bg); backdrop-filter: blur(12px); border: 1px solid var(--border-color); border-radius: 1rem; box-shadow: var(--shadow); overflow: hidden; }
-        .card-content { padding: 1.5rem; }
-        @media (min-width: 640px) { .card-content { padding: 2rem; } }
-
-        .student-info { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
-        .student-initials { width: 4rem; height: 4rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 700; color: white; background: var(--primary-gradient); flex-shrink: 0; }
-        #student-name { font-size: 1.5rem; font-weight: 700; color: var(--text-primary); }
-        #student-id { font-size: 0.875rem; color: var(--text-secondary); }
+        /* Hide scrollbar */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
         
-        .project-details-grid { display: grid; gap: 1.5rem; }
-        .project-detail-item h3 { font-size: 0.875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--primary-accent); margin-bottom: 0.25rem; }
-        #project-title { font-size: 1.25rem; line-height: 1.6; color: var(--text-primary); }
-        #project-type { display: inline-block; padding: 0.25rem 0.75rem; font-size: 0.875rem; font-weight: 500; border-radius: 9999px; }
-
-        .card-footer-section { padding: 1.5rem; border-top: 1px solid var(--border-color); background: rgba(0,0,0,0.02); }
-        @media (min-width: 640px) { .card-footer-section { padding: 1.5rem 2rem; } }
-        [data-theme="dark"] .card-footer-section { background: rgba(0,0,0,0.1); }
-        .card-footer-section h3 { font-size: 1.125rem; font-weight: 600; margin-bottom: 1rem; color: var(--text-primary); }
+        /* Feather Icon Styling */
+        i[data-feather] {
+            width: 24px;
+            height: 24px;
+        }
         
-        #team-members-list { list-style: none; display: grid; gap: 0.5rem; }
-        #team-members-list li { display: flex; align-items: center; justify-content: space-between; padding: 0.5rem; border-radius: 6px; }
-
-        .upload-btn { display: inline-flex; align-items: center; gap: 0.5rem; background: var(--primary-gradient); color: white; padding: 0.625rem 1.25rem; border-radius: 8px; font-weight: 600; text-decoration: none; border: none; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .upload-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(143,0,255,0.3); }
-        .upload-btn:disabled { background: var(--text-secondary); cursor: not-allowed; transform: none; box-shadow: none; }
+        /* Bottom nav icon sizing */
+        .bottom-nav-icon i[data-feather] {
+            width: 28px;
+            height: 28px;
+        }
         
-        footer { text-align: center; font-size: 0.875rem; color: var(--text-secondary); }
+        /* Centered Create button sizing */
+        .create-icon-wrapper i[data-feather] {
+            width: 36px;
+            height: 36px;
+        }
+
     </style>
 </head>
-<body>
+<body class="antialiased">
 
-    <div id="app-container">
-        <header>
-            
-        </header>
+    <!-- App Container -->
+    <div class="relative min-h-screen w-full md:max-w-md md:mx-auto md:shadow-2xl md:overflow-hidden bg-white">
 
-        <main id="main-content">
-            <div id="loading"><div class="loader"><div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div></div><p>Fetching project details...</p></div>
-            <div id="error" class="hidden"><h2 id="error-title"></h2><p id="error-message"></p></div>
-
-            <div id="project-details" class="hidden">
-                <div class="main-card">
-                    <div class="card-content">
-                        <div class="student-info">
-                            <div class="student-initials" id="student-initials"></div>
-                            <div><h2 id="student-name"></h2><p id="student-id"></p></div>
-                        </div>
-                        <div class="project-details-grid">
-                            <div class="project-detail-item"><h3>Project Title</h3><p id="project-title">No project assigned.</p></div>
-                            <div id="project-type-container" class="project-detail-item"><h3>Project Type</h3><span id="project-type"></span></div>
-                        </div>
+        <!-- ===== Skeleton Loader ===== -->
+        <div id="skeleton-loader" class="absolute inset-0 z-50 bg-white pt-20 pb-24 px-4 overflow-hidden">
+            <div class="animate-pulse space-y-6">
+                <!-- Top 2x2 Grid Skeleton -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="h-28 bg-gray-200 rounded-2xl"></div>
+                    <div class="h-28 bg-gray-200 rounded-2xl"></div>
+                    <div class="h-28 bg-gray-200 rounded-2xl"></div>
+                    <div class="h-28 bg-gray-200 rounded-2xl"></div>
+                </div>
+                
+                <!-- Badges Skeleton -->
+                <div>
+                    <div class="h-5 w-1/3 bg-gray-200 rounded-full mb-3"></div>
+                    <div class="flex space-x-3">
+                        <div class="w-32 h-16 bg-gray-200 rounded-2xl"></div>
+                        <div class="w-32 h-16 bg-gray-200 rounded-2xl"></div>
+                        <div class="w-32 h-16 bg-gray-200 rounded-2xl"></div>
                     </div>
-                    <div id="team-members-section" class="card-footer-section hidden"><h3>Team Members</h3><ul id="team-members-list"></ul></div>
-                    <div id="file-upload-section" class="card-footer-section hidden"><h3>Final Project Submission</h3><div id="upload-ui"></div></div>
+                </div>
+                
+                <!-- Scan Card Skeleton -->
+                <div class="h-32 bg-gray-200 rounded-2xl"></div>
+                
+                <!-- List Skeleton (Lectures/Activities) -->
+                <div class="space-y-3">
+                    <div class="h-5 w-1/2 bg-gray-200 rounded-full"></div>
+                    <div class="h-20 bg-gray-200 rounded-2xl"></div>
+                    <div class="h-20 bg-gray-200 rounded-2xl"></div>
                 </div>
             </div>
-        </main>
+            <!-- Skeleton Navs -->
+            <div class="fixed top-0 left-0 right-0 md:max-w-md md:mx-auto h-16 bg-white flex justify-between items-center p-4">
+                <div class="w-8 h-8 bg-gray-200 rounded-full"></div>
+                <div class="w-24 h-6 bg-gray-200 rounded-full"></div>
+                <div class="w-8 h-8 bg-gray-200 rounded-full"></div>
+            </div>
+            <div class="fixed bottom-0 left-0 right-0 md:max-w-md md:mx-auto h-20 bg-white flex justify-around items-center p-3">
+                <div class="w-8 h-8 bg-gray-200 rounded-full"></div>
+                <div class="w-8 h-8 bg-gray-200 rounded-full"></div>
+                <div class="w-12 h-12 bg-gray-300 rounded-full"></div>
+                <div class="w-8 h-8 bg-gray-200 rounded-full"></div>
+                <div class="w-8 h-8 bg-gray-200 rounded-full"></div>
+            </div>
+        </div>
         
-        <footer><p>&copy; 2025 BAF Project Management. All Rights Reserved.</p></footer>
-    </div>
+        <!-- ===== App Content (Hidden by default) ===== -->
+        <div id="app-content" class="hidden">
+            <!-- Top Navigation -->
+            <header class="fixed top-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-sm top-nav-shadow p-4 flex justify-between items-center md:max-w-md md:mx-auto h-16">
+                <!-- Profile -->
+                <button class="p-2 rounded-full transition-all hover:bg-gray-100 active:scale-90">
+                    <i data-feather="user" class="text-gray-700"></i>
+                </button>
+                
+                <!-- App Title -->
+                <h1 class="text-3xl font-logo text-primary-600">
+                    BirlaOne
+                </h1>
+                
+                <!-- Notifications -->
+                <button class="relative p-2 rounded-full transition-all hover:bg-gray-100 active:scale-90">
+                    <i data-feather="bell" class="text-gray-700"></i>
+                    <!-- Notification dot -->
+                    <span class="absolute top-2 right-2 block w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white"></span>
+                </button>
+            </header>
 
-    <script type="module">
-        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
-
-        const SUPABASE_URL = 'https://fuovcuzaxfkyqrridrgy.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ1b3ZjdXpheGZreXFycmlkcmd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU0NzIyMjAsImV4cCI6MjA2MTA0ODIyMH0._PkkfWXcn4j6cjBh-yLJjDevrmhuxKxVbcdQUSgCsSk';
-        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_KEY);
-
-        const loadingEl = document.getElementById('loading');
-        const errorEl = document.getElementById('error');
-        const projectDetailsEl = document.getElementById('project-details');
-        const errorTitleEl = document.getElementById('error-title');
-        const errorMessageEl = document.getElementById('error-message');
-        
-        let currentStudentData = null;
-        let currentProjectData = null;
-
-        function showError(title, message) {
-            loadingEl.style.display = 'none';
-            projectDetailsEl.classList.add('hidden');
-            errorTitleEl.textContent = title;
-            errorMessageEl.textContent = message;
-            errorEl.classList.remove('hidden');
-        }
-
-        async function fetchStudentData(studentId) {
-            const { data: student, error } = await supabaseClient.from('students').select('*').eq('studentid', studentId).single();
-            if (error || !student) throw new Error('Student not found. Please check the ID in the URL.');
-            return student;
-        }
-
-        async function fetchProjectData(studentId) {
-            const { data: assignment, error } = await supabaseClient.from('projectassignments').select('topicid').eq('studentid', studentId).single();
-            if (error || !assignment) return { topic: null, team: [] };
-            
-            const topicId = assignment.topicid;
-            const { data: topic, error: topicError } = await supabaseClient.from('topics').select('*').eq('topicid', topicId).single();
-            if (topicError) throw new Error('Could not retrieve project details.');
-
-            const { data: teamAssignments, error: teamError } = await supabaseClient.from('projectassignments').select('studentid').eq('topicid', topicId);
-            if (teamError) throw new Error('Could not retrieve team members.');
-            
-            const teamMemberIds = teamAssignments.map(a => a.studentid);
-            const { data: teamMembers, error: membersError } = await supabaseClient.from('students').select('studentid, fullname').in('studentid', teamMemberIds);
-            if (membersError) throw new Error('Could not retrieve team member details.');
-
-            return { topic, team: teamMembers };
-        }
-
-        function getUploadFormHTML(isResubmission = false) {
-            const title = isResubmission ? 'Your previous submission was rejected. Please upload a new file.' : 'Your group has not submitted the project file yet.';
-            const buttonText = isResubmission ? 'Upload New File' : 'Upload and Submit';
-            return `
-                <p style="color: var(--text-secondary);">${title}</p>
-                <div style="margin-top: 1rem;">
-                    <input type="file" id="file-input" accept=".pdf,.doc,.docx,.zip" class="hidden">
-                    <button id="select-file-btn" class="upload-btn">Select File</button>
-                    <p id="file-chosen" style="color: var(--text-secondary); font-size: 0.9em; margin-top: 0.75rem;">No file chosen</p>
-                    <button id="upload-btn" class="upload-btn" style="margin-top: 0.5rem;" disabled>${buttonText}</button>
-                    <div id="upload-status" style="font-size: 0.875rem; margin-top: 0.5rem;"></div>
-                </div>
-            `;
-        }
-        
-        async function fetchAndDisplayFileUploadStatus(topicId, currentStudentId) {
-            const uploadUI = document.getElementById('upload-ui');
-            document.getElementById('file-upload-section').classList.remove('hidden');
-
-            const { data: file, error } = await supabaseClient.from('project_files')
-                .select('*, students(fullname)')
-                .eq('topic_id', topicId)
-                .single();
-
-            if (!file) {
-                uploadUI.innerHTML = getUploadFormHTML(false);
-                setupUploadListeners(topicId, currentStudentId, false);
-                return;
-            }
-
-            const status = file.status || 'Pending';
-            const comments = file.mentor_comments;
-            const uploader = file.students ? file.students.fullname : 'a team member';
-            const uploadDate = new Date(file.uploaded_at).toLocaleDateString();
-
-            let statusHTML = '';
-
-            switch (status) {
-                case 'Approved':
-                    statusHTML = `
-                        <div style="background-color: rgba(34, 197, 94, 0.1); border-left: 4px solid #22c55e; padding: 1rem; border-radius: 0 0.5rem 0.5rem 0;">
-                            <h4 style="color: #166534; font-weight: 700;">✅ Approved</h4>
-                            <p style="color: var(--text-secondary); font-size: 0.9em; margin-top: 0.25rem;">Submitted by <strong>${uploader}</strong> on ${uploadDate}</p>
-                            ${comments ? `<p style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid rgba(34, 197, 94, 0.2); color: var(--text-secondary);"><strong>Mentor Feedback:</strong> ${comments}</p>` : ''}
-                            <div style="margin-top: 1rem; display: flex; flex-wrap: wrap; gap: 0.75rem;">
-                                <button id="download-declaration-btn" class="upload-btn">Download Declaration</button>
-                                <button id="download-certificate-btn" class="upload-btn">Download Certificate</button>
-                            </div>
-                        </div>`;
-                    break;
-                case 'Rejected':
-                    statusHTML = `
-                        <div style="background-color: rgba(239, 68, 68, 0.1); border-left: 4px solid #ef4444; padding: 1rem; border-radius: 0 0.5rem 0.5rem 0;">
-                            <h4 style="color: #991b1b; font-weight: 700;">❌ Rejected - Resubmission Required</h4>
-                             <p style="color: var(--text-secondary); font-size: 0.9em; margin-top: 0.25rem;">Last submission by <strong>${uploader}</strong> on ${uploadDate}</p>
-                            ${comments ? `<p style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid rgba(239, 68, 68, 0.2); color: var(--text-secondary);"><strong>Mentor Feedback:</strong> ${comments}</p>` : ''}
-                            <button id="resubmit-btn" class="upload-btn" style="margin-top: 1rem;">Resubmit File</button>
-                        </div>`;
-                    break;
-                default: // Pending
-                    statusHTML = `
-                        <div style="background-color: rgba(59, 130, 246, 0.1); border-left: 4px solid #3b82f6; padding: 1rem; border-radius: 0 0.5rem 0.5rem 0;">
-                            <h4 style="color: #1e40af; font-weight: 700;">⏳ Pending Review</h4>
-                            <p style="color: var(--text-secondary); font-size: 0.9em; margin-top: 0.25rem;">Your file has been submitted and is awaiting feedback from your mentor.</p>
-                        </div>`;
-                    break;
-            }
-            uploadUI.innerHTML = statusHTML;
-            
-            if (status === 'Approved') {
-                document.getElementById('download-declaration-btn').addEventListener('click', generateAndDownloadDeclaration);
-                document.getElementById('download-certificate-btn').addEventListener('click', generateAndDownloadCertificate);
-            }
-            
-            if (status === 'Rejected') {
-                document.getElementById('resubmit-btn').addEventListener('click', () => {
-                    uploadUI.innerHTML = getUploadFormHTML(true);
-                    setupUploadListeners(topicId, currentStudentId, true);
-                });
-            }
-        }
-
-        function setupUploadListeners(topicId, currentStudentId, isResubmission) {
-            const fileInput = document.getElementById('file-input');
-            const selectBtn = document.getElementById('select-file-btn');
-            const uploadBtn = document.getElementById('upload-btn');
-            const fileChosenEl = document.getElementById('file-chosen');
-            const uploadStatusEl = document.getElementById('upload-status');
-
-            if (!selectBtn) return;
-            selectBtn.onclick = () => fileInput.click();
-            
-            fileInput.onchange = () => {
-                if (fileInput.files.length > 0) {
-                    fileChosenEl.textContent = fileInput.files[0].name;
-                    uploadBtn.disabled = false;
-                } else {
-                    fileChosenEl.textContent = 'No file chosen';
-                    uploadBtn.disabled = true;
-                }
-            };
-
-            uploadBtn.onclick = async () => {
-                const file = fileInput.files[0];
-                if (!file) return;
-
-                uploadBtn.disabled = true;
-                uploadBtn.textContent = 'Uploading...';
-                const filePath = `${topicId}_${Date.now()}_${file.name.replace(/\s/g, '_')}`;
-
-                try {
-                    const { error: uploadError } = await supabaseClient.storage.from('FP').upload(filePath, file);
-                    if (uploadError) throw uploadError;
-                    
-                    const fileData = {
-                        topic_id: topicId,
-                        file_path: filePath,
-                        uploader_student_id: currentStudentId,
-                        uploaded_at: new Date(),
-                        status: 'Pending',
-                        mentor_comments: null
-                    };
-
-                    const { error: dbError } = isResubmission
-                        ? await supabaseClient.from('project_files').update(fileData).eq('topic_id', topicId)
-                        : await supabaseClient.from('project_files').insert(fileData);
-
-                    if (dbError) throw dbError;
-                    
-                    uploadStatusEl.textContent = '✅ Success! File submitted for review.';
-                    uploadStatusEl.style.color = '#22c55e';
-                    setTimeout(() => fetchAndDisplayFileUploadStatus(topicId, currentStudentId), 1500);
-                } catch (error) {
-                    console.error('Upload failed:', error);
-                    uploadStatusEl.textContent = `❌ Error: ${error.message}`;
-                    uploadStatusEl.style.color = '#ef4444';
-                    uploadBtn.disabled = false;
-                    uploadBtn.textContent = isResubmission ? 'Upload New File' : 'Upload and Submit';
-                }
-            };
-        }
-
-        function getSalutation(gender) {
-            if (gender && gender.toLowerCase() === 'female') return 'Ms.';
-            return 'Mr.';
-        }
-
-        // --- NEW --- Helper function to download HTML as a Word .doc file
-        function downloadAsDoc(htmlContent, filename) {
-            const header = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>Export HTML To Doc</title></head><body>";
-            const footer = "</body></html>";
-            const sourceHTML = header + htmlContent + footer;
-
-            const source = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(sourceHTML);
-            
-            const fileLink = document.createElement("a");
-            fileLink.href = source;
-            fileLink.download = filename;
-            
-            document.body.appendChild(fileLink);
-            fileLink.click();
-            document.body.removeChild(fileLink);
-        }
-
-        function generateAndDownloadDeclaration() {
-            const student = currentStudentData;
-            const topic = currentProjectData.topic;
-            const salutation = getSalutation(student.gender);
-            const studentFullName = `${salutation} ${student.fullname}`;
-
-            const contentHTML = `
-                <div style="font-family: 'Times New Roman', serif; color: black; font-size: 12pt; display: flex; flex-direction: column; height: 100%;">
-                    <div style="flex-grow: 1;">
-                        <h1 style="text-align: center; font-weight: bold; text-decoration: underline; font-size: 16pt; margin-bottom: 0.5in;">DECLARATION</h1>
-                        <div style="line-height: 1.8; text-align: justify;">
-                            <p style="margin-bottom: 0.3in;">
-                                I <strong>${studentFullName}</strong>, Student of B.K. Birla Night College, Institute studying In <strong>S.Y. BAF</strong>. Hereby declare that I have completed the field project entitled <strong>"${topic.topicname}"</strong>. In the area of commerce during the academic year 2025-26.
-                            </p>
-                            <p style="margin-bottom: 0.3in;">
-                                The report work is original and the information / data included in the report is true emerging from the primary and / secondary data gathered and analyzed as part of this project.
-                            </p>
-                            <p>
-                                Due credit is extended on the work of Literature/secondary survey by endorsing it in the bibliography as per prescribed format.
-                            </p>
+            <!-- Main Content - Dashboard -->
+            <main class="pt-20 pb-28 p-4 space-y-6 overflow-y-auto h-screen no-scrollbar">
+                
+                <!-- Dashboard 2x2 Grid -->
+                <div class="grid grid-cols-2 gap-4">
+                    <!-- Academic Score -->
+                    <div class="bg-gray-50 border border-gray-200 p-4 rounded-2xl flex flex-col justify-between">
+                        <div class="flex justify-between items-center">
+                            <h2 class="font-semibold text-sm text-gray-600">Academic Score</h2>
+                            <i data-feather="award" class="text-primary-600 h-5 w-5"></i>
+                        </div>
+                        <div>
+                            <span class="text-4xl font-bold text-gray-900">88</span>
+                            <span class="text-sm font-medium text-gray-500">/ 100</span>
                         </div>
                     </div>
-                    <div style="text-align: center; margin-top: 0.5in;">
-                         <p>Signature of the student with date</p>
-                         <p style="margin-top: 0.25in;"><strong>(${studentFullName})</strong></p>
+                    
+                    <!-- Plastic Recycled -->
+                    <div class="bg-gray-50 border border-gray-200 p-4 rounded-2xl flex flex-col justify-between">
+                        <div class="flex justify-between items-center">
+                            <h2 class="font-semibold text-sm text-gray-600">Plastic Recycled</h2>
+                            <i data-feather="recycle" class="text-green-600 h-5 w-5"></i>
+                        </div>
+                        <div>
+                            <span class="text-4xl font-bold text-gray-900">12.5</span>
+                            <span class="text-sm font-medium text-gray-500">kg</span>
+                        </div>
                     </div>
-                </div>`;
 
-            const fullPageHTML = `
-                <div style="width: 21cm; height: 29.7cm; padding: 1cm; box-sizing: border-box; background-color: white;">
-                    <div style="border: 2px solid black; padding: 1.5cm; height: 100%; box-sizing: border-box;">
-                        ${contentHTML}
+                    <!-- Campus Friends -->
+                    <div class="bg-gray-50 border border-gray-200 p-4 rounded-2xl flex flex-col justify-between">
+                        <div class="flex justify-between items-center">
+                            <h2 class="font-semibold text-sm text-gray-600">Campus Friends</h2>
+                            <i data-feather="users" class="text-purple-500 h-5 w-5"></i>
+                        </div>
+                        <div>
+                            <span class="text-4xl font-bold text-gray-900">5</span>
+                            <span class="text-sm font-medium text-gray-500">Active</span>
+                        </div>
                     </div>
-                </div>`;
-            
-            // --- MODIFIED --- Use the new download function
-            const filename = `Declaration_${student.fullname}.doc`;
-            downloadAsDoc(fullPageHTML, filename);
-        }
+                    
+                    <!-- Net Worth -->
+                    <div class="bg-gray-50 border border-gray-200 p-4 rounded-2xl flex flex-col justify-between">
+                        <div class="flex justify-between items-center">
+                            <h2 class="font-semibold text-sm text-gray-600">Net Worth</h2>
+                            <i data-feather="credit-card" class="text-indigo-500 h-5 w-5"></i>
+                        </div>
+                        <div>
+                            <span class="text-4xl font-bold text-gray-900">₹1,500</span>
+                            <p class="text-xs text-gray-500">Campus Credits</p>
+                        </div>
+                    </div>
+                </div>
 
-        function generateAndDownloadCertificate() {
-            const student = currentStudentData;
-            const topic = currentProjectData.topic;
-            const salutation = getSalutation(student.gender);
-            const studentFullName = `${salutation} ${student.fullname}`;
+                <!-- Roles & Badges -->
+                <div class="space-y-3">
+                    <h2 class="text-xl font-bold text-gray-900 flex items-center space-x-2">
+                        <i data-feather="star" class="text-yellow-500"></i>
+                        <span>Roles & Badges</span>
+                    </h2>
+                    <div class="flex space-x-3 overflow-x-auto pb-2 no-scrollbar">
+                        <!-- Badge 1 -->
+                        <div class="flex-shrink-0 w-40 p-4 bg-gray-50 border border-gray-200 rounded-2xl flex items-center space-x-3">
+                            <i data-feather="user-check" class="text-blue-500 h-8 w-8"></i>
+                            <div>
+                                <p class="font-semibold text-gray-800">CR</p>
+                                <p class="text-xs text-gray-500">CS 2nd Year</p>
+                            </div>
+                        </div>
+                        <!-- Badge 2 -->
+                        <div class="flex-shrink-0 w-40 p-4 bg-gray-50 border border-gray-200 rounded-2xl flex items-center space-x-3">
+                            <i data-feather="users" class="text-green-600 h-8 w-8"></i>
+                            <div>
+                                <p class="font-semibold text-gray-800">Club Head</p>
+                                <p class="text-xs text-gray-500">ACM Club</p>
+                            </div>
+                        </div>
+                        <!-- Badge 3 -->
+                        <div class="flex-shrink-0 w-40 p-4 bg-gray-50 border border-gray-200 rounded-2xl flex items-center space-x-3">
+                            <i data-feather="trophy" class="text-yellow-500 h-8 w-8"></i>
+                            <div>
+                                <p class="font-semibold text-gray-800">Winner</d>
+                                <p class="text-xs text-gray-500">Oasis Hackathon</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-            const contentHTML = `
-                <div style="font-family: 'Times New Roman', serif; color: black; font-size: 12pt; text-align: center; display: flex; flex-direction: column; justify-content: space-between; height: 100%;">
+                <!-- Scan Product Card -->
+                <a href="#" class="bg-gradient-to-r from-primary-600 to-primary-700 text-white p-6 rounded-2xl flex justify-between items-center shadow-lg shadow-primary-500/30 transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5 active:scale-95">
                     <div>
-                        <img src="https://i.ibb.co/jvfmpTh/image.png" alt="Logo" style="width: 100px; height: auto;">
-                        <p style="font-size: 14pt; margin: 0.1in 0 0 0;">Kalyan Citizens’ Education Society’s</p>
-                        <p style="font-size: 16pt; font-weight: bold; margin: 0;">B. K. Birla Night Arts, Science and Commerce College, Kalyan</p>
-                        <p style="margin: 0; font-style: italic;">(Affiliated to University of Mumbai)</p>
-                        <p style="font-size: 10pt; margin-top: 0.1in;">B.K. BIRLA COLLEGE CAMPUS ROAD, GAURIPADA, KALYAN (WEST) – 421301</p>
-                        
-                        <h1 style="font-weight: bold; text-decoration: underline; font-size: 16pt; margin: 0.5in 0;">CERTIFICATE</h1>
-                        
-                        <p style="text-align: justify; line-height: 1.8;">
-                            I hereby certify that, <strong>${studentFullName}</strong>, student of B.K. Birla Night College, studying in <strong>S.Y. BAF</strong>. Has completed a project title <strong>"${topic.topicname}"</strong> in the area commerce specialization for academic year 2025-26. To the best of my knowledge the work of the student is original and the information included in the project is correct.
-                        </p>
+                        <h3 class="text-xl font-bold">BeAware</h3>
+                        <p class="text-sm text-primary-100">Smart Ingredient-Based Product Rating</p>
                     </div>
-                    
-                    <table style="width: 100%; border: 0; font-weight: bold; font-size: 12pt;">
-                        <tr>
-                        <td style="text-align: left;">Internal Guide</td>
-                        <td style="text-align: center;">Head of the Department</td>
-                        <td style="text-align: right;">Principal</td>
-                        </tr>
-                    </table>
-                </div>`;
+                    <i data-feather="camera" class="h-12 w-12 opacity-70"></i>
+                </a>
 
-            const fullPageHTML = `
-                <div style="width: 21cm; height: 29.7cm; padding: 1cm; box-sizing: border-box; background-color: white;">
-                    <div style="border: 2px solid black; padding: 1.5cm; height: 100%; box-sizing: border-box;">
-                        ${contentHTML}
+
+                <!-- Scheduled Lectures -->
+                <div class="space-y-3">
+                    <h2 class="text-xl font-bold text-gray-900 flex items-center space-x-2">
+                        <i data-feather="book-open" class="text-primary-600"></i>
+                        <span>Today's Lectures</span>
+                    </h2>
+                    <div class="space-y-3">
+                        <!-- Lecture 1 -->
+                        <div class="flex space-x-4 p-4 bg-gray-50 border border-gray-200 rounded-2xl">
+                            <div class="flex flex-col items-center text-center">
+                                <span class="font-bold text-lg text-primary-600">Oct</span>
+                                <span class="text-2xl font-bold text-primary-600 -mt-1">22</span>
+                            </div>
+                            <div class="border-l border-gray-300 pl-4 flex-1">
+                                <p class="font-semibold text-gray-800">Data Structures</p>
+                                <p class="text-sm text-gray-500">Prof. R. Sharma</p>
+                                <p class="text-sm text-gray-500">10:00 - 11:00 AM</p>
+                            </div>
+                        </div>
+                        <!-- Lecture 2 -->
+                        <div class="flex space-x-4 p-4 bg-gray-50 border border-gray-200 rounded-2xl">
+                            <div class="flex flex-col items-center text-center">
+                                <span class="font-bold text-lg text-primary-600">Oct</span>
+                                <span class="text-2xl font-bold text-primary-600 -mt-1">22</span>
+                            </div>
+                            <div class="border-l border-gray-300 pl-4 flex-1">
+                                <p class="font-semibold text-gray-800">M-IV (Maths)</p>
+                                <p class="text-sm text-gray-500">Prof. S. Gupta</p>
+                                <p class="text-sm text-gray-500">11:00 - 12:00 PM</p>
+                            </div>
+                        </div>
                     </div>
-                </div>`;
-            
-            // --- MODIFIED --- Use the new download function
-            const filename = `Certificate_${student.fullname}.doc`;
-            downloadAsDoc(fullPageHTML, filename);
-        }
+                </div>
 
-        window.onload = async () => {
-            const urlParams = new URLSearchParams(window.location.search);
-            const studentIdParam = urlParams.get('id');
+                <!-- Scheduled Activities -->
+                <div class="space-y-3">
+                    <h2 class="text-xl font-bold text-gray-900 flex items-center space-x-2">
+                        <i data-feather="calendar" class="text-green-600"></i>
+                        <span>Upcoming Activities</span>
+                    </h2>
+                    <div class="space-y-3">
+                        <!-- Activity 1 -->
+                        <div class="flex space-x-4 p-4 bg-gray-50 border border-gray-200 rounded-2xl">
+                            <div class="flex flex-col items-center text-center">
+                                <span class="font-bold text-lg text-green-600">Oct</span>
+                                <span class="text-2xl font-bold text-green-600 -mt-1">25</span>
+                            </div>
+                            <div class="border-l border-gray-300 pl-4 flex-1">
+                                <p class="font-semibold text-gray-800">Oasis Hackathon</p>
+                                <p class="text-sm text-gray-500">Organized by: ACM Club</p>
+                                <p class="text-sm text-gray-500">Oct 25 | 9:00 AM - Oct 26 | 5:00 PM</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-            if (!studentIdParam) {
-                return showError("No Student ID Provided", "Please provide a student ID in the URL. Example: ?id=5241836");
-            }
+            </main>
 
-            try {
-                const studentId = parseInt(studentIdParam, 10);
-                if (isNaN(studentId)) {
-                    return showError("Invalid Student ID", "The ID in the URL is not a valid number.");
-                }
+            <!-- Bottom Navigation -->
+            <nav class="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-sm bottom-nav-shadow p-3 flex justify-around items-center md:max-w-md md:mx-auto h-20">
                 
-                const [student, projectData] = await Promise.all([fetchStudentData(studentId), fetchProjectData(studentId)]);
+                <!-- Dashboard (Active) -->
+                <a href="#" class="flex flex-col items-center justify-center p-2 text-primary-600 rounded-lg bottom-nav-icon" aria-label="Dashboard">
+                    <i data-feather="layout" class="stroke-[2.5px]"></i>
+                </a>
                 
-                currentStudentData = student;
-                currentProjectData = projectData;
-
-                document.getElementById('student-name').textContent = student.fullname;
-                document.getElementById('student-id').textContent = `Student ID: ${student.studentid}`;
-                const nameParts = student.fullname.trim().split(' ');
-                const initials = nameParts.length > 1
-                    ? `${nameParts[0][0]}${nameParts[nameParts.length - 1][0]}`
-                    : nameParts[0].substring(0, 2);
-                document.getElementById('student-initials').textContent = initials.toUpperCase();
+                <!-- Feed -->
+                <a href="#" class="flex flex-col items-center justify-center p-2 text-gray-400 hover:text-primary-600 transition-colors bottom-nav-icon" aria-label="Feed">
+                    <i data-feather="file-text"></i>
+                </a>
                 
-                if (projectData.topic) {
-                    document.getElementById('project-title').textContent = projectData.topic.topicname;
-                    const projectTypeEl = document.getElementById('project-type');
-                    projectTypeEl.textContent = student.type;
+                <!-- Create (Centered) -->
+                <a href="#" class="p-3 bg-primary-600 text-white rounded-full shadow-lg shadow-primary-500/50 -mt-8 create-icon-wrapper" aria-label="Create">
+                    <i data-feather="plus" class="stroke-[3px]"></i>
+                </a>
+                
+                <!-- Search -->
+                <a href="#" class="flex flex-col items-center justify-center p-2 text-gray-400 hover:text-primary-600 transition-colors bottom-nav-icon" aria-label="Search">
+                    <i data-feather="search"></i>
+                </a>
+                
+                <!-- Mini Apps -->
+                <a href="#" class="flex flex-col items-center justify-center p-2 text-gray-400 hover:text-primary-600 transition-colors bottom-nav-icon" aria-label="Mini Apps">
+                    <i data-feather="grid"></i>
+                </a>
+            </nav>
 
-                    if (student.type && student.type.toLowerCase() === 'group') {
-                        projectTypeEl.style.cssText = 'background-color: rgba(34, 197, 94, 0.2); color: #22c55e;';
-                        displayTeamMembers(studentId, projectData.team);
-                    } else {
-                        projectTypeEl.style.cssText = 'background-color: rgba(59, 130, 246, 0.2); color: #3b82f6;';
-                    }
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        window.addEventListener('load', () => {
+            // Simulate a network request
+            setTimeout(() => {
+                const skeleton = document.getElementById('skeleton-loader');
+                const app = document.getElementById('app-content');
+
+                if (skeleton && app) {
                     
-                    fetchAndDisplayFileUploadStatus(projectData.topic.topicid, studentId);
-                } else {
-                    document.getElementById('project-title').textContent = 'No project has been assigned to this student yet.';
-                    document.getElementById('project-type-container').style.display = 'none';
+                    // --- Fade out skeleton and fade in app ---
+                    skeleton.style.transition = 'opacity 0.4s ease-out';
+                    skeleton.style.opacity = '0';
+                    
+                    setTimeout(() => {
+                        skeleton.style.display = 'none';
+                        app.classList.remove('hidden');
+                        app.classList.add('fade-in');
+                        
+                        // --- IMPORTANT: Render Feather Icons *after* content is visible ---
+                        feather.replace();
+                        
+                    }, 400); // Match transition duration
                 }
 
-                loadingEl.style.display = 'none';
-                projectDetailsEl.classList.remove('hidden');
-                projectDetailsEl.classList.add('loaded');
-
-            } catch (error) {
-                console.error("Initialization failed:", error);
-                showError("Error Loading Data", error.message);
-            }
-        };
-
-        function displayTeamMembers(currentStudentId, teamMembers) {
-            const teamMembersList = document.getElementById('team-members-list');
-            const section = document.getElementById('team-members-section');
-            teamMembersList.innerHTML = '';
-            
-            const otherMembers = teamMembers.filter(m => m.studentid !== currentStudentId);
-
-            if (otherMembers.length > 0) {
-                 otherMembers.forEach(member => {
-                     const li = document.createElement('li');
-                     li.innerHTML = `<span>${member.fullname}</span><span style="font-size: 0.75rem; color: var(--text-secondary);">ID: ${member.studentid}</span>`;
-                     teamMembersList.appendChild(li);
-                 });
-                 section.classList.remove('hidden');
-            }
-        }
+            }, 1000); // 1 second delay
+        });
     </script>
+
 </body>
 </html>
+
