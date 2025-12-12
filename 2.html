@@ -3,393 +3,206 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BirlaOne Dashboard</title>
-    
-    <!-- Tailwind CSS CDN -->
+    <title>Download EcoCampus - Official App</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Feather Icons Script -->
-    <script src="https://unpkg.com/feather-icons"></script>
-    
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- Pacifico font for the logo -->
-    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
-    
-    <!-- Tailwind Config with NEW GREEN THEME -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .font-display { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .screenshot-scroll { scroll-snap-type: x mandatory; }
+        .screenshot-item { scroll-snap-align: center; }
+    </style>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        logo: ['Pacifico', 'cursive'],
-                    },
                     colors: {
-                        'primary': {
-                            '50': '#f7fbf4',
-                            '100': '#eef8e9',
-                            '200': '#dcf1d3',
-                            '300': '#c3e7b3',
-                            '400': '#a6d98e',
-                            '500': '#87c964',
-                            '600': '#56ab2f', /* Base Green */
-                            '700': '#458a26',
-                            '800': '#396f21',
-                            '900': '#305b1c',
-                            '950': '#1a320f',
-                        },
+                        brand: { 50: '#ecfdf5', 100: '#d1fae5', 500: '#10b981', 600: '#059669', 900: '#064e3b' }
                     }
-                },
-            },
-        };
-    </script>
-    
-    <!-- Custom Styles -->
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f8fafc; /* bg-slate-50 */
-        }
-        
-        /* Page load fade-in animation */
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        .fade-in {
-            animation: fadeIn 0.4s ease-in-out;
-        }
-        
-        /* Custom shadows for nav bars */
-        .top-nav-shadow {
-            box-shadow: 0 4px 10px -1px rgba(0, 0, 0, 0.03);
-        }
-        .bottom-nav-shadow {
-            box-shadow: 0 -4px 10px -1px rgba(0, 0, 0, 0.03);
-        }
-
-        /* Hide scrollbar */
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        .no-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-        
-        /* Feather Icon Styling */
-        i[data-feather] {
-            width: 24px;
-            height: 24px;
-        }
-        
-        /* Bottom nav icon sizing */
-        .bottom-nav-icon i[data-feather] {
-            width: 28px;
-            height: 28px;
-        }
-        
-        /* Removed .create-icon-wrapper style */
-
-    </style>
-</head>
-<body class="antialiased">
-
-    <!-- App Container -->
-    <div class="relative min-h-screen w-full md:max-w-md md:mx-auto md:shadow-2xl md:overflow-hidden bg-white">
-
-        <!-- ===== Skeleton Loader ===== -->
-        <div id="skeleton-loader" class="absolute inset-0 z-50 bg-white pt-20 pb-24 px-4 overflow-hidden">
-            <div class="animate-pulse space-y-6">
-                <!-- Top 2x2 Grid Skeleton -->
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="h-28 bg-gray-200 rounded-2xl"></div>
-                    <div class="h-28 bg-gray-200 rounded-2xl"></div>
-                    <div class="h-28 bg-gray-200 rounded-2xl"></div>
-                    <div class="h-28 bg-gray-200 rounded-2xl"></div>
-                </div>
-                
-                <!-- Badges Skeleton -->
-                <div>
-                    <div class="h-5 w-1D bg-gray-200 rounded-full mb-3"></div>
-                    <div class="flex space-x-3">
-                        <div class="w-32 h-16 bg-gray-200 rounded-2xl"></div>
-                        <div class="w-32 h-16 bg-gray-200 rounded-2xl"></div>
-                        <div class="w-32 h-16 bg-gray-200 rounded-2xl"></div>
-                    </div>
-                </div>
-                
-                <!-- Scan Card Skeleton -->
-                <div class="h-32 bg-gray-200 rounded-2xl"></div>
-                
-                <!-- List Skeleton (Lectures/Activities) -->
-                <div class="space-y-3">
-                    <div class="h-5 w-1/2 bg-gray-200 rounded-full"></div>
-                    <div class="h-20 bg-gray-200 rounded-2xl"></div>
-                    <div class="h-20 bg-gray-200 rounded-2xl"></div>
-                </div>
-            </div>
-            <!-- Skeleton Navs -->
-            <div class="fixed top-0 left-0 right-0 md:max-w-md md:mx-auto h-16 bg-white flex justify-between items-center p-4">
-                <div class="w-8 h-8 bg-gray-200 rounded-full"></div>
-                <div class="w-24 h-6 bg-gray-200 rounded-full"></div>
-                <div class="w-8 h-8 bg-gray-200 rounded-full"></div>
-            </div>
-            <!-- Updated Skeleton Nav -->
-            <div class="fixed bottom-0 left-0 right-0 md:max-w-md md:mx-auto h-20 bg-white flex justify-around items-center p-3">
-                <div class="w-8 h-8 bg-gray-200 rounded-full"></div>
-                <div class="w-8 h-8 bg-gray-200 rounded-full"></div>
-                <div class="w-8 h-8 bg-gray-200 rounded-full"></div> <!-- No more raised button -->
-                <div class="w-8 h-8 bg-gray-200 rounded-full"></div>
-                <div class="w-8 h-8 bg-gray-200 rounded-full"></div>
-            </div>
-        </div>
-        
-        <!-- ===== App Content (Hidden by default) ===== -->
-        <div id="app-content" class="hidden">
-            <!-- Top Navigation -->
-            <header class="fixed top-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-sm top-nav-shadow p-4 flex justify-between items-center md:max-w-md md:mx-auto h-16">
-                <!-- Profile -->
-                <button class="p-2 rounded-full transition-all hover:bg-gray-100 active:scale-90">
-                    <i data-feather="user" class="text-gray-700"></i>
-                </button>
-                
-                <!-- App Title -->
-                <h1 class="text-3xl font-logo text-primary-600">
-                    BirlaOne
-                </h1>
-                
-                <!-- Notifications -->
-                <button class="relative p-2 rounded-full transition-all hover:bg-gray-100 active:scale-90">
-                    <i data-feather="bell" class="text-gray-700"></i>
-                    <!-- Notification dot -->
-                    <span class="absolute top-2 right-2 block w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white"></span>
-                </button>
-            </header>
-
-            <!-- Main Content - Dashboard -->
-            <main class="pt-20 pb-28 p-4 space-y-6 overflow-y-auto h-screen no-scrollbar">
-                
-                <!-- Dashboard 2x2 Grid -->
-                <div class="grid grid-cols-2 gap-4">
-                    <!-- Academic Score -->
-                    <div class="bg-gray-50 border border-gray-200 p-4 rounded-2xl flex flex-col justify-between">
-                        <div class="flex justify-between items-center">
-                            <h2 class="font-semibold text-sm text-gray-600">Academic Score</h2>
-                            <i data-feather="award" class="text-primary-600 h-5 w-5"></i>
-                        </div>
-                        <div>
-                            <span class="text-4xl font-bold text-gray-900">88</span>
-                            <span class="text-sm font-medium text-gray-500">/ 100</span>
-                        </div>
-                    </div>
-                    
-                    <!-- Plastic Recycled -->
-                    <div class="bg-gray-50 border border-gray-200 p-4 rounded-2xl flex flex-col justify-between">
-                        <div class="flex justify-between items-center">
-                            <h2 class="font-semibold text-sm text-gray-600">Plastic Recycled</h2>
-                            <!-- NEW ICON -->
-                            <i data-feather="refresh-ccw" class="text-green-600 h-5 w-5"></i>
-                        </div>
-                        <div>
-                            <span class="text-4xl font-bold text-gray-900">12.5</span>
-                            <span class="text-sm font-medium text-gray-500">kg</span>
-                        </div>
-                    </div>
-
-                    <!-- Campus Friends -->
-                    <div class="bg-gray-50 border border-gray-200 p-4 rounded-2xl flex flex-col justify-between">
-                        <div class="flex justify-between items-center">
-                            <h2 class="font-semibold text-sm text-gray-600">Campus Friends</h2>
-                            <i data-feather="users" class="text-purple-500 h-5 w-5"></i>
-                        </div>
-                        <div>
-                            <span class="text-4xl font-bold text-gray-900">5</span>
-                            <span class="text-sm font-medium text-gray-500">Total</span>
-                        </div>
-                    </div>
-                    
-                    <!-- Net Worth -->
-                    <div class="bg-gray-50 border border-gray-200 p-4 rounded-2xl flex flex-col justify-between">
-                        <div class="flex justify-between items-center">
-                            <h2 class="font-semibold text-sm text-gray-600">Net Worth</h2>
-                            <i data-feather="credit-card" class="text-indigo-500 h-5 w-5"></i>
-                        </div>
-                        <div>
-                            <span class="text-4xl font-bold text-gray-900">₹1,500</span>
-                            <p class="text-xs text-gray-500">Personal Wealth</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Roles & Badges -->
-                <div class="space-y-3">
-                    <h2 class="text-xl font-bold text-gray-900 flex items-center space-x-2">
-                        <i data-feather="star" class="text-yellow-500"></i>
-                        <span>Roles & Badges</span>
-                    </h2>
-                    <div class="flex space-x-3 overflow-x-auto pb-2 no-scrollbar">
-                        <!-- Badge 1 -->
-                        <div class="flex-shrink-0 w-40 p-4 bg-gray-50 border border-gray-200 rounded-2xl flex items-center space-x-3">
-                            <i data-feather="user-check" class="text-blue-500 h-8 w-8"></i>
-                            <div>
-                                <p class="font-semibold text-gray-800">CR</p>
-                                <p class="text-xs text-gray-500">CS 2nd Year</p>
-                            </div>
-                        </div>
-                        <!-- Badge 2 -->
-                        <div class="flex-shrink-0 w-40 p-4 bg-gray-50 border border-gray-200 rounded-2xl flex items-center space-x-3">
-                            <i data-feather="users" class="text-green-600 h-8 w-8"></i>
-                            <div>
-                                <p class="font-semibold text-gray-800">Club Head</p>
-                                <p class="text-xs text-gray-500">ACM Club</p>
-                            </div>
-                        </div>
-                        <!-- Badge 3 -->
-                        <div class="flex-shrink-0 w-40 p-4 bg-gray-50 border border-gray-200 rounded-2xl flex items-center space-x-3">
-                            <i data-feather="trophy" class="text-yellow-500 h-8 w-8"></i>
-                            <div>
-                                <p class="font-semibold text-gray-800">Winner</d>
-                                <p class="text-xs text-gray-500">Oasis Hackathon</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Scan Product Card -->
-                <a href="#" class="bg-gradient-to-r from-primary-600 to-primary-700 text-white p-6 rounded-2xl flex justify-between items-center shadow-lg shadow-primary-500/30 transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5 active:scale-95">
-                    <div>
-                        <h3 class="text-xl font-bold">BeAware</h3>
-                        <p class="text-sm text-primary-100">Smart Ingredient-Based Product Rating</p>
-                    </div>
-                    <!-- NEW ICON (looks like a barcode) -->
-                    <i data-feather="camera" class="h-12 w-12 opacity-70"></i>
-                </a>
-
-
-                <!-- Scheduled Lectures -->
-                <div class="space-y-3">
-                    <h2 class="text-xl font-bold text-gray-900 flex items-center space-x-2">
-                        <i data-feather="book-open" class="text-primary-600"></i>
-                        <span>Today's Lectures</span>
-                    </h2>
-                    <div class="space-y-3">
-                        <!-- Lecture 1 -->
-                        <div class="flex space-x-4 p-4 bg-gray-50 border border-gray-200 rounded-2xl">
-                            <div class="flex flex-col items-center text-center">
-                                <span class="font-bold text-lg text-primary-600">Oct</span>
-                                <span class="text-2xl font-bold text-primary-600 -mt-1">22</span>
-                            </div>
-                            <div class="border-l border-gray-300 pl-4 flex-1">
-                                <p class="font-semibold text-gray-800">Data Structures</p>
-                                <p class="text-sm text-gray-500">Prof. R. Sharma</p>
-                                <p class="text-sm text-gray-500">10:00 - 11:00 AM</p>
-                            </div>
-                        </div>
-                        <!-- Lecture 2 -->
-                        <div class="flex space-x-4 p-4 bg-gray-50 border border-gray-200 rounded-2xl">
-                            <div class="flex flex-col items-center text-center">
-                                <span class="font-bold text-lg text-primary-600">Oct</span>
-                                <span class="text-2xl font-bold text-primary-600 -mt-1">22</span>
-                            </div>
-                            <div class="border-l border-gray-300 pl-4 flex-1">
-                                <p class="font-semibold text-gray-800">M-IV (Maths)</p>
-                                <p class="text-sm text-gray-500">Prof. S. Gupta</p>
-                                <p class="text-sm text-gray-500">11:00 - 12:00 PM</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Scheduled Activities -->
-                <div class="space-y-3">
-                    <h2 class="text-xl font-bold text-gray-900 flex items-center space-x-2">
-                        <i data-feather="calendar" class="text-green-600"></i>
-                        <span>Upcoming Activities</span>
-                    </h2>
-                    <div class="space-y-3">
-                        <!-- Activity 1 -->
-                        <div class="flex space-x-4 p-4 bg-gray-50 border border-gray-200 rounded-2xl">
-                            <div class="flex flex-col items-center text-center">
-                                <span class="font-bold text-lg text-green-600">Oct</span>
-                                <span class="text-2xl font-bold text-green-600 -mt-1">25</span>
-                            </div>
-                            <div class="border-l border-gray-300 pl-4 flex-1">
-                                <p class="font-semibold text-gray-800">Oasis Hackathon</p>
-                                <p class="text-sm text-gray-500">Organized by: ACM Club</p>
-                                <p class="text-sm text-gray-500">Oct 25 | 9:00 AM - Oct 26 | 5:00 PM</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </main>
-
-            <!-- Bottom Navigation -->
-            <nav class="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-sm bottom-nav-shadow p-3 flex justify-around items-center md:max-w-md md:mx-auto h-20">
-                
-                <!-- Dashboard (Active) -->
-                <a href="#" class="flex flex-col items-center justify-center p-2 text-primary-600 rounded-lg bottom-nav-icon" aria-label="Dashboard">
-                    <i data-feather="layout" class="stroke-[2.5px]"></i>
-                </a>
-                
-                <!-- Feed -->
-                <a href="#" class="flex flex-col items-center justify-center p-2 text-gray-400 hover:text-primary-600 transition-colors bottom-nav-icon" aria-label="Feed">
-                    <i data-feather="file-text"></i>
-                </a>
-                
-                <!-- Create (Centered & Aligned) -->
-                <a href="#" class="flex flex-col items-center justify-center p-2 text-gray-400 hover:text-primary-600 transition-colors bottom-nav-icon" aria-label="Create">
-                    <i data-feather="plus-circle"></i>
-                </a>
-                
-                <!-- Search -->
-                <a href="#" class="flex flex-col items-center justify-center p-2 text-gray-400 hover:text-primary-600 transition-colors bottom-nav-icon" aria-label="Search">
-                    <i data-feather="search"></i>
-                </a>
-                
-                <!-- Mini Apps -->
-                <a href="#" class="flex flex-col items-center justify-center p-2 text-gray-400 hover:text-primary-600 transition-colors bottom-nav-icon" aria-label="Mini Apps">
-                    <i data-feather="grid"></i>
-                </a>
-            </nav>
-
-        </div>
-    </div>
-
-    <!-- JavaScript -->
-    <script>
-        window.addEventListener('load', () => {
-            // Simulate a network request
-            setTimeout(() => {
-                const skeleton = document.getElementById('skeleton-loader');
-                const app = document.getElementById('app-content');
-
-                if (skeleton && app) {
-                    
-                    // --- Fade out skeleton and fade in app ---
-                    skeleton.style.transition = 'opacity 0.4s ease-out';
-                    skeleton.style.opacity = '0';
-                    
-                    setTimeout(() => {
-                        skeleton.style.display = 'none';
-                        app.classList.remove('hidden');
-                        app.classList.add('fade-in');
-                        
-                        // --- IMPORTANT: Render Feather Icons *after* content is visible ---
-                        feather.replace();
-                        
-                    }, 400); // Match transition duration
                 }
-
-            }, 1500); // 1.5 second delay
-        });
+            }
+        }
     </script>
+</head>
+<body class="bg-white text-gray-900">
 
+   
+
+    <main class="max-w-4xl mx-auto pb-24">
+        
+        <section class="p-5 pt-8">
+            <div class="flex gap-5">
+                <div class="w-24 h-24 rounded-[22px] bg-brand-50 border border-brand-100 flex items-center justify-center flex-shrink-0 shadow-sm">
+                    <img src="https://i.ibb.co/67MXS1wX/1763474740707.png" class="w-16 h-16 object-contain" alt="EcoCampus Icon">
+                </div>
+                <div class="flex-1 min-w-0 pt-1">
+                    <h1 class="text-2xl font-display font-bold text-gray-900 leading-tight">EcoCampus</h1>
+                    <p class="text-green-700 font-medium text-sm mt-1">B.K. Birla Night College</p>
+                    <p class="text-xs text-gray-400 mt-1">Contains ads • In-app rewards</p>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-between mt-6 px-2 border-b border-gray-100 pb-6">
+               
+                <div class="text-center flex-1 border-r border-gray-100">
+                    <div class="flex items-center justify-center gap-1 font-bold text-sm text-gray-900">
+                        8 MB
+                    </div>
+                    <p class="text-[10px] text-gray-500 mt-0.5">Size</p>
+                </div>
+                <div class="text-center flex-1 border-r border-gray-100">
+                    <div class="flex items-center justify-center gap-1 font-bold text-sm text-gray-900">
+                        16+
+                    </div>
+                    <p class="text-[10px] text-gray-500 mt-0.5">Rated for 16+</p>
+                </div>
+                <div class="text-center flex-1">
+                    <div class="flex items-center justify-center gap-1 font-bold text-sm text-gray-900">
+                        5+
+                    </div>
+                    <p class="text-[10px] text-gray-500 mt-0.5">Downloads</p>
+                </div>
+            </div>
+
+            <div class="mt-6">
+                <a href="https://dvytsoipqgawvmqsietk.supabase.co/storage/v1/object/public/App/EcoCampus.apk" class="block w-full bg-brand-600 hover:bg-brand-500 text-white font-bold text-center py-3.5 rounded-full shadow-lg shadow-brand-200 transition-all active:scale-95">
+                    Download Apk
+                </a>
+                <div class="flex justify-center items-center gap-2 mt-4 text-xs text-gray-500">
+                    <i data-lucide="shield-check" class="w-4 h-4 text-green-600"></i>
+                    <span>Verified by Green Club Security</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="px-5 mb-6">
+            <div class="flex items-center justify-between mb-3">
+                <h2 class="text-lg font-bold text-gray-900">What's new</h2>
+                <span class="text-xs text-brand-600 font-bold bg-brand-50 px-2 py-1 rounded">Ver 1.0.2</span>
+            </div>
+            <p class="text-xs text-gray-500 mb-2">Last updated Dec 12, 2025</p>
+            <p class="text-sm text-gray-600 leading-relaxed">
+                • <strong>Dark Mode:</strong> Save battery with the new dark theme.<br>
+                • <strong>Streak Restore:</strong> Missed a day? Use points to keep your streak alive!<br>
+                • <strong>Performance:</strong> Faster loading times for the leaderboard.
+            </p>
+        </section>
+
+        <section class="mt-2 mb-8">
+            <div class="flex gap-4 overflow-x-auto px-5 pb-6 no-scrollbar screenshot-scroll">
+                <div class="screenshot-item flex-shrink-0 w-32 md:w-60 aspect-[9/19] bg-gray-100 rounded-xl overflow-hidden border border-gray-200 relative">
+                    <img src="https://i.ibb.co/FLh4fK91/image.png" class="w-full h-full object-cover opacity-80">
+                    
+                </div>
+                <div class="screenshot-item flex-shrink-0 w-32 md:w-60 aspect-[9/19] bg-gray-100 rounded-xl overflow-hidden border border-gray-200 relative">
+                    <img src="https://i.ibb.co/wTTx10N/image.png" class="w-full h-full object-cover opacity-80">
+                    
+                </div>
+                <div class="screenshot-item flex-shrink-0 w-32 md:w-60 aspect-[9/19] bg-gray-100 rounded-xl overflow-hidden border border-gray-200 relative">
+                    <img src="https://i.ibb.co/ZRFPTksN/image.png" class="w-full h-full object-cover opacity-80">
+                    
+                </div>
+                <div class="screenshot-item flex-shrink-0 w-32 md:w-60 aspect-[9/19] bg-gray-100 rounded-xl overflow-hidden border border-gray-200 relative">
+                    <img src="https://i.ibb.co/60Ts5P6L/image.png" class="w-full h-full object-cover opacity-80">
+                    
+                </div>
+            </div>
+        </section>
+
+        <section class="px-5 mb-8">
+            <div class="flex items-center justify-between mb-3">
+                <h2 class="text-lg font-bold text-gray-900">About this app</h2>
+                <i data-lucide="arrow-right" class="w-5 h-5 text-gray-400"></i>
+            </div>
+            <p class="text-sm text-gray-600 leading-relaxed mb-4">
+                Join the sustainability revolution at B.K. Birla Night College! 🌱
+                <br><br>
+                EcoCampus is your ultimate companion for a greener college life. Track your carbon footprint, participate in recycling drives, and earn real rewards. Whether you are planting trees or just recycling a plastic bottle, every action counts.
+            </p>
+            
+            <div class="flex flex-wrap gap-2 mb-4">
+                <span class="px-3 py-1 rounded-full border border-gray-200 text-xs font-medium text-gray-600">#Education</span>
+                <span class="px-3 py-1 rounded-full border border-gray-200 text-xs font-medium text-gray-600">#Lifestyle</span>
+                <span class="px-3 py-1 rounded-full border border-gray-200 text-xs font-medium text-gray-600">#Productivity</span>
+            </div>
+
+            <h3 class="text-sm font-bold text-gray-900 mb-2">Key Features:</h3>
+            <ul class="space-y-3 text-sm text-gray-600 mb-6">
+                <li class="flex gap-3 items-start">
+                    <div class="mt-0.5"><i data-lucide="recycle" class="w-4 h-4 text-brand-600"></i></div>
+                    <span><strong>Smart Recycling Log:</strong> Scan QR codes to log plastic waste and see your CO2 impact instantly.</span>
+                </li>
+                <li class="flex gap-3 items-start">
+                    <div class="mt-0.5"><i data-lucide="gift" class="w-4 h-4 text-brand-600"></i></div>
+                    <span><strong>Earn & Redeem:</strong> Convert your EcoPoints into canteen coupons, stationery, and exclusive merch.</span>
+                </li>
+                <li class="flex gap-3 items-start">
+                    <div class="mt-0.5"><i data-lucide="trophy" class="w-4 h-4 text-brand-600"></i></div>
+                    <span><strong>Leaderboards:</strong> Compete with other students and departments to become the "Eco-Warrior of the Month".</span>
+                </li>
+                <li class="flex gap-3 items-start">
+                    <div class="mt-0.5"><i data-lucide="calendar" class="w-4 h-4 text-brand-600"></i></div>
+                    <span><strong>Event RSVP:</strong> Never miss a tree plantation drive or cleanup workshop. Register in one tap.</span>
+                </li>
+            </ul>
+        </section>
+
+        <section class="px-5 mb-8 border-t border-gray-100 pt-6">
+            <div class="flex items-center justify-between mb-3">
+                <h2 class="text-lg font-bold text-gray-900">Data safety</h2>
+                <i data-lucide="arrow-right" class="w-5 h-5 text-gray-400"></i>
+            </div>
+            <p class="text-sm text-gray-600 leading-relaxed mb-4">
+                Safety starts with understanding how developers collect and share your data. Data privacy and security practices may vary based on your use, region, and age.
+            </p>
+            
+            <div class="space-y-4 border border-gray-200 rounded-xl p-4">
+                <div class="flex gap-3">
+                    <i data-lucide="share-2" class="w-5 h-5 text-gray-400"></i>
+                    <div>
+                        <h4 class="text-sm font-bold text-gray-900">No data shared with third parties</h4>
+                        <p class="text-xs text-gray-500">The developer says this app doesn't share user data with other companies or organizations.</p>
+                    </div>
+                </div>
+                <div class="flex gap-3">
+                    <i data-lucide="cloud" class="w-5 h-5 text-gray-400"></i>
+                    <div>
+                        <h4 class="text-sm font-bold text-gray-900">Data is encrypted in transit</h4>
+                        <p class="text-xs text-gray-500">Your data is transferred over a secure connection.</p>
+                    </div>
+                </div>
+                <div class="flex gap-3">
+                    <i data-lucide="trash-2" class="w-5 h-5 text-gray-400"></i>
+                    <div>
+                        <h4 class="text-sm font-bold text-gray-900">You can request that data be deleted</h4>
+                        <p class="text-xs text-gray-500">The developer provides a way for you to request that your data be deleted.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="px-5 pb-8 border-t border-gray-100 pt-6">
+            <div class="flex justify-between items-center cursor-pointer group">
+                <div>
+                    <h3 class="text-base font-bold text-gray-900">App Support</h3>
+                    <p class="text-xs text-gray-500 mt-0.5">greenclubbkbirlanightcollege@gmail.com</p>
+                </div>
+                <i data-lucide="chevron-down" class="w-5 h-5 text-gray-400 group-hover:text-gray-600"></i>
+            </div>
+        </section>
+
+        <footer class="text-center py-8 bg-gray-50 border-t border-gray-100">
+            
+            <p class="text-[10px] text-gray-400">© 2025 B.K. Birla Night College. All rights reserved.</p>
+        </footer>
+
+    </main>
+
+    <script>
+        lucide.createIcons();
+    </script>
 </body>
 </html>
-
-
